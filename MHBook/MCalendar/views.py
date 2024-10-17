@@ -31,12 +31,11 @@ def logoutUser(request):
 
 def registrationPage(request):
     form = CreateUserForm() #grabs form structure from forms.py
-
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
         if form.is_valid(): #if form completed successfully save form
             form.save()
-            user = form.cleaned_data.get('username')
+            user = form.cleaned_data.get('email')
             messages.success(request, 'Account was created for ' + user) #flash message to user that form created successfuly 
             return redirect("loginPage")
         
