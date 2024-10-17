@@ -5,3 +5,6 @@ from django.views import generic
 
 def examplePage(request):
     return render(request, 'example.html')
+
+def myBookings(request):
+    return render(request, 'myBookings.html')
