@@ -13,9 +13,11 @@ from django.contrib.auth.decorators import login_required
 
 def loginPage(request):
     if request.method == "POST":
-        username = request.POST.get('username') #pulls email and password from login page
+        email = request.POST.get('email') #pulls email and password from login page
         password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password) #authenticates users
+        print('email: ', email, 'password', password)
+        user = authenticate(email=email, password=password) #authenticates users
+        print(user)
         if user is not None: #if user exists in database
             login(request, user)
             return redirect('accountPage')
@@ -36,7 +38,7 @@ def registrationPage(request):
         form = CreateUserForm(request.POST)
         if form.is_valid(): #if form completed successfully save form
             form.save()
-            user = form.cleaned_data.get('username')
+            user = form.cleaned_data.get('email')
             messages.success(request, 'Account was created for ' + user) #flash message to user that form created successfuly 
             return redirect("loginPage")
         
