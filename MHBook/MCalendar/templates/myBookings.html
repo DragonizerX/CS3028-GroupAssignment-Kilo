@@ -1,7 +1,28 @@
 <!DOCTYPE html>
 <html>
-    <body>
 
+<head>
+
+    <t1>My Bookings</t1>
+
+    <style>
+
+        .boxText{
+            text-align: center;
+            max-width: 120px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-style: solid;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="boxText"> 
         <h1>My Bookings</h1>
 
         <ul>
@@ -9,6 +30,8 @@
             <l1>{{ x.fullname }} - {{ x.phone }} - {{ x.email }} - {{ x.supervisor }} - {{ x.organisation }} - {{ x.date }} - {{ x.start }} - {{ x.finish }} - {{ x.room }} - {{ x.equipment }} - {{ x.equipmentid }}</li>
             {% endfor %}
         </ul>
+    </div>
 
-    </body>
+</body>
+
 </html>
