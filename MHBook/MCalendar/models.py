@@ -56,12 +56,12 @@ class Users(AbstractBaseUser, PermissionsMixin):
     def check_password(self, raw_password):
         return check_password(raw_password, self.password)
 
-
-
-
 class Supervisor(models.Model):
     first_name = models.CharField(max_length=15, unique=True, blank=True)
     last_name = models.CharField(max_length=15, unique=True, blank=True)
     email = models.EmailField(unique=True, blank=True)
     password = models.CharField(max_length=128, null=True)  # Initially allow null
     telephone = models.CharField(max_length=15, blank=True)
+
+    
+

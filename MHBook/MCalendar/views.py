@@ -33,7 +33,6 @@ def logoutUser(request):
 
 def registrationPage(request):
     form = CreateUserForm() #grabs form structure from forms.py
-
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
         if form.is_valid(): #if form completed successfully save form

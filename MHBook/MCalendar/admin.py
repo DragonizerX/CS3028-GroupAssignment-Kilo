@@ -7,3 +7,5 @@ from .models import Users, Supervisor
 admin.site.register(Users)
 admin.site.register(Supervisor)
 
+
+
