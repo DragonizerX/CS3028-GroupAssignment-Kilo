@@ -3,5 +3,5 @@ from django.views import generic
 
 # Create your views here.
 
-def examplePage(request):
-    return render(request, 'example.html')
+def CalendarPage(request):
+    return render(request, 'CalendarPage.html')
