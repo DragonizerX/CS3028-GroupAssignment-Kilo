@@ -1,1 +1,14 @@
-<h1>Oli do some work!!!</h1>
+<!DOCTYPE html>
+<html>
+    <body>
+
+        <h1>My Bookings</h1>
+
+        <ul>
+            {% for x in myBookings %}
+            <l1>{{ x.fullname }} - {{ x.phone }} - {{ x.email }} - {{ x.supervisor }} - {{ x.organisation }} - {{ x.date }} - {{ x.start }} - {{ x.finish }} - {{ x.room }} - {{ x.equipment }} - {{ x.equipmentid }}</li>
+            {% endfor %}
+        </ul>
+
+    </body>
+</html>
