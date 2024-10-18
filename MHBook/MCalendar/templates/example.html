@@ -13,66 +13,93 @@
 
     <!--styling for the page goes here-->
     <style> 
-        /* Calendar Container */
+        /* calender id */
         #calendar {
             margin: 10px auto;
             padding: 10px;
             max-width: 1000px;
-            background-color: #ffffff;
             border-radius: 30px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
 
         /* Header Toolbar */
-        .fc .fc-toolbar {
+        .fc-toolbar {
             padding: 20px;
         }
 
-        .fc .fc-toolbar-title {
-            font-size: 2.0em;
+        .fc-toolbar-title {
             font-weight: 200;
         }
 
-        /* Button Styling */
-        .fc .fc-button {
-            background-color: lightblue;
-            border: none;
-        }
-
-        .fc .fc-button:hover {
-            background-color: #357abd !important;
-        }
-
-        .fc .fc-button-primary:not(:disabled).fc-button-active {
-            background-color: #2c3e50;
-        }
-
         /* Time Grid */
-        .fc .fc-timegrid-slot {
-            height: 35px !important;
-            border-bottom: 1px solid #e5e5e5;
+        .fc-timegrid-slot {
+            height: 35px;
+            border-bottom: 1px solid;
         }
 
-        .fc .fc-timegrid-slot-label {
+        .fc-timegrid-slot-label {
             font-size: 0.9em;
-            color: #666;
+            color: darkgrey;
         }
 
         /* Selection */
-        .fc .fc-highlight {
-            background-color: lightblue; !important;
+        .fc-highlight {
+            background-color: lightblue;
         }
 
         /* Column Headers */
-        .fc .fc-col-header-cell {
-            background-color: #f8f9fa;
+        .fc-col-header-cell {
+            background-color: white;
             padding: 10px 0;
             font-weight: 500;
         }
 
         /* Time Slots */
-        .fc .fc-timegrid-col {
-            background-color: #ffffff;
+        .fc-timegrid-col {
+            background-color: white;
+        }
+
+        /* booking form id styling */
+        #bookingForm .card-body {
+            padding: 20px;
+        }
+    
+        #bookingForm .row {
+            margin-bottom: 5px;
+        }
+    
+        #bookingForm .control-label {
+            padding-top: 7px;
+        }
+    
+        #bookingForm .btn-success {
+            margin-top: 10px;
+        }
+
+        /* Button Styling */
+        .btn-info {
+            margin:10px;
+            padding:10px;
+        }
+
+        .text-center.mt-4 {
+            margin-top: 5px;
+            padding-top: 5px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .fc-button {
+            background-color: lightblue;
+            border: none;
+        }
+
+        .fc-button:hover {
+            background-color: lightblue;
+        }
+
+        .fc-button-primary:not(:disabled) {
+            background-color: lightblue;
         }
 
 
@@ -85,9 +112,70 @@
         <div id = "calendar"></div>
     </div>
 
-    <div>
-        <p>button with drop downs will go here</p>
-    </div>
+    <div class = "text-center mt-4">
+        <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#bookingForm" aria-expanded="false" aria-controls="bookingForm">
+            Make New Booking 
+        </button>
+
+        <div class="collapse mt-3" id="bookingForm">
+            <div class="card card-body">
+                <form>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label for="bookingName" class="control-label">Name for Booking:</label>
+                        </div>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="bookingName" required>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-sm-3">
+                            <label for="supervisorName" class="control-label">Supervisor/Company Name:</label>
+                        </div>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="supervisorName">
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-sm-3">
+                            <label for="bookingDate" class="control-label">Date of Booking:</label>
+                        </div>
+                        <div class="col-sm-9">
+                            <input type="date" class="form-control" id="bookingDate" required>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-sm-3">
+                            <label for="startTime" class="control-label">Start Time:</label>
+                        </div>
+                        <div class="col-sm-9">
+                            <input type="time" class="form-control" id="startTime" required>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-sm-3">
+                            <label for="allottedTime" class="control-label">Allotted Time:</label>
+                        </div>
+                        <div class="col-sm-9">
+                            <input type="time" class="form-control" id="allottedTime" required>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-sm-3">
+                            <label for="comments" class="control-label">Comments:</label>
+                        </div>
+                        <div class="col-sm-9">
+                            <textarea class="form-control" id="comments" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-sm-12 text-center">
+                            <button type="submit" class="btn btn-success">Confirm Booking</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
 
 
     <!--calendar creation-->
