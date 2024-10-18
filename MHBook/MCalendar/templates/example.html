@@ -8,16 +8,118 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.js'></script>
+
+    <!--styling for the page goes here-->
+    <style> 
+        /* Calendar Container */
+        #calendar {
+            margin: 10px auto;
+            padding: 10px;
+            max-width: 1000px;
+            background-color: #ffffff;
+            border-radius: 30px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Header Toolbar */
+        .fc .fc-toolbar {
+            padding: 20px;
+        }
+
+        .fc .fc-toolbar-title {
+            font-size: 2.0em;
+            font-weight: 200;
+        }
+
+        /* Button Styling */
+        .fc .fc-button {
+            background-color: lightblue;
+            border: none;
+        }
+
+        .fc .fc-button:hover {
+            background-color: #357abd !important;
+        }
+
+        .fc .fc-button-primary:not(:disabled).fc-button-active {
+            background-color: #2c3e50;
+        }
+
+        /* Time Grid */
+        .fc .fc-timegrid-slot {
+            height: 35px !important;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .fc .fc-timegrid-slot-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        /* Selection */
+        .fc .fc-highlight {
+            background-color: lightblue; !important;
+        }
+
+        /* Column Headers */
+        .fc .fc-col-header-cell {
+            background-color: #f8f9fa;
+            padding: 10px 0;
+            font-weight: 500;
+        }
+
+        /* Time Slots */
+        .fc .fc-timegrid-col {
+            background-color: #ffffff;
+        }
+
+
+    </style>
 </head>
 
 <body>
-    <div>
-        <p>calendar will go here</p>
+    <!--calendar section-->
+    <div class = "container">
+        <div id = "calendar"></div>
     </div>
 
     <div>
         <p>button with drop downs will go here</p>
     </div>
+
+
+    <!--calendar creation-->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                allDaySlot: false,
+                slotMinTime: '00:00:00',
+                slotMaxTime: '24:00:00',
+                slotDuration: '01:00:00',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'timeGridWeek,timeGridDay'
+                },
+                slotLabelFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                },
+                selectable: true,
+                select: function(info) {
+                    alert('Selected ' + info.startStr + ' to ' + info.endStr);
+                },
+                height: 'auto',
+                expandRows: true
+            });
+            calendar.render();
+        });
+    </script>
 
 </body>
 </html>
