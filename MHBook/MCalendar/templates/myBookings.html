@@ -62,11 +62,6 @@
                 line-height: 50px;
             }
 
-            .details {
-                max-width: 500px;
-                height: 250px;
-            }
-
             .bookingName {
                 margin: auto;
                 padding: 0 20px;
@@ -85,6 +80,21 @@
                 padding: 0 20px 0 0;
             }
 
+            .details {
+                max-width: 500px;
+                height: 250px;
+            }
+
+            .detailsDiv {
+                width: 50%;
+                float: left;
+            }
+
+            .detailsListItem {
+                list-style-type: none;
+                margin: auto;
+                padding: 4px 0;
+            }
 
         </style>
         
@@ -111,7 +121,7 @@
             </div>
         </header>
 
-        <div style="padding: 50px 0 0 50px;margin-top: 50px;border: dotted 2px red;">
+        <div style="padding: 50px 0 0 50px;margin-top: 50px;">
 
             <div id="bookings">
                 <h3>Bookings</h3>
@@ -129,22 +139,32 @@
                 </div>
 
                 <div class="details">
-                    <div class="boxText"> 
-                        <ul>
-                            {% for x in myBookings %}
-                                <li>{{ x.fullname }}</li>
-                                <li>{{ x.phone }}</li>
-                                <li>{{ x.email }}</li>
-                                <li>{{ x.supervisor }}</li>
-                                <li>{{ x.organisation }}</li>
-                                <li>{{ x.date }}</li>
-                                <li>{{ x.start }}</li>
-                                <li>{{ x.finish }}</li>
-                                <li>{{ x.room }}</li>
-                                <li>{{ x.equipment }}</li>
-                                <li>{{ x.equipmentid }}</li>
-                            {% endfor %}
-                        </ul>
+                    <div class="detailsDiv">
+                        <div class="boxText"> 
+                            <ul>
+                                {% for x in myBookings %}
+                                    <li class="detailsListItem">{{ x.fullname }}</li>
+                                    <li class="detailsListItem">{{ x.phone }}</li>
+                                    <li class="detailsListItem">{{ x.email }}</li>
+                                    <li class="detailsListItem">{{ x.supervisor }}</li>
+                                    <li class="detailsListItem">{{ x.organisation }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="detailsDiv">
+                        <div class="boxText"> 
+                            <ul>
+                                {% for x in myBookings %}
+                                    <li class="detailsListItem">{{ x.date }}</li>
+                                    <li class="detailsListItem">{{ x.start }}</li>
+                                    <li class="detailsListItem">{{ x.finish }}</li>
+                                    <li class="detailsListItem">{{ x.room }}</li>
+                                    <li class="detailsListItem">{{ x.equipment }}</li>
+                                    <li class="detailsListItem">{{ x.equipmentid }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
