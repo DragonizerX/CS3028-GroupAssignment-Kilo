@@ -35,13 +35,13 @@
             <input type="text" id="organisation" placeholder={{ x.organisation }}>
 
             <label for="date">Date: </label>
-            <input type="date" id="date" placeholder={{ x.date }}>
+            <input type="date" id="date" value={{ x.date|date:'Y-m-d' }}>
 
             <label for="start">Start time: </label>
-            <input type="time" id="start" placeholder={{ x.start|time:"H:i" }}>
+            <input type="time" id="start" value={{ x.start|time:"H:i" }}>
 
             <label for="finish">Finish time: </label>
-            <input type="time" id="finish" placeholder={{ x.finish|time:"H:i" }}>
+            <input type="time" id="finish" value={{ x.finish|time:"H:i" }}>
 
             <label for="room">Room: </label>
             <input type="text" id="room" placeholder={{ x.room }}>
@@ -52,9 +52,9 @@
             <label for="equipmentid">Equipment ID: </label>
             <input type="text" id="equipmentid" placeholder={{ x.equipmentid }}>
 
-            {% endfor %}
-
             <input type="submit" value="Submit">
-        </form>     
+
+            {% endfor %}
+        </form>
     </body>
 </html>
