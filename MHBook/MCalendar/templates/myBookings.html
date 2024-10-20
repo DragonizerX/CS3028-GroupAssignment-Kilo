@@ -129,7 +129,7 @@
         {%for z in myBookings%}
             <div class="bookingObject">
                 <div class="editDetails">
-                    <h5 class="bookingName">Booking Number</h5>
+                    <h5 class="bookingName">{{z.id}}</h5>
                     <div class="deleteButton">
                         <button>Delete</button>
                     </div>
@@ -139,25 +139,22 @@
                 </div>
 
                 <div class="details">
-                    {% with x=myBookings.0 %}
-                        <div class="detailsListItem">{{ x.fullname }}</div>
-                        <!-- <div class="detailsListItem">{{ x.phone }}</div> -->
-                        <!-- <div class="detailsListItem">{{ x.email }}</div> -->
-                        <!-- <div class="detailsListItem">{{ x.supervisor }}</div> -->
-                        <!-- <div class="detailsListItem">{{ x.organisation }}</div> -->
-                        <div class="detailsListItem">{{ x.date }}</div>
-                        <div class="detailsListItem">{{ x.start }}</div>
-                        <div class="detailsListItem">{{ x.finish }}</div>
-                        <div class="detailsListItem">{{ x.room }}</div>
-                        <div class="detailsListItem">{{ x.equipment }}</div>
-                        <div class="detailsListItem">{{ x.equipmentid }}</div>
-                    {% endwith %}
+                    <div class="detailsListItem">{{ z.fullname }}</div>
+                    <!-- <div class="detailsListItem">{{ x.phone }}</div> -->
+                    <!-- <div class="detailsListItem">{{ x.email }}</div> -->
+                    <!-- <div class="detailsListItem">{{ x.supervisor }}</div> -->
+                    <!-- <div class="detailsListItem">{{ x.organisation }}</div> -->
+                    <div class="detailsListItem">{{ z.date }}</div>
+                    <div class="detailsListItem">{{ z.start }}</div>
+                    <div class="detailsListItem">{{ z.finish }}</div>
+                    <div class="detailsListItem">{{ z.room }}</div>
+                    <div class="detailsListItem">{{ z.equipment }}</div>
+                    <div class="detailsListItem">{{ z.equipmentid }}</div>
                 </div>
-
             </div>
+            {%endfor%}
 
         </div>
-        {%endfor%}
 
     </body>
 </html>
