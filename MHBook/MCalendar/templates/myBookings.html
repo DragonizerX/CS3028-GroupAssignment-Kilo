@@ -133,16 +133,11 @@
 
                 <div class="details">
                     <div class="detailsListItem">Name: {{ z.fullname }}</div>
-                    <!-- <div class="detailsListItem">Phone: {{ z.phone }}</div> -->
-                    <!-- <div class="detailsListItem">Email: {{ z.email }}</div> -->
-                    <!-- <div class="detailsListItem">Supervisor: {{ z.supervisor }}</div> -->
-                    <!-- <div class="detailsListItem">Organisation: {{ z.organisation }}</div> -->
                     <div class="detailsListItem">Date: {{ z.date }}</div>
                     <div class="detailsListItem">Start: {{ z.start|time:"H:i" }}</div>
                     <div class="detailsListItem">Finish: {{ z.finish|time:"H:i" }}</div>
                     <div class="detailsListItem">Room: {{ z.room }}</div>
                     <div class="detailsListItem">Equipment: {{ z.equipment }}</div>
-                    <!-- <div class="detailsListItem">Equipment ID: {{ z.equipmentid }}</div> -->
                 </div>
             </div>
             {%endfor%}
