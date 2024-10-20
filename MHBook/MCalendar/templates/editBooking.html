@@ -2,21 +2,59 @@
 <html lang=en>
     <title>Edit Booking</title>
 
+    <head>
+        <style>
+
+            .details {
+                max-width: 400px;
+                background-color: lightgrey;
+                display: grid;
+                grid-template-columns: 40% 60%;
+            }
+
+        </style>
+    </head>
+
     <body>
-        <div class="details">
+        <form class="details">
             {% for x in editBooking %}
-            <div class="detailsListItem">Name: {{ x.fullname }}</div>
-            <div class="detailsListItem">Phone: {{ x.phone }}</div>
-            <div class="detailsListItem">Email: {{ x.email }}</div>
-            <div class="detailsListItem">Supervisor: {{ x.supervisor }}</div>
-            <div class="detailsListItem">Organisation: {{ x.organisation }}</div>
-            <div class="detailsListItem">Date: {{ x.date }}</div>
-            <div class="detailsListItem">Start: {{ x.start|time:"H:i" }}</div>
-            <div class="detailsListItem">Finish: {{ x.finish|time:"H:i" }}</div>
-            <div class="detailsListItem">Room: {{ x.room }}</div>
-            <div class="detailsListItem">Equipment: {{ x.equipment }}</div>
-            <div class="detailsListItem">Equipment ID: {{ x.equipmentid }}</div>
+            
+            <label for="name">Full Name: </label>
+            <input type="text" id="name" placeholder={{ x.fullname }}>
+
+            <label for="phone">Phone Number: </label>
+            <input type="tel" id="phone" placeholder={{ x.phone }}>
+
+            <label for="email">Email: </label>
+            <input type="email" id="email" placeholder={{ x.email }}>
+
+            <label for="supervisor">Supervisor: </label>
+            <input type="text" id="supervisor" placeholder={{ x.supervisor }}>
+
+            <label for="organisation">Organisation: </label>
+            <input type="text" id="organisation" placeholder={{ x.organisation }}>
+
+            <label for="date">Date: </label>
+            <input type="date" id="date" placeholder={{ x.date }}>
+
+            <label for="start">Start time: </label>
+            <input type="time" id="start" placeholder={{ x.start|time:"H:i" }}>
+
+            <label for="finish">Finish time: </label>
+            <input type="time" id="finish" placeholder={{ x.finish|time:"H:i" }}>
+
+            <label for="room">Room: </label>
+            <input type="text" id="room" placeholder={{ x.room }}>
+
+            <label for="equipment">Equipment: </label>
+            <input type="text" id="equipment" placeholder={{ x.equipment }}>
+
+            <label for="equipmentid">Equipment ID: </label>
+            <input type="text" id="equipmentid" placeholder={{ x.equipmentid }}>
+
             {% endfor %}
-        </div>     
+
+            <input type="submit" value="Submit">
+        </form>     
     </body>
 </html>
