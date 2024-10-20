@@ -9,7 +9,9 @@
                 max-width: 400px;
                 background-color: lightgrey;
                 display: grid;
-                grid-template-columns: 40% 60%;
+                grid-template-columns: 50% 50%;
+                row-gap: 5px;
+                padding: 10px;
             }
 
         </style>
@@ -18,7 +20,7 @@
     <body>
         <form class="details">
             {% for x in editBooking %}
-            
+
             <label for="name">Full Name: </label>
             <input type="text" id="name" placeholder={{ x.fullname }}>
 
@@ -52,9 +54,9 @@
             <label for="equipmentid">Equipment ID: </label>
             <input type="text" id="equipmentid" placeholder={{ x.equipmentid }}>
 
-            <input type="submit" value="Submit">
-
             {% endfor %}
-        </form>
+
+            <input type="submit" value="Submit Changes" style="width: 30%; margin: 10px auto; grid-column: 1 / span 2;">
+        </form>     
     </body>
 </html>
