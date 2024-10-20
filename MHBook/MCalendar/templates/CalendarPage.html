@@ -102,83 +102,112 @@
             background-color: lightblue;
         }
 
+        #equipmentSelect {
+            width:500px;
+            margin:20px auto;
+            text-align:center;
+        }
 
     </style>
 </head>
 
 <body>
-    <!--calendar section-->
     <div class = "container">
-        <div id = "calendar"></div>
-    </div>
-
-    <div class = "text-center mt-4">
-        <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#bookingForm" aria-expanded="false" aria-controls="bookingForm">
-            Make New Booking 
-        </button>
-
-        <div class="collapse mt-3" id="bookingForm">
-            <div class="card card-body">
-                <form>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <label for="bookingName" class="control-label">Name for Booking:</label>
-                        </div>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control" id="bookingName" required>
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-sm-3">
-                            <label for="supervisorName" class="control-label">Supervisor/Company Name:</label>
-                        </div>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control" id="supervisorName" required>
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-sm-3">
-                            <label for="bookingDate" class="control-label">Date of Booking:</label>
-                        </div>
-                        <div class="col-sm-9">
-                            <input type="date" class="form-control" id="bookingDate" required>
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-sm-3">
-                            <label for="startTime" class="control-label">Start Time:</label>
-                        </div>
-                        <div class="col-sm-9">
-                            <input type="time" class="form-control" id="startTime" required>
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-sm-3">
-                            <label for="allottedTime" class="control-label">Allotted Time:</label>
-                        </div>
-                        <div class="col-sm-9">
-                            <input type="time" class="form-control" id="allottedTime" required>
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-sm-3">
-                            <label for="comments" class="control-label">Comments:</label>
-                        </div>
-                        <div class="col-sm-9">
-                            <textarea class="form-control" id="comments" rows="3"></textarea>
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-sm-12 text-center">
-                            <button type="submit" class="btn btn-success">Confirm Booking</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+        <!--EQUIPMENT SELECTION-->
+        <div id="equipmentSelect" class="form-group">
+            <label for="equipment">Select Equipment:</label>
+            <select class="form-control" id="equipment">
+                <option value="">-- Select Equipment --</option>
+                <option value="spinning-disc">Spinning disc</option>
+                <option value="m1-328">M1 - 3.28</option>
+                <option value="m2-328">M2 - 3.28</option>
+                <option value="haggis-329">Haggis - 3.29</option>
+                <option value="tatties-329">Tatties - 3.29</option>
+                <option value="workstation-1">Computer workstation 1</option>
+                <option value="workstation-2">Computer workstation 2</option>
+                <option value="lsm880">LSM880</option>
+                <option value="lsm710">LSM710</option>
+                <option value="lsm700">LSM700</option>
+                <option value="evos-xl">Evos XL</option>
+                <option value="evos-m5000">Evos M5000</option>
+                <option value="holomonitor">Holomonitor</option>
+                <option value="micro-ct">Micro CT</option>
+            </select>
         </div>
 
+        <!--CALL CALENDAR CREATION FROM SCRIPTS-->
+        <div id = "calendar"></div>
+        
+        <!--BOOKING FORM-->
+        <div class = "text-center mt-4">
+            <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#bookingForm" aria-expanded="false" aria-controls="bookingForm">
+                Make New Booking 
+            </button>
+            
+            <div class="collapse mt-3" id="bookingForm">
+                <div class="card card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <label for="bookingName" class="control-label">Name for Booking:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="bookingName" required>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="supervisorName" class="control-label">Supervisor/Company Name:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="supervisorName" required>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="bookingDate" class="control-label">Date of Booking:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="date" class="form-control" id="bookingDate" required>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="startTime" class="control-label">Start Time:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="time" class="form-control" id="startTime" required>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="allottedTime" class="control-label">Allotted Time:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="time" class="form-control" id="allottedTime" required>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="comments" class="control-label">Comments:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" id="comments" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-sm-12 text-center">
+                                <button type="submit" class="btn btn-success">Confirm Booking</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!--calendar creation-->
+    <!--JAVASCRIPT SCRIPTS-->
+    <!--CALENDAR CREATION-->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
