@@ -37,7 +37,7 @@
                 padding-top: 5px;
             }
 
-            #bookings {
+            #requestsHeader {
                 margin-left: 20px;
                 margin-bottom: 30px;
                 border: 3px solid black;
@@ -65,12 +65,6 @@
                 margin: auto;
                 padding: 0 20px;
                 float: left;
-            }
-
-            .editButton {
-                float: right;
-                margin: auto;
-                padding: 0 20px 0 0;
             }
             
             .details {
@@ -102,9 +96,9 @@
 
     </head>
 
-    <body style="height:1000px;">
+    <body style="height:1000px;margin:0;">
         
-        <header style="position:sticky;top:20px;background-color: lightgrey; padding: 5px 0;">
+        <header style="position:sticky;top:0;background-color: lightgrey; padding: 5px 0;">
             <div id="menuIcon" onclick="menuBarAnimation(this)">
                 <div class="menuBar"></div>
                 <div class="menuBar menuBarPadding"></div>
@@ -115,34 +109,32 @@
         <div style="padding: 50px 0 0 50px;margin-top: 50px;">
 
 
-            <div id="bookings">
-                <h3>Bookings</h3>
+            <div id="requestsHeader">
+                <h3>Requests</h3>
             </div>
 
 
         {%for z in requests%}
             <div class="bookingObject">
+
                 <div class="editDetails">
                     <h5 class="bookingName">Booking ID: {{z.id}}</h5>
-                    <div class="editButton">
-                        <a href="http://127.0.0.1:8000/MCalendar/myBookings/editBooking/{{ z.id }}" target="_blank">
-                            <button>Edit/Delete</button>
-                        </a>
-                    </div>
+                    <button id="reject" style="float:right;margin:15px 10px 0 0;">Reject</button>
+                    <button id="accept" style="float:right;margin:15px 10px;">Accept</button>
                 </div>
 
                 <div class="details">
                     <div class="detailsListItem">Name: {{ z.fullname }}</div>
-                    <!-- <div class="detailsListItem">Phone: {{ z.phone }}</div> -->
-                    <!-- <div class="detailsListItem">Email: {{ z.email }}</div> -->
-                    <!-- <div class="detailsListItem">Supervisor: {{ z.supervisor }}</div> -->
-                    <!-- <div class="detailsListItem">Organisation: {{ z.organisation }}</div> -->
+                    <div class="detailsListItem">Phone: {{ z.phone }}</div>
+                    <div class="detailsListItem">Email: {{ z.email }}</div>
+                    <div class="detailsListItem">Supervisor: {{ z.supervisor }}</div>
+                    <div class="detailsListItem">Organisation: {{ z.organisation }}</div>
                     <div class="detailsListItem">Date: {{ z.date }}</div>
                     <div class="detailsListItem">Start: {{ z.start|time:"H:i" }}</div>
                     <div class="detailsListItem">Finish: {{ z.finish|time:"H:i" }}</div>
                     <div class="detailsListItem">Room: {{ z.room }}</div>
                     <div class="detailsListItem">Equipment: {{ z.equipment }}</div>
-                    <!-- <div class="detailsListItem">Equipment ID: {{ z.equipmentid }}</div> -->
+                    <div class="detailsListItem">Equipment ID: {{ z.equipmentid }}</div>
                 </div>
             </div>
             {%endfor%}
