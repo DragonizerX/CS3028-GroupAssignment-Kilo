@@ -17,8 +17,8 @@ def myBookings(request):
     }
     return HttpResponse(template.render(context, request))
 
-def editBooking(request):
-    editBooking = Bookings.objects.all().values()
+def editBooking(request, id):
+    editBooking = Bookings.objects.get(id=id)
     template = loader.get_template('editBooking.html')
     context = {
         'editBooking': editBooking,

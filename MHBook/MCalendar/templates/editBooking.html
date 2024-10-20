@@ -4,19 +4,7 @@
 
     <body>
         <div class="details">
-            {% for x in editBooking %}
-            <div class="detailsListItem">Name: {{ x.fullname }}</div>
-            <div class="detailsListItem">Phone: {{ x.phone }}</div>
-            <div class="detailsListItem">Email: {{ x.email }}</div>
-            <div class="detailsListItem">Supervisor: {{ x.supervisor }}</div>
-            <div class="detailsListItem">Organisation: {{ x.organisation }}</div>
-            <div class="detailsListItem">Date: {{ x.date }}</div>
-            <div class="detailsListItem">Start: {{ x.start|time:"H:i" }}</div>
-            <div class="detailsListItem">Finish: {{ x.finish|time:"H:i" }}</div>
-            <div class="detailsListItem">Room: {{ x.room }}</div>
-            <div class="detailsListItem">Equipment: {{ x.equipment }}</div>
-            <div class="detailsListItem">Equipment ID: {{ x.equipmentid }}</div>
-            {% endfor %}
+            <p>{{ editBooking.fullname }}</p>
         </div>     
     </body>
 </html>
