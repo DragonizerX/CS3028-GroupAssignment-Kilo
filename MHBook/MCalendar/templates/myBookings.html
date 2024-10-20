@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
+        <title>My Bookings</title>
 
         <style>
 
@@ -130,11 +130,10 @@
             <div class="bookingObject">
                 <div class="editDetails">
                     <h5 class="bookingName">Booking ID: {{z.id}}</h5>
-                    <div class="deleteButton">
-                        <button>Delete</button>
-                    </div>
                     <div class="editButton">
-                        <button>Edit</button>
+                        <a href="http://127.0.0.1:8000/MCalendar/myBookings/editBooking/{{ z.id }}" target="_blank">
+                            <button>Edit</button>
+                        </a>
                     </div>
                 </div>
 

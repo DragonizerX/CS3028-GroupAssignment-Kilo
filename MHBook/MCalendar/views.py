@@ -16,3 +16,11 @@ def myBookings(request):
         'myBookings': myBookings,
     }
     return HttpResponse(template.render(context, request))
+
+def editBooking(request, id):
+    editBooking = Bookings.objects.filter(id=id).values()
+    template = loader.get_template('editBooking.html')
+    context = {
+        'editBooking': editBooking,
+    }
+    return HttpResponse(template.render(context, request))
