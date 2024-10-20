@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.template import loader
 from .models import Bookings
@@ -23,6 +23,21 @@ def requests(request):
         'requests': requests,
     }
     return HttpResponse(template.render(context, request))
+
+def cancelBooking(request, id):
+    booking = get_object_or_404(Bookings, id=id)
+    booking.delete()
+    return HttpResponse("""
+        <html>
+            <head>
+                <script type="text/javascript">
+                    window.onload = function() {
+                        window.close();
+                    };
+                </script>
+            </head>
+        </html>
+    """)
 
 def editBooking(request, id):
     booking = get_object_or_404(Bookings, id=id)

@@ -18,6 +18,15 @@
         }
 
     </style>
+    <script>
+        function confirmCancel(id) {
+            const dialog = window.confirm('Are you sure you want to cancel this booking?');
+    
+            if (dialog) {
+                window.location.href = `/MCalendar/cancelBooking/${id}/`;
+            }
+        }
+    </script>
 </head>
 
 <body style="max-width: 400px;">
@@ -60,10 +69,12 @@
 
         <input type="submit" value="Submit" style="width: 80%; margin: auto;">
 
-        {% endfor %}
+        
     </form>
 
-    <button id="cancelButton" onclick="return confirm('Are you sure you want to cancel the Booking?')">Cancel Booking</button>
+    <button id="cancelButton" onclick="confirmCancel({{ x.id }})">Cancel Booking</button>
+
+    {% endfor %}
 
 </body>
 </html>
