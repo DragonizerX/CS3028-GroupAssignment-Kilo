@@ -17,6 +17,14 @@ def myBookings(request):
     }
     return HttpResponse(template.render(context, request))
 
+def requests(request):
+    requests = Bookings.objects.all().values()
+    template = loader.get_template('requests.html')
+    context = {
+        'requests': requests,
+    }
+    return HttpResponse(template.render(context, request))
+
 def editBooking(request, id):
     booking = get_object_or_404(Bookings, id=id)
     
