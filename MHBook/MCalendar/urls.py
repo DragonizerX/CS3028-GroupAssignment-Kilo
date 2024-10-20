@@ -14,5 +14,7 @@ urlpatterns = [
     path("myBookings/editBooking/<int:id>", views.editBooking, name="editBooking"),
     # Accessable via http://127.0.0.1:8000/MCalendar/requests/
     path("requests/", views.requests, name="requests"),
+
+    path('cancelBooking/<int:id>/', views.cancelBooking, name='cancelBooking'),
     
 ]
