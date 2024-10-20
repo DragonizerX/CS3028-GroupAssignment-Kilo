@@ -3,15 +3,24 @@
 <head>
     <title>Edit Booking</title>
     <style>
+
         .details {
-            max-width: 400px;
             background-color: lightgrey;
             display: grid;
             grid-template-columns: 40% 60%;
+            gap: 2px 0;
+            padding: 5px;
         }
+
+        #cancelButton {
+            padding: 5px;
+            margin: 20px;
+        }
+
     </style>
 </head>
-<body>
+
+<body style="max-width: 400px;">
     <form class="details" method="POST">
         {% csrf_token %}
         {% for x in editBooking %}
@@ -49,9 +58,12 @@
         <label for="equipmentid">Equipment ID: </label>
         <input type="text" id="equipmentid" name="equipmentid" placeholder="{{ x.equipmentid }}">
 
-        <input type="submit" value="Submit">
+        <input type="submit" value="Submit" style="width: 80%; margin: auto;">
 
         {% endfor %}
     </form>
+
+    <button id="cancelButton" onclick="return confirm('Are you sure you want to cancel the Booking?')">Cancel Booking</button>
+
 </body>
 </html>
