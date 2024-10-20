@@ -133,7 +133,7 @@
                             <label for="supervisorName" class="control-label">Supervisor/Company Name:</label>
                         </div>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control" id="supervisorName">
+                            <input type="text" class="form-control" id="supervisorName" required>
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -200,7 +200,11 @@
                 },
                 selectable: true,
                 select: function(info) {
-                    alert('Selected ' + info.startStr + ' to ' + info.endStr);
+                    var date = info.start.toISOString().split('T')[0];
+                    var time = info.start.toTimeString().split(' ')[0].slice(0, 5); //formatting for date and time
+                    document.getElementById('bookingDate').value = date;
+                    document.getElementById('startTime').value = time;
+                    $('#bookingForm').collapse('show');
                 },
                 height: 'auto',
                 expandRows: true
