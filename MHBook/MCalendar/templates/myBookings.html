@@ -9,7 +9,7 @@
         <style>
 
             #menuIcon {
-                margin-left: 20px;
+                margin-left: 10px;
                 cursor: pointer;
                 position: sticky;
                 top: 0px;
@@ -52,7 +52,6 @@
                 margin-top: 20px;
                 margin-left: 20px;
                 max-width: 500px;
-                height: 300px;
             }
 
             .editDetails {
@@ -81,13 +80,9 @@
             }
 
             .details {
-                max-width: 500px;
-                height: 250px;
-            }
-
-            .detailsDiv {
-                width: 50%;
-                float: left;
+                margin: 10px 0;
+                display: grid;
+                grid-template-columns: auto auto;
             }
 
             .detailsListItem {
@@ -113,7 +108,7 @@
 
     <body style="height:1000px;">
         
-        <header style="position:sticky;top:20px;background-color: lightgrey;">
+        <header style="position:sticky;top:20px;background-color: lightgrey; padding: 5px 0;">
             <div id="menuIcon" onclick="menuBarAnimation(this)">
                 <div class="menuBar"></div>
                 <div class="menuBar menuBarPadding"></div>
@@ -129,7 +124,7 @@
 
             <div class="bookingObject">
                 <div class="editDetails">
-                    <h5 class="bookingName">Booking Name</h5>
+                    <h5 class="bookingName">Booking Number</h5>
                     <div class="deleteButton">
                         <button>Delete</button>
                     </div>
@@ -139,34 +134,21 @@
                 </div>
 
                 <div class="details">
-                    <div class="detailsDiv">
-                        <div class="boxText"> 
-                            <ul>
-                                {% for x in myBookings %}
-                                    <li class="detailsListItem">{{ x.fullname }}</li>
-                                    <li class="detailsListItem">{{ x.phone }}</li>
-                                    <li class="detailsListItem">{{ x.email }}</li>
-                                    <li class="detailsListItem">{{ x.supervisor }}</li>
-                                    <li class="detailsListItem">{{ x.organisation }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="detailsDiv">
-                        <div class="boxText"> 
-                            <ul>
-                                {% for x in myBookings %}
-                                    <li class="detailsListItem">{{ x.date }}</li>
-                                    <li class="detailsListItem">{{ x.start }}</li>
-                                    <li class="detailsListItem">{{ x.finish }}</li>
-                                    <li class="detailsListItem">{{ x.room }}</li>
-                                    <li class="detailsListItem">{{ x.equipment }}</li>
-                                    <li class="detailsListItem">{{ x.equipmentid }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
+                    {% for x in myBookings %}
+                        <div class="detailsListItem">{{ x.fullname }}</div>
+                        <!-- <div class="detailsListItem">{{ x.phone }}</div> -->
+                        <!-- <div class="detailsListItem">{{ x.email }}</div> -->
+                        <!-- <div class="detailsListItem">{{ x.supervisor }}</div> -->
+                        <!-- <div class="detailsListItem">{{ x.organisation }}</div> -->
+                        <div class="detailsListItem">{{ x.date }}</div>
+                        <div class="detailsListItem">{{ x.start }}</div>
+                        <div class="detailsListItem">{{ x.finish }}</div>
+                        <div class="detailsListItem">{{ x.room }}</div>
+                        <div class="detailsListItem">{{ x.equipment }}</div>
+                        <div class="detailsListItem">{{ x.equipmentid }}</div>
+                    {% endfor %}
                 </div>
+
             </div>
         </div>
     </body>
