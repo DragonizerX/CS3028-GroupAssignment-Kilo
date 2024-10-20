@@ -145,8 +145,8 @@
                     <!-- <div class="detailsListItem">Supervisor: {{ z.supervisor }}</div> -->
                     <!-- <div class="detailsListItem">Organisation: {{ z.organisation }}</div> -->
                     <div class="detailsListItem">Date: {{ z.date }}</div>
-                    <div class="detailsListItem">Start: {{ z.start }}</div>
-                    <div class="detailsListItem">Finish: {{ z.finish }}</div>
+                    <div class="detailsListItem">Start: {{ z.start|time:"H:i" }}</div>
+                    <div class="detailsListItem">Finish: {{ z.finish|time:"H:i" }}</div>
                     <div class="detailsListItem">Room: {{ z.room }}</div>
                     <div class="detailsListItem">Equipment: {{ z.equipment }}</div>
                     <div class="detailsListItem">Equipment ID: {{ z.equipmentid }}</div>
