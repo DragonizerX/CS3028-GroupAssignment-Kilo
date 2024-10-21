@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.template import loader
-from .models import Bookings
+from .models import Bookings, AccountRequest
 
 # Create your views here.b
 
@@ -17,7 +17,7 @@ def myBookings(request):
     return HttpResponse(template.render(context, request))
 
 def requests(request):
-    requests = Bookings.objects.all().values()
+    requests = AccountRequest.objects.all().values()
     template = loader.get_template('requests.html')
     context = {
         'requests': requests,
@@ -38,6 +38,17 @@ def cancelBooking(request, id):
             </head>
         </html>
     """)
+
+def confirmAccept(request, id):
+    requests = get_object_or_404(AccountRequest, id=id)
+    requests.isAccepted = True
+    requests.save()
+    return redirect('MCalendar:requests')
+
+def confirmReject(request, id):
+    requests = get_object_or_404(AccountRequest, id=id)
+    requests.delete()
+    return redirect('MCalendar:requests')
 
 def editBooking(request, id):
     booking = get_object_or_404(Bookings, id=id)

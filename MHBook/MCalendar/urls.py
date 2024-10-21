@@ -16,5 +16,8 @@ urlpatterns = [
     path("requests/", views.requests, name="requests"),
 
     path('cancelBooking/<int:id>/', views.cancelBooking, name='cancelBooking'),
+
+    path("confirmAccept/<int:id>/", views.confirmAccept, name="confirmAccept"),
+    path("confirmReject/<int:id>/", views.confirmReject, name="confirmReject"),
     
 ]

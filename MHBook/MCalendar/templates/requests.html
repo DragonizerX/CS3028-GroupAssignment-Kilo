@@ -48,12 +48,11 @@
             }
 
             .accountRequestObject {
-                margin-left: 20px;
-                padding: 30px 0;
+                margin: 20px 0 20px 20px;
+                padding: 50px 10px;
                 border: solid 2px black;
-                max-width: 500px;
+                max-width: 700px;
                 display: grid;
-                grid-template-columns: 40% 30% 30%;
                 gap: 40px 10px;
                 align-items: center;
             }
@@ -66,7 +65,7 @@
             .accept {
                 max-width: 60px;
                 max-height: 30px;
-                margin: auto 0 0 auto;
+                margin: auto 0 auto auto;
             }
 
             .reject {
@@ -98,6 +97,22 @@
                     }
                 })
 
+            function confirmAccept(id) {
+                const dialog = window.confirm('Are you sure you want to accept this request?');
+        
+                if (dialog) {
+                    window.location.href = `/MCalendar/confirmAccept/${id}/`;
+                    }
+                }
+
+            function confirmReject(id) {
+                const dialog = window.confirm('Are you sure you want to reject this request?');
+            
+                if (dialog) {
+                    window.location.href = `/MCalendar/confirmReject/${id}/`;
+                    }
+                }
+
         </script>
 
     </head>
@@ -117,17 +132,21 @@
             <div id="requestsHeader">
                 <h3>Requests</h3>
             </div>
-
-            <div class="accountRequestObject">
-                <h4 class="accountName">Account request: </h5>
-                <button class="accept">Accept</button>
-                <button class="reject">Reject</button>
-                <div class="requestDetailsContainer">
-                    <div class="requestDetails">Phone: </div>
-                    <div class="requestDetails">Email: </div>
-                    <div class="requestDetails">Organisation: </div>
-                </div>
-            </div>
+            
+            {% for x in requests %}
+                {% if x.isAccepted == False %}
+                    <div class="accountRequestObject">
+                        <h4 class="accountName">Account request: {{ x.fullname }}</h5>
+                        <button class="accept" onclick="confirmAccept({{ x.id }})">Accept</button>
+                        <button class="reject" onclick="confirmReject({{ x.id }})">Reject</button>
+                        <div class="requestDetailsContainer">
+                            <div class="requestDetails">Phone: {{ x.phone }}</div>
+                            <div class="requestDetails">Email: {{ x.email }}</div>
+                            <div class="requestDetails">Organisation: {{ x.organisation }}</div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
 
         </div>
 
