@@ -34,7 +34,7 @@ class Users(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=15, unique=True, blank=True)
     email = models.EmailField(unique=True, blank=True)
     password = models.CharField(max_length=128, null=True)  # Initially allow null
-    telephone = models.CharField(max_length=15, blank=True)
+    telephone = models.CharField(max_length=11, blank=True)
 
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)

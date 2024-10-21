@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from .forms import CreateUserForm
+from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse
+from .models import Users
 
 
 
@@ -27,9 +28,11 @@ def loginPage(request):
     context = {}
     return render(request, 'login.html', context)
 
+
 def logoutUser(request):
     logout(request)
     return redirect('loginPage')
+
 
 def registrationPage(request):
     form = CreateUserForm() #grabs form structure from forms.py
@@ -45,6 +48,46 @@ def registrationPage(request):
     context = {'form': form}
     return render(request, 'register.html', context)
 
-@login_required(login_url='loginPage')
+
+@login_required(login_url='loginPage') #Method 1 for making sure user in logged in to access this page.
 def accountPage(request):
-    return render(request, 'account.html')
+    user = Users.objects.get(id=request.user.id) #Get both current user and current form.
+    form = UpdateUserForm(request.POST or None, instance=user)
+    if request.method == 'POST':
+        form = UpdateUserForm(data=request.POST, instance=request.user)
+
+        if form.is_valid(): #If the form's data is valid then data is saved and redirected.
+            form.save()
+            messages.success(request, "User has been updated!")
+            return redirect("accountPage")
+        
+        else:
+            form = UpdateUserForm(instance=request.user) #Even if not valid, will display saved data.
+        
+        return render(request, 'account.html', {"form" :form} )
+    return render(request, 'account.html', {"form" :form})
+
+
+def changePasswordPage(request):
+    if request.user.is_authenticated: #Method 2 for making sure user in logged in to access this page.
+        current_user = request.user
+
+        if request.method == 'POST':
+            form = ChangePasswordForm(current_user, request.POST)
+            if form.is_valid(): #If the form's data is valid then data is
+                form.save()
+                messages.success(request, "Your Password Has Been Updated, Please Log In Again")
+                return redirect('loginPage')
+
+            else:
+                for error in list(form.errors.values()): #Displays error messages as to why password wasn't accepted.
+                    messages.error(request,error)
+                    return redirect('changePassword')
+
+        else:
+            form = ChangePasswordForm(current_user)
+            return render(request, 'changePassword.html', {'form':form})
+        
+    else:
+        messages.success(request, "Please log in before entering that page!")
+        return redirect("loginPage")
