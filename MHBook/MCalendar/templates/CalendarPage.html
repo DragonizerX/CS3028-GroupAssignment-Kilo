@@ -146,13 +146,14 @@
             
             <div class="collapse mt-3" id="bookingForm">
                 <div class="card card-body">
-                    <form>
+                    <form method="post" action="{%url 'MCalendar:create_event' %} ">
+                        {% csrf_token %}
                         <div class="row">
                             <div class="col-sm-3">
                                 <label for="bookingName" class="control-label">Name for Booking:</label>
                             </div>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="bookingName" required>
+                                <input type="text" class="form-control" id="bookingName" name="bookingName" required>
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -160,7 +161,7 @@
                                 <label for="supervisorName" class="control-label">Supervisor/Company Name:</label>
                             </div>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="supervisorName" required>
+                                <input type="text" class="form-control" id="supervisorName" name="supervisorName" required>
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -168,7 +169,7 @@
                                 <label for="bookingDate" class="control-label">Date of Booking:</label>
                             </div>
                             <div class="col-sm-9">
-                                <input type="date" class="form-control" id="bookingDate" required>
+                                <input type="date" class="form-control" id="bookingDate" name="bookingDate" required>
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -176,7 +177,7 @@
                                 <label for="startTime" class="control-label">Start Time:</label>
                             </div>
                             <div class="col-sm-9">
-                                <input type="time" class="form-control" id="startTime" required>
+                                <input type="time" class="form-control" id="startTime" name="startTime" required>
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -184,7 +185,7 @@
                                 <label for="allottedTime" class="control-label">Allotted Time:</label>
                             </div>
                             <div class="col-sm-9">
-                                <input type="time" class="form-control" id="allottedTime" required>
+                                <input type="time" class="form-control" id="allottedTime" name="allottedTime" required>
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -192,7 +193,7 @@
                                 <label for="comments" class="control-label">Comments:</label>
                             </div>
                             <div class="col-sm-9">
-                                <textarea class="form-control" id="comments" rows="3"></textarea>
+                                <textarea class="form-control" id="comments" name="comments" rows="3"></textarea>
                             </div>
                         </div>
                         <div class="row mt-3">
