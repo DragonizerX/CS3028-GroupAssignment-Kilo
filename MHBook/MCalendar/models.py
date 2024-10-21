@@ -9,3 +9,4 @@ class Event(models.Model):
     startTime = models.TimeField()
     allotedTime = models.TimeField()
     comments = models.TextField(max_length = 1000)
+    equipment = models.CharField(max_length=100, default='Not specified')

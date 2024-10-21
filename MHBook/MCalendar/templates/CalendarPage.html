@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Calender</title>
+    <title>Calendar</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -13,7 +13,7 @@
 
     <!--styling for the page goes here-->
     <style> 
-        /* calender id */
+        /* calendar id */
         #calendar {
             margin: 10px auto;
             padding: 10px;
@@ -107,16 +107,15 @@
             margin:20px auto;
             text-align:center;
         }
-
     </style>
 </head>
 
 <body>
-    <div class = "container">
+    <div class="container">
         <!--EQUIPMENT SELECTION-->
         <div id="equipmentSelect" class="form-group">
             <label for="equipment">Select Equipment:</label>
-            <select class="form-control" id="equipment">
+            <select class="form-control" id="equipment" name="equipment">
                 <option value="">-- Select Equipment --</option>
                 <option value="spinning-disc">Spinning disc</option>
                 <option value="m1-328">M1 - 3.28</option>
@@ -135,19 +134,20 @@
             </select>
         </div>
 
-        <!--CALL CALENDAR CREATION FROM SCRIPTS-->
-        <div id = "calendar"></div>
+        <!--CALENDAR-->
+        <div id="calendar"></div>
         
         <!--BOOKING FORM-->
-        <div class = "text-center mt-4">
+        <div class="text-center mt-4">
             <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#bookingForm" aria-expanded="false" aria-controls="bookingForm">
                 Make New Booking 
             </button>
             
             <div class="collapse mt-3" id="bookingForm">
                 <div class="card card-body">
-                    <form method="post" action="{%url 'MCalendar:create_event' %} ">
+                    <form method="post" action="{% url 'MCalendar:create_event' %}">
                         {% csrf_token %}
+                        <input type="hidden" id="equipmentInput" name="equipment" value="">
                         <div class="row">
                             <div class="col-sm-3">
                                 <label for="bookingName" class="control-label">Name for Booking:</label>
@@ -208,40 +208,79 @@
     </div>
 
     <!--JAVASCRIPT SCRIPTS-->
-    <!--CALENDAR CREATION-->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'timeGridWeek',
-                allDaySlot: false,
-                slotMinTime: '00:00:00',
-                slotMaxTime: '24:00:00',
-                slotDuration: '01:00:00',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'timeGridWeek,timeGridDay'
-                },
-                slotLabelFormat: {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false
-                },
-                selectable: true,
-                select: function(info) {
-                    var date = info.start.toISOString().split('T')[0];
-                    var time = info.start.toTimeString().split(' ')[0].slice(0, 5); //formatting for date and time
-                    document.getElementById('bookingDate').value = date;
-                    document.getElementById('startTime').value = time;
-                    $('#bookingForm').collapse('show');
-                },
-                height: 'auto',
-                expandRows: true
-            });
-            calendar.render();
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'timeGridWeek',
+            allDaySlot: false,
+            slotMinTime: '00:00:00',
+            slotMaxTime: '24:00:00',
+            slotDuration: '01:00:00',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'timeGridWeek,timeGridDay'
+            },
+            slotLabelFormat: {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            },
+            selectable: true,
+            select: function(info) {
+                var date = info.start.toISOString().split('T')[0];
+                var time = info.start.toTimeString().split(' ')[0].slice(0, 5);
+                document.getElementById('bookingDate').value = date;
+                document.getElementById('startTime').value = time;
+                $('#bookingForm').collapse('show');
+            },
+            height: 'auto',
+            expandRows: true,
+            events: '/get_events/', 
+            eventContent: function(arg) {
+                return {
+                    html: '<b>' + arg.event.title + '</b>'
+                };
+            }
         });
-    </script>
+        calendar.render();
 
+        //pushing equipment to backend
+        document.getElementById('equipment').addEventListener('change', function() {
+            document.getElementById('equipmentInput').value = this.value;
+        });
+
+        document.querySelector('#bookingForm form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            
+            var selectedEquipment = document.getElementById('equipment').value;
+            formData.append('equipment', selectedEquipment);
+
+            fetch("{% url 'MCalendar:create_event' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    calendar.addEvent({
+                        title: data.event.title,
+                        start: data.event.start,
+                        end: data.event.end
+                    });
+                    $('#bookingForm').collapse('hide');
+                    this.reset();
+                    document.getElementById('equipment').value = ''; 
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+    </script>
 </body>
 </html>
