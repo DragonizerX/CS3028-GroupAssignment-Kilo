@@ -95,12 +95,7 @@ def changePasswordPage(request):
     else:
         messages.success(request, "Please log in before entering that page!")
         return redirect("loginPage")
-=======
-from django.shortcuts import render
-from django.views import generic
-
-# Create your views here.
 
 def examplePage(request):
     return render(request, 'example.html')
->>>>>>> origin/Staging
+
