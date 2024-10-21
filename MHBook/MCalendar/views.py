@@ -27,17 +27,7 @@ def requests(request):
 def cancelBooking(request, id):
     booking = get_object_or_404(Bookings, id=id)
     booking.delete()
-    return HttpResponse("""
-        <html>
-            <head>
-                <script type="text/javascript">
-                    window.onload = function() {
-                        window.close();
-                    };
-                </script>
-            </head>
-        </html>
-    """)
+    return redirect('MCalendar:myBookings')
 
 def confirmAccept(request, id):
     requests = get_object_or_404(AccountRequest, id=id)
@@ -99,6 +89,7 @@ def editBooking(request, id):
             booking.equipmentid = equipmentid
 
         booking.save()
+        return redirect('MCalendar:myBookings')
 
     template = loader.get_template('editBooking.html')
     context = {
