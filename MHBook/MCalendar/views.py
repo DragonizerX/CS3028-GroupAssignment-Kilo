@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Event
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 
 # Create your views here.
 
@@ -51,3 +52,7 @@ def get_events(request):
 
 def home(request):
     return render(request,"CalendarPage.html")
+
+@staff_member_required
+def AdminCalendarView(request):
+    return render(request, 'CalendarPageAdmin.html')
