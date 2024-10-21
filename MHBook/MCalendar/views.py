@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from django.shortcuts import render, redirect
 from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm
 from django.contrib.auth.forms import UserCreationForm
