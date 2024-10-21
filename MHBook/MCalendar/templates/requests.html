@@ -47,36 +47,42 @@
                 line-height: 10px;
             }
 
-            .bookingObject {
-                border: 3px solid black;
-                margin-top: 20px;
+            .accountRequestObject {
                 margin-left: 20px;
+                padding: 30px 0;
+                border: solid 2px black;
                 max-width: 500px;
-            }
-
-            .editDetails {
-                border-bottom: 3px solid black;
-                max-width: 500px;
-                height: 50px;
-                line-height: 50px;
-            }
-
-            .bookingName {
-                margin: auto;
-                padding: 0 20px;
-                float: left;
-            }
-            
-            .details {
-                margin: 10px 0;
                 display: grid;
-                grid-template-columns: 50% 50%;
+                grid-template-columns: 40% 30% 30%;
+                gap: 40px 10px;
+                align-items: center;
             }
 
-            .detailsListItem {
-                list-style-type: none;
+            .accountName {
+                max-height: 30px;
                 margin: auto;
-                padding: 4px 0;
+            }
+
+            .accept {
+                max-width: 60px;
+                max-height: 30px;
+                margin: auto 0 0 auto;
+            }
+
+            .reject {
+                max-width: 60px;
+                max-height: 30px;
+                margin: auto 0 auto 0;
+            }
+
+            .requestDetailsContainer {
+                grid-column: 1 / span 3;
+                display: flex;
+            }
+
+            .requestDetails {
+                max-height: 30px;
+                margin: auto;
             }
 
         </style>
@@ -108,36 +114,20 @@
 
         <div style="padding: 50px 0 0 50px;margin-top: 50px;">
 
-
             <div id="requestsHeader">
                 <h3>Requests</h3>
             </div>
 
-
-        {%for z in requests%}
-            <div class="bookingObject">
-
-                <div class="editDetails">
-                    <h5 class="bookingName">Booking ID: {{z.id}}</h5>
-                    <button id="reject" style="float:right;margin:15px 10px 0 0;">Reject</button>
-                    <button id="accept" style="float:right;margin:15px 10px;">Accept</button>
-                </div>
-
-                <div class="details">
-                    <div class="detailsListItem">Name: {{ z.fullname }}</div>
-                    <div class="detailsListItem">Phone: {{ z.phone }}</div>
-                    <div class="detailsListItem">Email: {{ z.email }}</div>
-                    <div class="detailsListItem">Supervisor: {{ z.supervisor }}</div>
-                    <div class="detailsListItem">Organisation: {{ z.organisation }}</div>
-                    <div class="detailsListItem">Date: {{ z.date }}</div>
-                    <div class="detailsListItem">Start: {{ z.start|time:"H:i" }}</div>
-                    <div class="detailsListItem">Finish: {{ z.finish|time:"H:i" }}</div>
-                    <div class="detailsListItem">Room: {{ z.room }}</div>
-                    <div class="detailsListItem">Equipment: {{ z.equipment }}</div>
-                    <div class="detailsListItem">Equipment ID: {{ z.equipmentid }}</div>
+            <div class="accountRequestObject">
+                <h4 class="accountName">Account request: </h5>
+                <button class="accept">Accept</button>
+                <button class="reject">Reject</button>
+                <div class="requestDetailsContainer">
+                    <div class="requestDetails">Phone: </div>
+                    <div class="requestDetails">Email: </div>
+                    <div class="requestDetails">Organisation: </div>
                 </div>
             </div>
-            {%endfor%}
 
         </div>
 
