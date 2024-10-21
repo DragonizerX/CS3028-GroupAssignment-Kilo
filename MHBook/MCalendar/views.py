@@ -5,3 +5,19 @@ from django.views import generic
 
 def examplePage(request):
     return render(request, 'example.html')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def sidebarPage(request):
+    return render(request, 'sidebar.html')
