@@ -20,8 +20,11 @@ def loginPage(request):
         user = authenticate(email=email, password=password) #authenticates users
         print(user)
         if user is not None: #if user exists in database
-            login(request, user)
-            return redirect('accountPage')
+            if user.verified == True:
+                login(request, user)
+                return redirect('accountPage')
+            else:
+                messages.info(request, 'Your account has not been approved by the admins yet!')
         else:
             messages.info(request, 'username OR password is incorrect')
             
