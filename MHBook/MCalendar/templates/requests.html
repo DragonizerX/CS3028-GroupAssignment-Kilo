@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Requests</title>
+
+        <style>
+
+            #menuIcon {
+                margin-left: 10px;
+                cursor: pointer;
+                position: sticky;
+                top: 0px;
+                background-color: lightgrey;
+                width: 40px;
+                height: 39px;
+                border: 3px solid black;
+            }
+
+            .menuBar {
+                opacity: 1;
+                transition: opacity 0.4s ease-in-out;
+                margin: auto;
+                padding-top: 10px;
+                width: 25px;
+                color: black;
+                border-bottom: 3px solid black;
+            }
+
+            .menuBar.fade{
+                opacity: 0;
+            }
+
+            .menuBarPadding {
+                padding-top: 5px;
+            }
+
+            #requestsHeader {
+                margin-left: 20px;
+                margin-bottom: 30px;
+                border: 3px solid black;
+                text-align: center;
+                max-width: 200px;
+                height: 50px;
+                line-height: 10px;
+            }
+
+            .accountRequestObject {
+                margin: 20px 0 20px 20px;
+                padding: 50px 10px;
+                border: solid 2px black;
+                max-width: 700px;
+                display: grid;
+                gap: 40px 10px;
+                align-items: center;
+            }
+
+            .accountName {
+                max-height: 30px;
+                margin: auto;
+            }
+
+            .accept {
+                max-width: 60px;
+                max-height: 30px;
+                margin: auto 0 auto auto;
+            }
+
+            .reject {
+                max-width: 60px;
+                max-height: 30px;
+                margin: auto 0 auto 0;
+            }
+
+            .requestDetailsContainer {
+                grid-column: 1 / span 3;
+                display: flex;
+            }
+
+            .requestDetails {
+                max-height: 30px;
+                margin: auto;
+            }
+
+        </style>
+        
+        <script>
+
+            document.addEventListener("DOMContentLoaded", function()
+                {
+                    let menuIcon = document.getElementById('menuIcon');
+                    let menuBars = document.querySelectorAll('.menuBar');
+                    menuIcon.onclick = function() {
+                    menuBars.forEach(bar => bar.classList.toggle('fade'));
+                    }
+                })
+
+            function confirmAccept(id) {
+                const dialog = window.confirm('Are you sure you want to accept this request?');
+        
+                if (dialog) {
+                    window.location.href = `/MCalendar/confirmAccept/${id}/`;
+                    }
+                }
+
+            function confirmReject(id) {
+                const dialog = window.confirm('Are you sure you want to reject this request?');
+            
+                if (dialog) {
+                    window.location.href = `/MCalendar/confirmReject/${id}/`;
+                    }
+                }
+
+        </script>
+
+    </head>
+
+    <body style="height:1000px;margin:0;">
+        
+        <header style="position:sticky;top:0;background-color: lightgrey; padding: 5px 0;">
+            <div id="menuIcon" onclick="menuBarAnimation(this)">
+                <div class="menuBar"></div>
+                <div class="menuBar menuBarPadding"></div>
+                <div class="menuBar menuBarPadding"></div>
+            </div>
+        </header>
+
+        <div style="padding: 50px 0 0 50px;margin-top: 50px;">
+
+            <div id="requestsHeader">
+                <h3>Requests</h3>
+            </div>
+            
+            {% for x in requests %}
+                {% if x.isAccepted == False %}
+                    <div class="accountRequestObject">
+                        <h4 class="accountName">Account request: {{ x.fullname }}</h5>
+                        <button class="accept" onclick="confirmAccept({{ x.id }})">Accept</button>
+                        <button class="reject" onclick="confirmReject({{ x.id }})">Reject</button>
+                        <div class="requestDetailsContainer">
+                            <div class="requestDetails">Phone: {{ x.phone }}</div>
+                            <div class="requestDetails">Email: {{ x.email }}</div>
+                            <div class="requestDetails">Organisation: {{ x.organisation }}</div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+        </div>
+
+    </body>
+</html>

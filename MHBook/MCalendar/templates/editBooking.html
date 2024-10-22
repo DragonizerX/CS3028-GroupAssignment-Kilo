@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Edit Booking</title>
+    <style>
+
+        .details {
+            background-color: lightgrey;
+            display: grid;
+            grid-template-columns: 40% 60%;
+            gap: 2px 0;
+            padding: 5px;
+        }
+
+        #cancelButton {
+            padding: 5px;
+            margin: 20px;
+        }
+
+    </style>
+    <script>
+        function confirmCancel(id) {
+            const dialog = window.confirm('Are you sure you want to cancel this booking?');
+    
+            if (dialog) {
+                window.location.href = `/MCalendar/cancelBooking/${id}/`;
+            }
+        }
+    </script>
+</head>
+
+<body style="max-width: 400px;">
+    <form class="details" method="POST">
+        {% csrf_token %}
+        {% for x in editBooking %}
+        
+        <label for="name">Full Name: </label>
+        <input type="text" id="name" name="fullname" placeholder="{{ x.fullname }}">
+
+        <label for="phone">Phone Number: </label>
+        <input type="tel" id="phone" name="phone" placeholder="{{ x.phone }}">
+
+        <label for="email">Email: </label>
+        <input type="email" id="email" name="email" placeholder="{{ x.email }}">
+
+        <label for="supervisor">Supervisor: </label>
+        <input type="text" id="supervisor" name="supervisor" placeholder="{{ x.supervisor }}">
+
+        <label for="organisation">Organisation: </label>
+        <input type="text" id="organisation" name="organisation" placeholder="{{ x.organisation }}">
+
+        <label for="date">Date: </label>
+        <input type="date" id="date" name="date" value="{{ x.date|date:'Y-m-d' }}">
+
+        <label for="start">Start time: </label>
+        <input type="time" id="start" name="start" value="{{ x.start|time:'H:i' }}">
+
+        <label for="finish">Finish time: </label>
+        <input type="time" id="finish" name="finish" value="{{ x.finish|time:'H:i' }}">
+
+        <label for="room">Room: </label>
+        <input type="text" id="room" name="room" placeholder="{{ x.room }}">
+
+        <label for="equipment">Equipment: </label>
+        <input type="text" id="equipment" name="equipment" placeholder="{{ x.equipment }}">
+
+        <label for="equipmentid">Equipment ID: </label>
+        <input type="text" id="equipmentid" name="equipmentid" placeholder="{{ x.equipmentid }}">
+
+        <input type="submit" value="Submit" style="width: 80%; margin: auto;">
+
+        
+    </form>
+
+    <button id="cancelButton" onclick="confirmCancel({{ x.id }})">Cancel Booking</button>
+
+    {% endfor %}
+
+</body>
+</html>
