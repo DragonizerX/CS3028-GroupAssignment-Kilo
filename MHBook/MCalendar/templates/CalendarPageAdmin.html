@@ -145,7 +145,7 @@
             
             <div class="collapse mt-3" id="bookingForm">
                 <div class="card card-body">
-                    <form method="post" action="{% url 'MCalendar:create_event' %}">
+                    <form method="post" action="{% url 'create_event' %}">
                         {% csrf_token %}
                         <input type="hidden" id="equipmentInput" name="equipment" value="">
                         <div class="row">
@@ -277,7 +277,7 @@
                 var selectedEquipment = document.getElementById('equipment').value;
                 formData.append('equipment', selectedEquipment);
         
-                fetch("{% url 'MCalendar:create_event' %}", {
+                fetch("{% url 'create_event' %}", {
                     method: 'POST',
                     body: formData,
                     headers: {

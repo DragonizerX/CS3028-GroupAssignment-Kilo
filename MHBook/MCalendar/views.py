@@ -1,19 +1,16 @@
-from django.shortcuts import render, redirect
-from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
-from django.http import HttpResponse
-from .models import Users
-
-
-
+from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
 from django.template import loader
-from .models import Bookings, AccountRequest
 
+
+from django.contrib.admin.views.decorators import staff_member_required
+
+from .models import Bookings, AccountRequest, Users, Event
+from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm
 # Create your views here.b
 
 def loginPage(request):
@@ -98,17 +95,7 @@ def changePasswordPage(request):
     else:
         messages.success(request, "Please log in before entering that page!")
         return redirect("loginPage")
-from django.shortcuts import render, redirect
-from .models import Event
-from django.http import HttpResponse, JsonResponse
-from django.contrib import messages
-from django.contrib.admin.views.decorators import staff_member_required
-
-# Create your views here.
-
-def examplePage(request):
-    return render(request, 'example.html')
-
+    
 
 def myBookings(request):
     myBookings = Bookings.objects.all().values()
@@ -234,6 +221,7 @@ def create_event(request):
 
 def get_events(request):
     events = Event.objects.all()
+    print(events)
     event_list = []
     for event in events:
         event_list.append({

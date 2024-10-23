@@ -3,7 +3,6 @@ from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 from django.contrib.auth.models import User
 from django import forms
 
-from django import forms
 from MCalendar.models import Users, Event
 
 class CreateUserForm(UserCreationForm):

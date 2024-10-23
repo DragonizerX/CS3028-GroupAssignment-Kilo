@@ -9,7 +9,6 @@ urlpatterns = [
     path('logout/', views.logoutUser, name='logout'),
     path('account/', views.accountPage, name='accountPage'),
     path('changePassword/', views.changePasswordPage, name = 'changePassword'),
-    path("example/", views.examplePage, name="example"),
     # Accessable via http://127.0.0.1:8000/MCalendar/myBookings/
     path("myBookings/", views.myBookings, name="myBookings"),
     # Accessable via http://127.0.0.1:8000/MCalendar/myBookings/editBooking/1
@@ -24,7 +23,7 @@ urlpatterns = [
     
 
     # Accessable via http://127.0.0.1:8000/MCalendar/home/
-    path("home/", views.home, name="home"),
+    path("", views.home, name="home"),
     path('create-event/', views.create_event, name='create_event'),
     path('get_events/', views.get_events, name='get_events'),
     path('CalendarPageAdmin/', views.AdminCalendarView, name='CalendarPageAdmin'),
