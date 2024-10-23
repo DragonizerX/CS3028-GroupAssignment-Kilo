@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Calendar</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.js'></script>
+
+    <!--styling for the page goes here-->
+    <style> 
+        /* calendar id */
+        #calendar {
+            margin: 10px auto;
+            padding: 10px;
+            max-width: 1000px;
+            border-radius: 30px;
+        }
+
+        /* Header Toolbar */
+        .fc-toolbar {
+            padding: 20px;
+        }
+
+        .fc-toolbar-title {
+            font-weight: 200;
+        }
+
+        /* Time Grid */
+        .fc-timegrid-slot {
+            height: 35px;
+            border-bottom: 1px solid;
+        }
+
+        .fc-timegrid-slot-label {
+            font-size: 0.9em;
+            color: darkgrey;
+        }
+
+        /* Selection */
+        .fc-highlight {
+            background-color: lightblue;
+        }
+
+        /* Column Headers */
+        .fc-col-header-cell {
+            background-color: white;
+            padding: 10px 0;
+            font-weight: 500;
+        }
+
+        /* Time Slots */
+        .fc-timegrid-col {
+            background-color: white;
+        }
+
+        /* booking form id styling */
+        #bookingForm .card-body {
+            padding: 20px;
+        }
+    
+        #bookingForm .row {
+            margin-bottom: 5px;
+        }
+    
+        #bookingForm .control-label {
+            padding-top: 7px;
+        }
+    
+        #bookingForm .btn-success {
+            margin-top: 10px;
+        }
+
+        /* Button Styling */
+        .btn-info {
+            margin:10px;
+            padding:10px;
+        }
+
+        .text-center.mt-4 {
+            margin-top: 5px;
+            padding-top: 5px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .fc-button {
+            background-color: lightblue;
+            border: none;
+        }
+
+        .fc-button:hover {
+            background-color: lightblue;
+        }
+
+        .fc-button-primary:not(:disabled) {
+            background-color: lightblue;
+        }
+
+        #equipmentSelect {
+            width:500px;
+            margin:20px auto;
+            text-align:center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!--EQUIPMENT SELECTION-->
+        <div id="equipmentSelect" class="form-group">
+            <label for="equipment">Select Equipment:</label>
+            <select class="form-control" id="equipment" name="equipment">
+                <option value="">-- Select Equipment --</option>
+                <option value="spinning-disc">Spinning disc</option>
+                <option value="m1-328">M1 - 3.28</option>
+                <option value="m2-328">M2 - 3.28</option>
+                <option value="haggis-329">Haggis - 3.29</option>
+                <option value="tatties-329">Tatties - 3.29</option>
+                <option value="workstation-1">Computer workstation 1</option>
+                <option value="workstation-2">Computer workstation 2</option>
+                <option value="lsm880">LSM880</option>
+                <option value="lsm710">LSM710</option>
+                <option value="lsm700">LSM700</option>
+                <option value="evos-xl">Evos XL</option>
+                <option value="evos-m5000">Evos M5000</option>
+                <option value="holomonitor">Holomonitor</option>
+                <option value="micro-ct">Micro CT</option>
+            </select>
+        </div>
+
+        <!--CALENDAR-->
+        <div id="calendar"></div>
+        
+        <!--BOOKING FORM-->
+        <div class="text-center mt-4">
+            <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#bookingForm" aria-expanded="false" aria-controls="bookingForm">
+                Make New Booking 
+            </button>
+            
+            <div class="collapse mt-3" id="bookingForm">
+                <div class="card card-body">
+                    <form method="post" action="{% url 'MCalendar:create_event' %}">
+                        {% csrf_token %}
+                        <input type="hidden" id="equipmentInput" name="equipment" value="">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <label for="bookingName" class="control-label">Name for Booking:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="bookingName" name="bookingName" required>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="supervisorName" class="control-label">Supervisor/Company Name:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="supervisorName" name="supervisorName" required>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="bookingDate" class="control-label">Date of Booking:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="date" class="form-control" id="bookingDate" name="bookingDate" required>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="startTime" class="control-label">Start Time:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="time" class="form-control" id="startTime" name="startTime" required>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="allottedTime" class="control-label">Allotted Time:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="time" class="form-control" id="allottedTime" name="allottedTime" required>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="comments" class="control-label">Comments:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" id="comments" name="comments" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-sm-12 text-center">
+                                <button type="submit" class="btn btn-success">Confirm Booking</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--JAVASCRIPT SCRIPTS-->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                allDaySlot: false,
+                slotMinTime: '00:00:00',
+                slotMaxTime: '24:00:00',
+                slotDuration: '01:00:00',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'timeGridWeek,timeGridDay'
+                },
+                slotLabelFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                },
+                selectable: true,
+                select: function(info) {
+                    var date = info.start.toISOString().split('T')[0];
+                    var time = info.start.toTimeString().split(' ')[0].slice(0, 5);
+                    document.getElementById('bookingDate').value = date;
+                    document.getElementById('startTime').value = time;
+                    $('#bookingForm').collapse('show');
+                },
+                height: 'auto',
+                expandRows: true,
+                events: '/get_events/',  // Ensure this endpoint sends the required event data (title, start, end, etc.)
+                
+                // Customizing the display of event content
+                eventContent: function(arg) {
+                    // Retrieve event details from the `event` object
+                    var title = arg.event.title;                 // Booking name
+                    var startTime = arg.event.start.toTimeString().slice(0, 5); // Start time in HH:MM format
+                    var endTime = arg.event.end ? arg.event.end.toTimeString().slice(0, 5) : ''; // End time if available
+                    var supervisor = arg.event.extendedProps.supervisor || 'No Supervisor'; // Supervisor name (optional)
+                    var comments = arg.event.extendedProps.comments || '';  // Additional comments (optional)
+        
+                    // Construct HTML content for the event
+                    var contentHtml = `
+                        <div>
+                            <b>${title}</b><br/>
+                            <span><b>Time:</b> ${startTime} - ${endTime}</span><br/>
+                            <span><b>Supervisor:</b> ${supervisor}</span><br/>
+                            <span>${comments}</span>
+                        </div>
+                    `;
+        
+                    // Return the HTML structure to be rendered inside the event
+                    return { html: contentHtml };
+                }
+            });
+            
+            calendar.render();
+        
+            // Handling equipment change and form submission
+            document.getElementById('equipment').addEventListener('change', function() {
+                document.getElementById('equipmentInput').value = this.value;
+            });
+        
+            document.querySelector('#bookingForm form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+        
+                var selectedEquipment = document.getElementById('equipment').value;
+                formData.append('equipment', selectedEquipment);
+        
+                fetch("{% url 'MCalendar:create_event' %}", {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        calendar.addEvent({
+                            title: data.event.title,
+                            start: data.event.start,
+                            end: data.event.end,
+                            extendedProps: {
+                                supervisor: data.event.supervisor,   // Including supervisor in the event's extra properties
+                                comments: data.event.comments       // Including comments
+                            }
+                        });
+                        $('#bookingForm').collapse('hide');
+                        this.reset();
+                        document.getElementById('equipment').value = ''; 
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+        </script>
+        
+</body>
+</html>

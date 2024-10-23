@@ -22,4 +22,10 @@ urlpatterns = [
     path("confirmAccept/<int:id>/", views.confirmAccept, name="confirmAccept"),
     path("confirmReject/<int:id>/", views.confirmReject, name="confirmReject"),
     
+
+    # Accessable via http://127.0.0.1:8000/MCalendar/home/
+    path("home/", views.home, name="home"),
+    path('create-event/', views.create_event, name='create_event'),
+    path('get_events/', views.get_events, name='get_events'),
+    path('CalendarPageAdmin/', views.AdminCalendarView, name='CalendarPageAdmin'),
 ]

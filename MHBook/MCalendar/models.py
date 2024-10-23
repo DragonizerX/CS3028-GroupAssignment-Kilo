@@ -88,3 +88,12 @@ class AccountRequest(models.Model):
     supervisor = models.CharField(max_length=64, default='N/A')
     organisation = models.CharField(max_length=128, blank=False, null=False)
     isAccepted = models.BooleanField(default=False)
+
+class Event(models.Model):
+    bookingName = models.CharField(max_length=80)
+    supervisorName = models.CharField(max_length=80)
+    bookingDate = models.DateField()
+    startTime = models.TimeField()
+    allotedTime = models.TimeField()
+    comments = models.TextField(max_length = 1000)
+    equipment = models.CharField(max_length=100, default='Not specified')
