@@ -9,7 +9,7 @@ from django.template import loader
 
 from django.contrib.admin.views.decorators import staff_member_required
 
-from .models import Bookings, AccountRequest, Users, Event
+from .models import Bookings, Users, Event
 from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm
 # Create your views here.b
 
@@ -106,7 +106,7 @@ def myBookings(request):
     return HttpResponse(template.render(context, request))
 
 def requests(request):
-    requests = AccountRequest.objects.all().values()
+    requests = Users.objects.all().values()
     template = loader.get_template('requests.html')
     context = {
         'requests': requests,
@@ -116,18 +116,18 @@ def requests(request):
 def cancelBooking(request, id):
     booking = get_object_or_404(Bookings, id=id)
     booking.delete()
-    return redirect('MCalendar:myBookings')
+    return redirect('myBookings')
 
 def confirmAccept(request, id):
-    requests = get_object_or_404(AccountRequest, id=id)
-    requests.isAccepted = True
+    requests = get_object_or_404(Users, id=id)
+    requests.verified = True
     requests.save()
-    return redirect('MCalendar:requests')
+    return redirect('requests')
 
 def confirmReject(request, id):
-    requests = get_object_or_404(AccountRequest, id=id)
+    requests = get_object_or_404(Users, id=id)
     requests.delete()
-    return redirect('MCalendar:requests')
+    return redirect('requests')
 
 def editBooking(request, id):
     booking = get_object_or_404(Bookings, id=id)
