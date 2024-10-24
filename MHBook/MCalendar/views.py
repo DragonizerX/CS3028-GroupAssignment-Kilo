@@ -19,11 +19,18 @@ def loginPage(request):
         password = request.POST.get('password')
         print('email: ', email, 'password', password)
         user = authenticate(email=email, password=password) #authenticates users
-        print(user)
+        #print(user)
         if user is not None: #if user exists in database
             if user.verified == True:
-                login(request, user)
-                return redirect('accountPage')
+                #print(user.is_superuser)
+                if user.is_superuser:
+                    #print("A")
+                    login(request, user)
+                    return redirect('CalendarPageAdmin')
+                else:
+                    #print("B")
+                    login(request, user)
+                    return redirect('home')
             else:
                 messages.info(request, 'Your account has not been approved by the admins yet!')
         else:
@@ -53,24 +60,27 @@ def registrationPage(request):
     return render(request, 'register.html', context)
 
 
-@login_required(login_url='loginPage') #Method 1 for making sure user in logged in to access this page.
+#@login_required(login_url='loginPage') #Method 1 for making sure user in logged in to access this page.
 def accountPage(request):
-    user = Users.objects.get(id=request.user.id) #Get both current user and current form.
-    form = UpdateUserForm(request.POST or None, instance=user)
-    if request.method == 'POST':
-        form = UpdateUserForm(data=request.POST, instance=request.user)
+    if request.user.is_authenticated:
+        user = Users.objects.get(id=request.user.id) #Get both current user and current form.
+        form = UpdateUserForm(request.POST or None, instance=user)
+        if request.method == 'POST':
+            form = UpdateUserForm(data=request.POST, instance=request.user)
 
-        if form.is_valid(): #If the form's data is valid then data is saved and redirected.
-            form.save()
-            messages.success(request, "User has been updated!")
-            return redirect("accountPage")
-        
-        else:
-            form = UpdateUserForm(instance=request.user) #Even if not valid, will display saved data.
-        
-        return render(request, 'account.html', {"form" :form} )
-    return render(request, 'account.html', {"form" :form})
-
+            if form.is_valid(): #If the form's data is valid then data is saved and redirected.
+                form.save()
+                messages.success(request, "User has been updated!")
+                return redirect("accountPage")
+            
+            else:
+                form = UpdateUserForm(instance=request.user) #Even if not valid, will display saved data.
+            
+            return render(request, 'account.html', {"form" :form} )
+        return render(request, 'account.html', {"form" :form})
+    else:
+        messages.success(request, "Please log in before entering that page!")
+        return redirect("loginPage")
 
 def changePasswordPage(request):
     if request.user.is_authenticated: #Method 2 for making sure user in logged in to access this page.
@@ -98,20 +108,29 @@ def changePasswordPage(request):
     
 
 def myBookings(request):
-    myBookings = Bookings.objects.all().values()
-    template = loader.get_template('myBookings.html')
-    context = {
-        'myBookings': myBookings,
-    }
-    return HttpResponse(template.render(context, request))
+    if request.user.is_authenticated:
+        myBookings = Bookings.objects.all().values()
+        template = loader.get_template('myBookings.html')
+        context = {
+            'myBookings': myBookings,
+        }
+        return HttpResponse(template.render(context, request))
+    else:
+        messages.success(request, "Please log in before entering that page!")
+        return redirect("loginPage")
 
 def requests(request):
-    requests = Users.objects.all().values()
-    template = loader.get_template('requests.html')
-    context = {
-        'requests': requests,
-    }
-    return HttpResponse(template.render(context, request))
+    if request.user.is_superuser:
+        requests = Users.objects.all().values()
+        template = loader.get_template('requests.html')
+        context = {
+            'requests': requests,
+        }
+        return HttpResponse(template.render(context, request))
+    else:
+        messages.success(request, "Please log in before entering that page! Admin access only.")
+        logout(request)
+        return redirect("loginPage")
 
 def cancelBooking(request, id):
     booking = get_object_or_404(Bookings, id=id)
@@ -130,61 +149,65 @@ def confirmReject(request, id):
     return redirect('requests')
 
 def editBooking(request, id):
-    booking = get_object_or_404(Bookings, id=id)
-    
-    if request.method == 'POST':
-        fullname = request.POST.get('fullname')
-        if fullname:
-            booking.fullname = fullname
+    if request.user.is_authenticated:
+        booking = get_object_or_404(Bookings, id=id)
+        
+        if request.method == 'POST':
+            fullname = request.POST.get('fullname')
+            if fullname:
+                booking.fullname = fullname
 
-        phone = request.POST.get('phone')
-        if phone:
-            booking.phone = int(phone)
+            phone = request.POST.get('phone')
+            if phone:
+                booking.phone = int(phone)
 
-        email = request.POST.get('email')
-        if email:
-            booking.email = email
+            email = request.POST.get('email')
+            if email:
+                booking.email = email
 
-        supervisor = request.POST.get('supervisor')
-        if supervisor:
-            booking.supervisor = supervisor
+            supervisor = request.POST.get('supervisor')
+            if supervisor:
+                booking.supervisor = supervisor
 
-        organisation = request.POST.get('organisation')
-        if organisation:
-            booking.organisation = organisation
+            organisation = request.POST.get('organisation')
+            if organisation:
+                booking.organisation = organisation
 
-        date = request.POST.get('date')
-        if date:
-            booking.date = date
+            date = request.POST.get('date')
+            if date:
+                booking.date = date
 
-        start = request.POST.get('start')
-        if start:
-            booking.start = start
+            start = request.POST.get('start')
+            if start:
+                booking.start = start
 
-        finish = request.POST.get('finish')
-        if finish:
-            booking.finish = finish
+            finish = request.POST.get('finish')
+            if finish:
+                booking.finish = finish
 
-        room = request.POST.get('room')
-        if room:
-            booking.room = room
+            room = request.POST.get('room')
+            if room:
+                booking.room = room
 
-        equipment = request.POST.get('equipment')
-        if equipment:
-            booking.equipment = equipment
+            equipment = request.POST.get('equipment')
+            if equipment:
+                booking.equipment = equipment
 
-        equipmentid = request.POST.get('equipmentid')
-        if equipmentid:
-            booking.equipmentid = equipmentid
+            equipmentid = request.POST.get('equipmentid')
+            if equipmentid:
+                booking.equipmentid = equipmentid
 
-        booking.save()
-        return redirect('MCalendar:myBookings')
+            booking.save()
+            return redirect('MCalendar:myBookings')
 
-    template = loader.get_template('editBooking.html')
-    context = {
-        'editBooking': [booking],
-    }
-    return HttpResponse(template.render(context, request))
+        template = loader.get_template('editBooking.html')
+        context = {
+            'editBooking': [booking],
+        }
+        return HttpResponse(template.render(context, request))
+    else:
+        messages.success(request, "Please log in before entering that page!")
+        return redirect("loginPage")
 
 def create_event(request):
     if request.method == 'POST':
@@ -221,7 +244,7 @@ def create_event(request):
 
 def get_events(request):
     events = Event.objects.all()
-    print(events)
+    #print(events)
     event_list = []
     for event in events:
         event_list.append({
@@ -232,8 +255,17 @@ def get_events(request):
     return JsonResponse(event_list, safe=False)
 
 def home(request):
-    return render(request,"CalendarPage.html")
+    if request.user.is_authenticated:
+        return render(request,"CalendarPage.html")
+    else:
+        messages.success(request, "Please log in before entering that page!")
+        return redirect("loginPage")
 
-@staff_member_required
+
 def AdminCalendarView(request):
-    return render(request, 'CalendarPageAdmin.html')
+    if request.user.is_superuser:
+        return render(request, 'CalendarPageAdmin.html')
+    else:
+        messages.success(request, "Please log in before entering that page! Admin access only.")
+        logout(request)
+        return redirect("loginPage")
