@@ -38,7 +38,7 @@
             {% endfor %}
         </ul>
 
-        <div class="detailsListItem">User name:</div>
+        <div class="detailsListItem">User:</div>
         <ul>
             {% for y in x.user.all %}
                 <li>User first name: {{ y.first_name }}</li>
@@ -46,10 +46,19 @@
             {% endfor %}
         </ul>
 
-        <div class="detailsListItem">Booking: {{ x.bookingRef }}</div>
+        <div class="detailsListItem">Booking: {{ x.bookingRef }}</div> <!--A bit confusing so let me explain bbygirl-->
         <ul>
             {% for y in x.bookingStuff.all %}
                 <li>Booking Reference: {{ y.id }}</li>
+                <ul>
+                    {% for z in equipment %} <!--runs through every entry from the Equipment database-->
+                        {% if z.equipmentid == y.equipmentid %} <!--If IDs match display info-->
+                            <li>Equipment ID: {{ z.equipmentid }}</li>
+                            <li>Equipment Name: {{ z.equipmentname }}</li>
+                            <li>Rate: {{ z.rate }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
                 <li>Length of equipment use: 
                     <span id="length-{{ y.id }}"></span>
                     <script> // This time difference sh*t took so long to implement I DONT EVEN CARE IF YOU CAN MAKE IT BETTER. NEVER AGAIN
@@ -67,14 +76,6 @@
         <div class="detailsListItem">Start: {{ x.startDate }}</div>
         <div class="detailsListItem">Finish: {{ x.finishDate }}</div>
 
-        <div class="detailsListItem">Equipment:</div>
-        <ul>
-            {% for y in x.equipment.all %}
-                <li>Equipment ID: {{ y.equipmentid }}</li>
-                <li>Equipment Name: {{ y.equipmentname }}</li>
-                <li>Rate: {{ y.rate }}</li>
-            {% endfor %}
-        </ul>
         <div class="detailsListItem">Total Cost: {{ x.totalCost }}</div>
     {% endfor %}
 

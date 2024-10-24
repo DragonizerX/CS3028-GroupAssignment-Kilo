@@ -242,9 +242,11 @@ def AdminCalendarView(request):
 
 def billing(request):
     billing = Billing.objects.all()
+    equipment = Equipment.objects.all()
     template = loader.get_template('billing.html')
     context = {
         'billing': billing,
+        'equipment': equipment,
     }
     return HttpResponse(template.render(context, request))
 
