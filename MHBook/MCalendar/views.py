@@ -9,7 +9,7 @@ from django.template import loader
 
 from django.contrib.admin.views.decorators import staff_member_required
 
-from .models import Bookings, AccountRequest, Users, Event
+from .models import Bookings, AccountRequest, Users, Event, Billing, Equipment
 from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm
 # Create your views here.b
 
@@ -237,3 +237,16 @@ def home(request):
 @staff_member_required
 def AdminCalendarView(request):
     return render(request, 'CalendarPageAdmin.html')
+
+# --------------
+
+def billing(request):
+    billing = Billing.objects.all()
+    template = loader.get_template('billing.html')
+    context = {
+        'billing': billing,
+    }
+    return HttpResponse(template.render(context, request))
+
+def equipment(request):
+    return Equipment.objects.all().values()

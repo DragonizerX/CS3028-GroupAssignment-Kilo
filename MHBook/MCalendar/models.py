@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import UserManager, PermissionsMixin, AbstractBaseUser
 
+from django.utils import timezone
+from dateutil.relativedelta import relativedelta # type: ignore
+
 
 class CustomUserManager(UserManager):
     def get_by_natural_key(self, email):
@@ -65,9 +68,6 @@ class Supervisor(models.Model):
     password = models.CharField(max_length=128, null=True)  # Initially allow null
     telephone = models.CharField(max_length=15, blank=True)
 
-    
-
-
 class Bookings(models.Model):
     fullname = models.CharField(max_length=64, blank=False, null=False)
     phone = models.IntegerField(blank=False, null=False)
@@ -97,3 +97,21 @@ class Event(models.Model):
     allotedTime = models.TimeField()
     comments = models.TextField(max_length = 1000)
     equipment = models.CharField(max_length=100, default='Not specified')
+
+# -------------------
+
+class Equipment(models.Model): # Temp equipment model for backend
+    equipmentid = models.CharField(max_length=32, blank=False, null=False)
+    equipmentname = models.CharField(max_length=64, default="N/A")
+    rate = models.FloatField(default=0.0)
+
+class Billing(models.Model): 
+    invoiceRef = models.CharField(max_length=10, blank=False, null=False)
+    supervisor = models.ManyToManyField(Supervisor) # includes first and last name, can be changed in billing.html
+    user = models.ManyToManyField(Users) # includes first and last name, can be changed in billing.html
+    bookingStuff = models.ManyToManyField(Bookings) # includes booking reference no which for now is the booking id, and takes the start and finish time parameters to calculate the differnce in minutes to display time used
+    issueDate = models.DateField(default=timezone.now)
+    startDate = models.DateField(default=(timezone.now().date() - relativedelta(months=3))) # Default is 3 months difference but we need to be able to change this and finish date
+    finishDate = models.DateField(default=timezone.now)
+    equipment = models.ManyToManyField(Equipment) # includes the equipment id, name and its hourly rate
+    totalCost = models.FloatField(default=0.0)

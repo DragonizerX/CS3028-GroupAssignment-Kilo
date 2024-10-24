@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Billing</title>
+    <script>
+        function timeDiff(start, finish) {
+            // convert time strings to Date objects for calculation
+            const startTime = new Date(`1970-01-01T${start}:00`);
+            const finishTime = new Date(`1970-01-01T${finish}:00`);
+        
+            // calculate the difference
+            let result = (finishTime - startTime) / (1000 * 60); // Convert to minutes
+        
+            // if the result is negative, it means the finish time is on the next day
+            if (result < 0) {
+                result += 24 * 60; // Add 24 hours in minutes
+            }
+        
+            return result; // EASYYYYY
+        }
+    </script>
+</head>
+
+<body>
+
+    {% for x in billing %}
+        <div class="billingStuff">
+            <h5 class="billingName">Billing ID: {{x.id}}</h5>
+        </div>
+
+        <div class="detailsListItem">Invoice Reference no: {{ x.invoiceRef }}</div>
+
+        <div class="detailsListItem">Supervisor:</div>
+        <ul>
+            {% for y in x.supervisor.all %}
+                <li>Supervisor first name: {{ y.first_name }}</li>
+                <li>Supervisor last name: {{ y.last_name }}</li>
+            {% endfor %}
+        </ul>
+
+        <div class="detailsListItem">User name:</div>
+        <ul>
+            {% for y in x.user.all %}
+                <li>User first name: {{ y.first_name }}</li>
+                <li>User last name: {{ y.last_name }}</li>
+            {% endfor %}
+        </ul>
+
+        <div class="detailsListItem">Booking: {{ x.bookingRef }}</div>
+        <ul>
+            {% for y in x.bookingStuff.all %}
+                <li>Booking Reference: {{ y.id }}</li>
+                <li>Length of equipment use: 
+                    <span id="length-{{ y.id }}"></span>
+                    <script> // This time difference sh*t took so long to implement I DONT EVEN CARE IF YOU CAN MAKE IT BETTER. NEVER AGAIN
+                        var startTime = "{{ y.start|time:'H:i' }}";
+                        var finishTime = "{{ y.finish|time:'H:i' }}";
+
+                        var length = timeDiff(startTime, finishTime);
+                        document.getElementById("length-{{ y.id }}").textContent = length + " minutes";
+                    </script>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div class="detailsListItem">Invoice date of issue: {{ x.issueDate }}</div>
+        <div class="detailsListItem">Start: {{ x.startDate }}</div>
+        <div class="detailsListItem">Finish: {{ x.finishDate }}</div>
+
+        <div class="detailsListItem">Equipment:</div>
+        <ul>
+            {% for y in x.equipment.all %}
+                <li>Equipment ID: {{ y.equipmentid }}</li>
+                <li>Equipment Name: {{ y.equipmentname }}</li>
+                <li>Rate: {{ y.rate }}</li>
+            {% endfor %}
+        </ul>
+        <div class="detailsListItem">Total Cost: {{ x.totalCost }}</div>
+    {% endfor %}
+
+</body>
+</html>

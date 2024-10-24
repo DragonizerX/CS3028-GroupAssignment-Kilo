@@ -27,4 +27,10 @@ urlpatterns = [
     path('create-event/', views.create_event, name='create_event'),
     path('get_events/', views.get_events, name='get_events'),
     path('CalendarPageAdmin/', views.AdminCalendarView, name='CalendarPageAdmin'),
+
+
+
+    
+    # Accessable via http://127.0.0.1:8000/MCalendar/billing/
+    path("billing/", views.billing, name="billings"),
 ]
