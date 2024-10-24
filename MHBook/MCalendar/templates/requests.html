@@ -134,15 +134,15 @@
             </div>
             
             {% for x in requests %}
-                {% if x.isAccepted == False %}
+                {% if x.verified == False %}
                     <div class="accountRequestObject">
-                        <h4 class="accountName">Account request: {{ x.fullname }}</h5>
+                        <h4 class="accountName">Account request: {{ x.first_name }} {{x.last_name}} </h5>
                         <button class="accept" onclick="confirmAccept({{ x.id }})">Accept</button>
                         <button class="reject" onclick="confirmReject({{ x.id }})">Reject</button>
                         <div class="requestDetailsContainer">
-                            <div class="requestDetails">Phone: {{ x.phone }}</div>
+                            <div class="requestDetails">Phone: {{ x.telephone }}</div>
                             <div class="requestDetails">Email: {{ x.email }}</div>
-                            <div class="requestDetails">Organisation: {{ x.organisation }}</div>
+                            <!-- <div class="requestDetails">Organisation: {{ x.organisation }}</div> -->
                         </div>
                     </div>
                 {% endif %}
