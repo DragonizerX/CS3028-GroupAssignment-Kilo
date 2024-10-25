@@ -11,76 +11,54 @@
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.css' rel='stylesheet' />
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.js'></script>
 
-    <!--styling for the page goes here-->
     <style> 
-        /* calendar id */
         #calendar {
             margin: 10px auto;
             padding: 10px;
             max-width: 1000px;
             border-radius: 30px;
         }
-
-        /* Header Toolbar */
         .fc-toolbar {
             padding: 20px;
         }
-
         .fc-toolbar-title {
             font-weight: 200;
         }
-
-        /* Time Grid */
         .fc-timegrid-slot {
             height: 35px;
             border-bottom: 1px solid;
         }
-
         .fc-timegrid-slot-label {
             font-size: 0.9em;
             color: darkgrey;
         }
-
-        /* Selection */
         .fc-highlight {
             background-color: lightblue;
         }
-
-        /* Column Headers */
         .fc-col-header-cell {
             background-color: white;
             padding: 10px 0;
             font-weight: 500;
         }
-
-        /* Time Slots */
         .fc-timegrid-col {
             background-color: white;
         }
-
-        /* booking form id styling */
         #bookingForm .card-body {
             padding: 20px;
         }
-    
         #bookingForm .row {
             margin-bottom: 5px;
         }
-    
         #bookingForm .control-label {
             padding-top: 7px;
         }
-    
         #bookingForm .btn-success {
             margin-top: 10px;
         }
-
-        /* Button Styling */
         .btn-info {
             margin:10px;
             padding:10px;
         }
-
         .text-center.mt-4 {
             margin-top: 5px;
             padding-top: 5px;
@@ -88,20 +66,16 @@
             margin-left: auto;
             margin-right: auto;
         }
-
         .fc-button {
             background-color: lightblue;
             border: none;
         }
-
         .fc-button:hover {
             background-color: lightblue;
         }
-
         .fc-button-primary:not(:disabled) {
             background-color: lightblue;
         }
-
         #equipmentSelect {
             width:500px;
             margin:20px auto;
@@ -268,7 +242,6 @@
             slotMaxTime: '24:00:00',
             slotDuration: '01:00:00',
             snapDuration: '01:00:00',
-
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
@@ -289,20 +262,41 @@
             },
             height: 'auto',
             expandRows: true,
-            events: 'CalendarPageAdmin/get_events/', 
+            events: function(fetchInfo, successCallback, failureCallback) {
+                const equipment = document.getElementById('equipment').value;
+                
+                if (!equipment) {
+                    successCallback([]); // Return empty array if no equipment selected
+                    return;
+                }
+                
+                fetch(`/MCalendar/CalendarPage/get_events/?equipment=${encodeURIComponent(equipment)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        successCallback(data);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        failureCallback(error);
+                    });
+            },
             eventContent: function(arg) {
                 return {
                     html: '<b>' + arg.event.title + '</b>'
                 };
             }
         });
+        
         calendar.render();
 
-        //pushing equipment to backend
+        // Equipment change handler
         document.getElementById('equipment').addEventListener('change', function() {
-            document.getElementById('equipmentInput').value = this.value;
+            const selectedEquipment = this.value;
+            document.getElementById('equipmentInput').value = selectedEquipment;
+            calendar.refetchEvents(); // This will reload events for the selected equipment
         });
 
+        // Form submission handler
         document.querySelector('#bookingForm form').addEventListener('submit', function(e) {
             e.preventDefault();
             var formData = new FormData(this);
@@ -324,14 +318,12 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    calendar.addEvent({
-                        title: data.event.title,
-                        start: data.event.start,
-                        end: data.event.end
-                    });
+                    calendar.refetchEvents();  // Refresh calendar to show new booking
                     $('#bookingForm').collapse('hide');
                     this.reset();
-                    document.getElementById('equipment').value = ''; 
+                    // Keep the selected equipment value
+                    document.getElementById('equipment').value = selectedEquipment;
+                    document.getElementById('equipmentInput').value = selectedEquipment;
                 }
             })
             .catch(error => console.error('Error:', error));
