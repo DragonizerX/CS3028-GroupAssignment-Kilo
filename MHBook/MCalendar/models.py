@@ -99,3 +99,9 @@ class Event(models.Model):
     allotedTime = models.TimeField()
     comments = models.TextField(max_length = 1000)
     equipment = models.CharField(max_length=100, default='Not specified')
+
+
+class Equipment(models.Model):
+    equipmentID_auto = models.AutoField(primary_key=True)
+    equipmentName = models.CharField(max_length=100)
+    hourlyRate = models.FloatField(default=0.0)
