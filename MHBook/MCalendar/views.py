@@ -269,6 +269,8 @@ def get_events(request):
                 'title': f"{event.bookingName} - {event.equipment}",
                 'start': f"{event.bookingDate}T{event.startTime}",
                 'end': f"{event.bookingDate}T{event.allotedTime}",
+                'supervisorName': event.supervisorName,
+                'comments': event.comments
             }
             event_list.append(event_data)
             
