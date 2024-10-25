@@ -4,20 +4,33 @@
     <title>Billing</title>
     <script>
         function timeDiff(start, finish) {
-            // convert time strings to Date objects for calculation
             const startTime = new Date(`1970-01-01T${start}:00`);
             const finishTime = new Date(`1970-01-01T${finish}:00`);
-        
-            // calculate the difference
-            let result = (finishTime - startTime) / (1000 * 60); // Convert to minutes
-        
-            // if the result is negative, it means the finish time is on the next day
+            let result = (finishTime - startTime) / (1000 * 60); 
             if (result < 0) {
-                result += 24 * 60; // Add 24 hours in minutes
+                result += 24 * 60; 
             }
-        
-            return result; // EASYYYYY
+            return result;
         }
+
+        function calculateCost(rate, length) {
+            const hour = length / 60;
+            const result = hour * rate;
+            return parseFloat(result.toFixed(2));
+        }
+
+        let costsArray = [];
+
+        function addCostToTotal(cost) {
+            costsArray.push(cost);
+        }
+
+        function displayTotalCost() {
+            const total = costsArray.reduce((sum, cost) => sum + cost, 0);
+            document.getElementById("total-cost").textContent = "£" + total.toFixed(2);
+        }
+
+        document.addEventListener("DOMContentLoaded", displayTotalCost);
     </script>
 </head>
 
@@ -25,11 +38,10 @@
 
     {% for x in billing %}
         <div class="billingStuff">
-            <h5 class="billingName">Billing ID: {{x.id}}</h5>
+            <h5 class="billingName">Billing ID: {{ x.id }}</h5>
         </div>
 
         <div class="detailsListItem">Invoice Reference no: {{ x.invoiceRef }}</div><br>
-
         <div class="detailsListItem">Invoice date of issue: {{ x.issueDate }}</div><br>
         <div class="detailsListItem">Start: {{ x.startDate }}</div>
         <div class="detailsListItem">Finish: {{ x.finishDate }}</div><br>
@@ -50,35 +62,45 @@
             {% endfor %}
         </ul>
 
-        <div class="detailsListItem">Booking: {{ x.bookingRef }}</div> <!--A bit confusing so let me explain bbygirl-->
+        <div class="detailsListItem">Booking: {{ x.bookingRef }}</div>
         <ul>
-            {% for y in x.bookingStuff.all %}
-                <li>Booking Reference: {{ y.id }}</li>
-                <ul>
-                    {% for z in equipment %} <!--runs through every entry from the Equipment database-->
-                        {% if z.equipmentid == y.equipmentid %} <!--If IDs match display info-->
-                            <li>Equipment ID: {{ z.equipmentid }}</li>
-                            <li>Equipment Name: {{ z.equipmentname }}</li>
-                            <li>Rate: {{ z.rate }}</li>
+            {% for y in filterBooking %}
+                {% if y.date >= x.startDate and y.date <= x.finishDate %}
+                    {% for z in equipment %}
+                        {% if z.equipmentid == y.equipmentid %}
+                            <li>Booking Reference: {{ y.id }}</li>
+                            <ul>
+                                <li>Equipment ID: {{ z.equipmentid }}</li>
+                                <li>Equipment Name: {{ z.equipmentname }}</li>
+                                <li>Rate: {{ z.rate }}</li>
+                            </ul>
+                            <li>Length of equipment use: 
+                                <span id="length-{{ y.id }}"></span>
+                                <script>
+                                    var startTime = "{{ y.start|time:'H:i' }}";
+                                    var finishTime = "{{ y.finish|time:'H:i' }}";
+                                    var length = timeDiff(startTime, finishTime);
+                                    document.getElementById("length-{{ y.id }}").textContent = length + " minutes";
+                                </script>
+                            </li>
+                            <li>Cost of Equipment Use: 
+                                <span id="cost-{{ y.id }}"></span>
+                                <script>
+                                    var rate = parseFloat("{{ z.rate }}");
+                                    var cost = calculateCost(rate, length);
+                                    document.getElementById("cost-{{ y.id }}").textContent = "£" + cost;
+                                    addCostToTotal(cost);
+                                </script>
+                            </li>
+                            <br>
                         {% endif %}
                     {% endfor %}
-                </ul>
-                <li>Length of equipment use: 
-                    <span id="length-{{ y.id }}"></span>
-                    <script> // This time difference sh*t took so long to implement I DONT EVEN CARE IF YOU CAN MAKE IT BETTER. NEVER AGAIN
-                        var startTime = "{{ y.start|time:'H:i' }}";
-                        var finishTime = "{{ y.finish|time:'H:i' }}";
-
-                        var length = timeDiff(startTime, finishTime);
-                        document.getElementById("length-{{ y.id }}").textContent = length + " minutes";
-                    </script>
-                </li>
-                <br>
+                {% endif %}
             {% endfor %}
         </ul>
-
-        <div class="detailsListItem">Total Cost: {{ x.totalCost }}</div>
     {% endfor %}
+
+    <div class="detailsListItem">Total Cost: <span id="total-cost">£0.00</span></div>
 
 </body>
 </html>

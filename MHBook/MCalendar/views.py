@@ -178,7 +178,7 @@ def editBooking(request, id):
             booking.equipmentid = equipmentid
 
         booking.save()
-        return redirect('MCalendar:myBookings')
+        return redirect('myBookings')
 
     template = loader.get_template('editBooking.html')
     context = {
@@ -243,10 +243,17 @@ def AdminCalendarView(request):
 def billing(request):
     billing = Billing.objects.all()
     equipment = Equipment.objects.all()
+
+    filterBooking = []
+    for x in billing:
+        filtered_bookings = Bookings.objects.filter(date__range=(x.startDate, x.finishDate))
+        filterBooking.extend(filtered_bookings)
+
     template = loader.get_template('billing.html')
     context = {
         'billing': billing,
         'equipment': equipment,
+        'filterBooking': filterBooking,
     }
     return HttpResponse(template.render(context, request))
 
