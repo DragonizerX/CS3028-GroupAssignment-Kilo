@@ -28,7 +28,11 @@
             <h5 class="billingName">Billing ID: {{x.id}}</h5>
         </div>
 
-        <div class="detailsListItem">Invoice Reference no: {{ x.invoiceRef }}</div>
+        <div class="detailsListItem">Invoice Reference no: {{ x.invoiceRef }}</div><br>
+
+        <div class="detailsListItem">Invoice date of issue: {{ x.issueDate }}</div><br>
+        <div class="detailsListItem">Start: {{ x.startDate }}</div>
+        <div class="detailsListItem">Finish: {{ x.finishDate }}</div><br>
 
         <div class="detailsListItem">Supervisor:</div>
         <ul>
@@ -69,12 +73,9 @@
                         document.getElementById("length-{{ y.id }}").textContent = length + " minutes";
                     </script>
                 </li>
+                <br>
             {% endfor %}
         </ul>
-
-        <div class="detailsListItem">Invoice date of issue: {{ x.issueDate }}</div>
-        <div class="detailsListItem">Start: {{ x.startDate }}</div>
-        <div class="detailsListItem">Finish: {{ x.finishDate }}</div>
 
         <div class="detailsListItem">Total Cost: {{ x.totalCost }}</div>
     {% endfor %}
