@@ -115,7 +115,7 @@
         <!--EQUIPMENT SELECTION-->
         <div id="equipmentSelect" class="form-group">
             <label for="equipment">Select Equipment:</label>
-            <select class="form-control" id="equipment" name="equipment">
+            <select class="form-control" id="equipment" name="equipment" required>
                 <option value="">-- Select Equipment --</option>
                 <option value="spinning-disc">Spinning disc</option>
                 <option value="m1-328">M1 - 3.28</option>
@@ -158,7 +158,7 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-sm-3">
-                                <label for="supervisorName" class="control-label">Supervisor/Company Name:</label>
+                                <label for="supervisorName" class="control-label">Supervisor:</label>
                             </div>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="supervisorName" name="supervisorName" required>
@@ -217,6 +217,8 @@
             slotMinTime: '00:00:00',
             slotMaxTime: '24:00:00',
             slotDuration: '01:00:00',
+            snapDuration: '01:00:00',
+
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',

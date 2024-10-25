@@ -254,7 +254,7 @@ def get_events(request):
         })
     return JsonResponse(event_list, safe=False)
 
-def home(request):
+def CalendarPage(request):
     if request.user.is_authenticated:
         return render(request,"CalendarPage.html")
     else:
