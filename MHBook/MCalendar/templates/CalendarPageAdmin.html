@@ -99,7 +99,7 @@
         {% if user.is_superuser %}
             <a href="{% url 'CalendarPageAdmin' %}">Home</a>
         {% else %}
-            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'CalendarPage' %}">Home</a>
         {% endif %}
 
         <a href="{% url 'accountPage' %}">Account</a>
@@ -281,118 +281,6 @@
 
     <!--JAVASCRIPT SCRIPTS-->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'timeGridWeek',
-                allDaySlot: false,
-                slotMinTime: '00:00:00',
-                slotMaxTime: '24:00:00',
-                slotDuration: '01:00:00',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'timeGridWeek,timeGridDay'
-                },
-                slotLabelFormat: {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false
-                },
-                selectable: true,
-                select: function(info) {
-                    var date = info.start.toISOString().split('T')[0];
-                    var time = info.start.toTimeString().split(' ')[0].slice(0, 5);
-                    document.getElementById('bookingDate').value = date;
-                    document.getElementById('startTime').value = time;
-                    $('#bookingForm').collapse('show');
-                },
-                height: 'auto',
-                expandRows: true,
-                events: 'get_events/',  // Ensure this endpoint sends the required event data (title, start, end, etc.)
-                
-                // Customizing the display of event content
-                eventContent: function(arg) {
-                    // Retrieve event details from the `event` object
-                    var title = arg.event.title;                 // Booking name
-                    var startTime = arg.event.start.toTimeString().slice(0, 5); // Start time in HH:MM format
-                    var endTime = arg.event.end ? arg.event.end.toTimeString().slice(0, 5) : ''; // End time if available
-                    var supervisor = arg.event.extendedProps.supervisor || 'No Supervisor'; // Supervisor name (optional)
-                    var comments = arg.event.extendedProps.comments || '';  // Additional comments (optional)
-        
-                    // Construct HTML content for the event
-                    var contentHtml = `
-                        <div>
-                            <b>${title}</b><br/>
-                            <span><b>Time:</b> ${startTime} - ${endTime}</span><br/>
-                            <span><b>Supervisor:</b> ${supervisor}</span><br/>
-                            <span>${comments}</span>
-                        </div>
-                    `;
-        
-                    // Return the HTML structure to be rendered inside the event
-                    return { html: contentHtml };
-                }
-            });
-            
-            calendar.render();
-        
-            // Handling equipment change and form submission
-            document.getElementById('equipment').addEventListener('change', function() {
-                document.getElementById('equipmentInput').value = this.value;
-            });
-        
-            document.querySelector('#bookingForm form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                var formData = new FormData(this);
-        
-                var selectedEquipment = document.getElementById('equipment').value;
-                formData.append('equipment', selectedEquipment);
-        
-                fetch("{% url 'create_event' %}", {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        calendar.addEvent({
-                            title: data.event.title,
-                            start: data.event.start,
-                            end: data.event.end,
-                            extendedProps: {
-                                supervisor: data.event.supervisor,   // Including supervisor in the event's extra properties
-                                comments: data.event.comments       // Including comments
-                            }
-                        });
-                        $('#bookingForm').collapse('hide');
-                        this.reset();
-                        document.getElementById('equipment').value = ''; 
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-            });
-        });
-
-        function toggleNav() {
-
-            var element = document.getElementById("sidebar");
-            element.classList.toggle("toggle");
-        }
-
-        function LogoutButton() {
-            if (confirm("You are about to logout,\nAre you sure you want to continue?")) {
-              window.location.href="{% url 'logout' %}";
-            } else {
-              none;
-            }
-          }
-
-        </script>
-        
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -461,7 +349,7 @@
                 });
             }
         });
-        
+
         calendar.render();
 
         // Equipment change handler
@@ -503,6 +391,21 @@
             .catch(error => console.error('Error:', error));
         });
     });
+
+    function toggleNav() {
+
+        var element = document.getElementById("sidebar");
+        element.classList.toggle("toggle");
+    }
+
+    function LogoutButton() {
+        if (confirm("You are about to logout,\nAre you sure you want to continue?")) {
+          window.location.href="{% url 'logout' %}";
+        } else {
+          none;
+        }
+      }
+
     </script>
 </body>
 </html>

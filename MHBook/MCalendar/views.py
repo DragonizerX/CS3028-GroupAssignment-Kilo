@@ -31,7 +31,7 @@ def loginPage(request):
                 else:
                     #print("B")
                     login(request, user)
-                    return redirect('home')
+                    return redirect('CalendarPage')
             else:
                 messages.info(request, 'Your account has not been approved by the admins yet!')
         else:

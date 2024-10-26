@@ -99,7 +99,7 @@
         {% if user.is_superuser %}
             <a href="{% url 'CalendarPageAdmin' %}">Home</a>
         {% else %}
-            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'CalendarPage' %}">Home</a>
         {% endif %}
 
         <a href="{% url 'accountPage' %}">Account</a>
