@@ -54,7 +54,7 @@
             let dropdown = document.getElementById(ref);
             let computedStyle = window.getComputedStyle(dropdown).display;
             if (computedStyle === 'none') {
-                dropdown.style.display = 'block';
+                dropdown.style.display = 'grid';
             } else {
                 dropdown.style.display = 'none';
             }
@@ -154,12 +154,12 @@
         .billingDropdown {
             margin: auto;
             border-radius: 5px;
+            display: grid;
             display: none;
             width: 70%;
             max-width: 450px;
             background-color: hsl(0 0 90%);
             box-shadow: 2px 2px 5px hsl(265 0% 70%);
-            display: grid;
             grid-template-columns: 50% 50%;
         }
 
