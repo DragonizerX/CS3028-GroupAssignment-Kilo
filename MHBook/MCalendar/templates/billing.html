@@ -37,10 +37,114 @@
 
         // Necessary as bugs occured as function wasn't working. This basically waits until everything is loaded and then runs the function.
         document.addEventListener("DOMContentLoaded", displayTotalCost);
+
+        function displaySupervisors() {
+            let dropdown = document.getElementById('supervisorDropdown');
+            let computedStyle = window.getComputedStyle(dropdown).display;
+            if (computedStyle === 'none') {
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        }
     </script>
+
+    <style>
+
+        #navBar {
+            width: 80%;
+            max-width: 800px;
+            height: 50px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 40% 20% 20% 20%;
+        }
+
+        .supervisorSearch {
+            box-shadow: 2px 2px 5px hsl(265 0% 70%);
+            border-radius: 5px;
+            height: 40px;
+            margin: auto;
+            background-color: hsl(0 0 85%);
+            border: none;
+            padding: 10px;
+            width: 90%;
+            cursor: pointer;
+        }
+
+        #supervisorDropdown {
+            border-radius: 5px;
+            position: absolute;
+            display: none;
+            background-color: hsl(0 0 90%);
+            box-shadow: 2px 2px 5px hsl(265 0% 70%);
+            max-height: 100px;
+            overflow-y: scroll;
+        }
+
+        #supervisorDropdown div {
+            display: block;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        #startDate {
+            margin: auto;
+            max-width: 50px;
+        }
+
+        #endDate {
+            margin: auto;
+            max-width: 50px;
+        }
+        
+        .dates {
+            box-shadow: 2px 2px 5px hsl(265 0% 70%);
+            border-radius: 5px;
+            text-align: center;
+            height: 40px;
+            width: 90%;
+            margin: auto;
+            background-color: hsl(0 0 85%);
+        }
+
+        #filter {
+            box-shadow: 2px 2px 5px hsl(265 0% 70%);
+            border-radius: 5px;
+            height: 40px;
+            margin: auto;
+            background-color: hsl(0 0 85%);
+            border: none;
+            padding: 10px;
+            width: 80%;
+            cursor: pointer;
+        }
+
+    </style>
 </head>
 
 <body>
+
+    <div id="navBar">
+        <div>
+            <button class="supervisorSearch" onclick="displaySupervisors()">-- All Supervisors --</button>
+            <div id="supervisorDropdown">
+                <div>Runs</div>
+                {% for sup in supervisor %} <!-- Why doesnt this work?? -->
+                    <div>{{sup.first_name}} {{sup.last_name}}</div>
+                {%endfor%}
+            </div>
+        </div>
+        <div class="dates">
+            Start Date: 
+            <input type="date" id="startDate">
+        </div>
+        <div class="dates">
+            End Date: 
+            <input type="date" id="endDate">
+        </div>
+        <button id="filter"> Filter </button>
+    </div>
 
     {% for x in billing %}
         <div class="billingStuff">
@@ -69,7 +173,6 @@
         </ul>
 
         <div class="detailsListItem">Booking: {{ x.bookingRef }}</div>
-        {% comment %} Now we are getting into complicated territory {% endcomment %}
         {% comment %} Basically this next part filters through everything and makes sure only bookings that are within the time frame and have the required supervisors get displayed {% endcomment %}
         {% comment %} Also makes sure that only equipment with matching IDs gets displayed and charged {% endcomment %}
         <ul>

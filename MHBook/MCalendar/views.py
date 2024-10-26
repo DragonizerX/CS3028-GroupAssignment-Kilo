@@ -9,7 +9,7 @@ from django.template import loader
 
 from django.contrib.admin.views.decorators import staff_member_required
 
-from .models import Bookings, AccountRequest, Users, Event, Billing, Equipment
+from .models import Bookings, AccountRequest, Users, Event, Billing, Equipment, Supervisor
 from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm
 # Create your views here.b
 
@@ -256,6 +256,9 @@ def billing(request):
         'filterBooking': filterBooking,
     }
     return HttpResponse(template.render(context, request))
+
+def supervisor(request):
+    return Supervisor.objects.all().values()
 
 def equipment(request):
     return Equipment.objects.all().values()
