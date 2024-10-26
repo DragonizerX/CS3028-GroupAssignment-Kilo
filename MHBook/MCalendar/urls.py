@@ -22,9 +22,10 @@ urlpatterns = [
     path("confirmReject/<int:id>/", views.confirmReject, name="confirmReject"),
     
 
-    # Accessable via http://127.0.0.1:8000/MCalendar/home/
-    path("", views.home, name="home"),
-    path('create-event/', views.create_event, name='create_event'),
+    # Accessable via http://127.0.0.1:8000/MCalendar/CalendarPage/
+    path("CalendarPage/", views.CalendarPage, name="CalendarPage"),
+    path('CalendarPage/create-event/', views.create_event, name='create_event'),
+    path('CalendarPage/get_events/', views.get_events, name='get_events'),
     path('CalendarPageAdmin/get_events/', views.get_events, name='get_events'),
     path("CalendarPageAdmin/", views.AdminCalendarView, name='CalendarPageAdmin'),
 ]

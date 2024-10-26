@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.template import loader
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 
 from django.contrib.admin.views.decorators import staff_member_required
@@ -209,52 +210,75 @@ def editBooking(request, id):
         messages.success(request, "Please log in before entering that page!")
         return redirect("loginPage")
 
+@ensure_csrf_cookie
+def calendar_view(request):
+    return render(request, 'CalendarPage.html')
+
+@ensure_csrf_cookie
 def create_event(request):
     if request.method == 'POST':
-        booking_Name = request.POST.get('bookingName')
-        supervisor_Name = request.POST.get('supervisorName')
-        booking_Date = request.POST.get('bookingDate')
-        start_Time = request.POST.get('startTime')
-        alloted_Time = request.POST.get('allottedTime')
-        comments_ = request.POST.get('comments')
-        equipment_ = request.POST.get('equipment')
-    
-        event = Event(
-            bookingName = booking_Name,
-            supervisorName = supervisor_Name,
-            bookingDate = booking_Date,
-            startTime = start_Time,
-            allotedTime = alloted_Time,
-            comments = comments_,
-            equipment = equipment_
-        )
-        event.save()
+        try:
+            
+            booking_Name = request.POST.get('bookingName')
+            supervisor_Name = request.POST.get('supervisorName')
+            booking_Date = request.POST.get('bookingDate')
+            start_Time = request.POST.get('startTime')
+            alloted_Time = request.POST.get('allottedTime')
+            comments_ = request.POST.get('comments')
+            equipment_ = request.POST.get('equipment')
+        
+            event = Event(
+                bookingName=booking_Name,
+                supervisorName=supervisor_Name,
+                bookingDate=booking_Date,
+                startTime=start_Time,
+                allotedTime=alloted_Time,
+                comments=comments_,
+                equipment=equipment_
+            )
+            event.save()
 
-        return JsonResponse({
-            'status': 'success',
-            'event': {
+            return JsonResponse({
+                'status': 'success',
+                'event': {
+                    'title': f"{event.bookingName} - {event.equipment}",
+                    'start': f"{event.bookingDate}T{event.startTime}",
+                    'end': f"{event.bookingDate}T{event.allotedTime}",
+                }
+            })
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=400)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+def get_events(request):
+    try:
+        equipment = request.GET.get('equipment', '')
+        
+        if equipment:
+            events = Event.objects.filter(equipment=equipment)
+        else:
+            events = Event.objects.none()
+            
+        event_list = []
+        for event in events:
+            event_data = {
                 'title': f"{event.bookingName} - {event.equipment}",
                 'start': f"{event.bookingDate}T{event.startTime}",
                 'end': f"{event.bookingDate}T{event.allotedTime}",
+                'supervisorName': event.supervisorName,
+                'comments': event.comments
             }
-        })
+            event_list.append(event_data)
+            
+        return JsonResponse(event_list, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
 
-        return HttpResponse("Booking created!")
-    return HttpResponse(request='CalendarPage.html')
-
-def get_events(request):
-    events = Event.objects.all()
-    #print(events)
-    event_list = []
-    for event in events:
-        event_list.append({
-            'title': f"{event.bookingName} - {event.equipment}",
-            'start': f"{event.bookingDate}T{event.startTime}",
-            'end': f"{event.bookingDate}T{event.allotedTime}",
-        })
-    return JsonResponse(event_list, safe=False)
-
-def home(request):
+def CalendarPage(request):
     if request.user.is_authenticated:
         return render(request,"CalendarPage.html")
     else:
