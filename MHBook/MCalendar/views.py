@@ -258,7 +258,13 @@ def billing(request):
     return HttpResponse(template.render(context, request))
 
 def supervisor(request):
+    supervisor = Supervisor.objects.all()
+    context = {
+        'supervisor': supervisor,
+    }
+
     return Supervisor.objects.all().values()
+    
 
 def equipment(request):
     return Equipment.objects.all().values()

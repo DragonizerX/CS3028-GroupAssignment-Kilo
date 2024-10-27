@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <title>Billing</title>
-    <script defer>
+    <script>
         // Calculates the time difference between times in order to be able to calculate cost later
         function timeDiff(start, finish) { 
             const startTime = new Date(`1970-01-01T${start}:00`);
@@ -59,7 +59,7 @@
                 dropdown.style.display = 'none';
             }
         }
-
+        
         function filter() {
             // changes global variables so that the billings displayed are filtered
         }
@@ -74,7 +74,7 @@
             height: 50px;
             margin: 40px auto 80px auto;
             display: grid;
-            grid-template-columns: 40% 20% 20% 20%;
+            grid-template-columns: 30% 25% 25% 20%;
         }
 
         .supervisorSearch {
@@ -107,12 +107,12 @@
 
         #startDate {
             margin: auto;
-            max-width: 50px;
+            max-width: 80%;
         }
 
         #endDate {
             margin: auto;
-            max-width: 50px;
+            max-width: 80%;
         }
         
         .dates {
@@ -173,7 +173,7 @@
         <button class="supervisorSearch" onclick="displaySupervisors()">-- Supervisors --</button>
             <div id="supervisorDropdown">
                 <input type="checkbox" checked=True>All</input>
-                {% for sup in supervisor %} <!-- Why doesnt this work?? -->
+                {% for sup in supervisor.all %} <!-- Why doesnt this work?? -->
                     <input type="checkbox">{{ sup.first_name }} {{ sup.last_name }}</input>
                 {% endfor %}
             </div>
@@ -204,7 +204,9 @@
             <div>{{ x.finishDate }}</div>
         </div>
         <div class="billingDropdown" id="{{x.invoiceRef}}"> 
-            Word
+            <div>ID: {{ x.id }}</div>
+            <div>Issued: {{ x.issueDate }}</div>
+            <div>Users: <div>{% for user in x.user.all %}{{ user.first_name }} {{ user.last_name }}{% endfor %}</div></n></div>
         </div>
     {% endfor %}
 

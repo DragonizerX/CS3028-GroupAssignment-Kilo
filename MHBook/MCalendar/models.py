@@ -4,7 +4,7 @@ from django.contrib.auth.models import UserManager, PermissionsMixin, AbstractBa
 
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta # type: ignore
-
+from datetime import timedelta
 
 class CustomUserManager(UserManager):
     def get_by_natural_key(self, email):
