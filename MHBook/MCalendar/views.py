@@ -10,7 +10,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 from django.contrib.admin.views.decorators import staff_member_required
 
-from .models import Bookings, Users, Event
+from .models import Bookings, Users, Event, Equipment
 from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm
 # Create your views here.b
 
@@ -280,7 +280,8 @@ def get_events(request):
 
 def CalendarPage(request):
     if request.user.is_authenticated:
-        return render(request,"CalendarPage.html")
+        equipment_list = Equipment.objects.all()
+        return render(request, 'CalendarPage.html', {'equipmentList': equipment_list})
     else:
         messages.success(request, "Please log in before entering that page!")
         return redirect("loginPage")
@@ -288,7 +289,8 @@ def CalendarPage(request):
 
 def AdminCalendarView(request):
     if request.user.is_superuser:
-        return render(request, 'CalendarPageAdmin.html')
+        equipment_list = Equipment.objects.all()
+        return render(request, 'CalendarPageAdmin.html', {'equipmentList': equipment_list})
     else:
         messages.success(request, "Please log in before entering that page! Admin access only.")
         logout(request)
