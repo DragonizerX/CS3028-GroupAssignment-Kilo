@@ -136,10 +136,6 @@
         <select class="form-control" id="equipment" name="equipment" required>
             <option value="">-- Select Equipment --</option>
 
-            {% if user.is_superuser %}
-                <option value="addEquip">-- Add Equipment --</option>
-            {% endif %}
-
             {% for x in equipmentList %}
                 <option value="{{ x.equipmentID_auto}}">-- {{ x.equipmentName }} -- {{ x.hourlyRate }} --</option>
             {% endfor %}

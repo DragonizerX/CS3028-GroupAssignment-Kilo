@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 from django.contrib.auth.models import User
 from django import forms
 
-from MCalendar.models import Users, Event
+from MCalendar.models import Users, Event, Equipment
 
 class CreateUserForm(UserCreationForm):
     class Meta:
@@ -41,6 +41,17 @@ class EventForm(forms.ModelForm):
             'alloted_time': forms.TimeInput(attrs={'class':'form-control','type':'time'}),
             'comments':forms.Textarea(attrs={'class':'form-contorl','rows':3}),
             'equipment': forms.Select(attrs={'class': 'form-control'})
+
+        }
+
+class AddEquipmentForm(forms.ModelForm):
+    class Meta:
+        model = Equipment
+        fields = ['equipmentName', 'hourlyRate']
+
+        widgets = {
+            'equipmentName': forms.TextInput(attrs={'class': 'form-control'}),
+            'hourlyRate':forms.TextInput(attrs={'class': 'form-control'}),
 
         }
 
