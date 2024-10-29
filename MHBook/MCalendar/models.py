@@ -105,3 +105,6 @@ class Equipment(models.Model):
     equipmentID_auto = models.AutoField(primary_key=True)
     equipmentName = models.CharField(max_length=100)
     hourlyRate = models.FloatField(default=0.0)
+
+    def __str__(self):
+        return self.equipmentName
