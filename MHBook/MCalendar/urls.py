@@ -25,6 +25,8 @@ urlpatterns = [
 
     # Accessable via http://127.0.0.1:8000/MCalendar/CalendarPage/
     path("CalendarPage/", views.CalendarPage, name="CalendarPage"),
+    path('CalendarPage/add_equipment/', views.add_equipment, name='add_equipment'),
+    path('CalendarPage/delete_equipment/', views.delete_equipment, name='delete_equipment'),
     path('CalendarPage/create-event/', views.create_event, name='create_event'),
     path('CalendarPage/get_events/', views.get_events, name='get_events'),
     path('CalendarPageAdmin/get_events/', views.get_events, name='get_events'),

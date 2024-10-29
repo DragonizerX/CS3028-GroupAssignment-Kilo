@@ -11,7 +11,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.admin.views.decorators import staff_member_required
 
 from .models import Bookings, Users, Event, Equipment
-from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm
+from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm, AddEquipmentForm
 # Create your views here.b
 
 def loginPage(request):
@@ -278,9 +278,44 @@ def get_events(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
+def add_equipment(request):
+    if request.method == 'POST':
+        form = AddEquipmentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            if request.user.is_superuser:
+                return redirect('CalendarPageAdmin')  # Redirect to a success page or another view
+            else:
+                return redirect('CalendarPage')
+        else:
+            return JsonResponse({'errors': form.errors}, status=400)
+    else:
+        form = AddEquipmentForm()
+    
+    # Render the form in case of GET request or invalid POST
+    if request.user.is_superuser:
+        return render(request, 'CalendarPageAdmin.html', {'form': form})
+    else:
+        return render(request, 'CalendarPage.html', {'form': form})
+    
+def delete_equipment(request):
+    if request.method == 'POST':
+        equipment_id = request.POST.get('delete_equipment')
+        try:
+            equipment = Equipment.objects.get(equipmentID_auto=equipment_id)
+            equipment.delete()
+            return redirect('CalendarPageAdmin')  # Redirect after deletion
+        except Equipment.DoesNotExist:
+            return HttpResponse("Equipment not found.", status=404)
+    
+    # If it's a GET request, render the deletion form with the dropdown
+    equipment_list = Equipment.objects.all()
+    return render(request, 'CalendarPageAdmin.html', {'equipmentList': equipment_list})
+
 def CalendarPage(request):
     if request.user.is_authenticated:
-        return render(request,"CalendarPage.html")
+        equipment_list = Equipment.objects.all()
+        return render(request, 'CalendarPage.html', {'equipmentList': equipment_list})
     else:
         messages.success(request, "Please log in before entering that page!")
         return redirect("loginPage")
@@ -288,7 +323,8 @@ def CalendarPage(request):
 
 def AdminCalendarView(request):
     if request.user.is_superuser:
-        return render(request, 'CalendarPageAdmin.html')
+        equipment_list = Equipment.objects.all()
+        return render(request, 'CalendarPageAdmin.html', {'equipmentList': equipment_list})
     else:
         messages.success(request, "Please log in before entering that page! Admin access only.")
         logout(request)

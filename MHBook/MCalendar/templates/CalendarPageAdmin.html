@@ -50,18 +50,19 @@
         .fc-timegrid-col {
             background-color: white;
         }
-        #bookingForm .card-body {
+        #deleteEquipForm #addEquipForm #bookingForm .card-body {
             padding: 20px;
         }
-        #bookingForm .row {
+        #deleteEquipForm #addEquipForm #bookingForm .row {
             margin-bottom: 5px;
         }
-        #bookingForm .control-label {
+        #deleteEquipForm #addEquipForm #bookingForm .control-label {
             padding-top: 7px;
         }
-        #bookingForm .btn-success {
+        #deleteEquipForm #addEquipForm #bookingForm .btn-success {
             margin-top: 10px;
         }
+
         .btn-info {
             margin:10px;
             padding:10px;
@@ -120,42 +121,103 @@
     <div class="container-fluid bg-dark text-white topbar">
         <div class="row">
             <div class="col-2 container-fluid text-left">
-            <span class="sidebarButton" onclick="toggleNav()">&#9776;</span>
+            <span class="sidebarButton" style="position:relative; top: 11px;" onclick="toggleNav()">&#9776;</span>
             </div>
             <div class="col-8 container-fluid text-center h1">
-                <span><h1>HistoTrack</h1></span>
+                <h1 style="font-size: 40px; position: relative; bottom: 9px;">HistoTrack</h1>
             </div>
             <div class="col-2"></div>
         </div>
     </div>
 
     <div class="container">
-        <!--EQUIPMENT SELECTION-->
-        <div id="equipmentSelect" class="form-group">
-            <label for="equipment">Select Equipment:</label>
-            <select class="form-control" id="equipment" name="equipment" required>
-                <option value="">-- Select Equipment --</option>
-                <option value="spinning-disc">Spinning disc</option>
-                <option value="Cryostat">Cryostat</option>
-                <option value="wax-microtome">Wax Microtome</option>
-                <option value="Vibratome">Vibratome</option>
-                <option value="TEM">TEM</option>
-                <option value="SEM">SEM</option>
-                <option value="ultramicrotome">UltraMicrotome</option>
-                <option value="lsm880">LSM880</option>
-                <option value="lsm710">LSM710</option>
-                <option value="lsm700">LSM700</option>
-                <option value="evos-xl">Evos XL</option>
-                <option value="evos-m5000">Evos M5000</option>
-                <option value="holomonitor">Holomonitor</option>
-                <option value="micro-ct">Lightsheet</option>
-                <option vaue="Nessie">Nessie</option>
-                <option value="Kelpie">Kelpie</option>
-                <option value="Haggis">Haggis</option>
-                <option value="Workstation">Workstation</option>
-                <option value="WorkstationArivis">Workstation Arivis</option>
-            </select>
+    <!--EQUIPMENT SELECTION-->
+    <div id="equipmentSelect" class="form-group">
+                
+        <label for="equipment">Select Equipment:</label>
+        <select class="form-control" id="equipment" name="equipment" required>
+            <option value="">-- Select Equipment --</option>
+
+            {% for x in equipmentList %}
+                <option value="{{ x.equipmentID_auto}}">-- {{ x.equipmentName }} -- {{ x.hourlyRate }} --</option>
+            {% endfor %}
+
+        </select>
+    </div>
+
+    <div class="text-center mt-4">
+
+        {% if user.is_superuser %}
+        <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#addEquipForm" aria-expanded="false" aria-controls="addEquipForm">
+            Add Equipment 
+        </button>
+
+        <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#deleteEquipForm" aria-expanded="false" aria-controls="deleteEquipForm">
+            Delete Equipment 
+        </button>
+        {% endif %}
+
+            <div class="collapse mt-3" id="addEquipForm">
+                <div class="card card-body">
+                    <form method="post" action="{% url 'add_equipment' %}">
+                        {% csrf_token %}
+                        <input type="hidden" id="addEquipmentInput" name="addEquipment" value="">
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="equipmentName" class="control-label">Name of Equipment :</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="equipmentName" name="equipmentName" required>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="hourlyRate" class="control-label">Hourly Rate for Equipment :</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="float" class="form-control" id="hourlyRate" name="hourlyRate" required>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-sm-12 text-center">
+                                <button type="submit" class="btn btn-success">Confirm Addition of New Equipment</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        <div class="collapse mt-3" id="deleteEquipForm">
+            <div class="card card-body">
+                <form method="post" action="{% url 'delete_equipment' %}">
+                    {% csrf_token %}
+                    <input type="hidden" id="deleteEquipmentInput" name="deleteEquipment" value="">
+                    <div class="row mt-2">
+                        <div class="col-sm-3">
+                            <label for="delete_equipment" class="control-label">Select Equipment to Delete :</label>
+                        </div>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="delete_equipment" name="delete_equipment" required>
+                                <option value="">-- Select Equipment --</option>
+                    
+                                {% for x in equipmentList %}
+                                    <option value="{{ x.equipmentID_auto}}">-- {{ x.equipmentName }} -- {{ x.hourlyRate }} --</option>
+                                {% endfor %}
+                    
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-sm-12 text-center">
+                            <button type="submit" class="btn btn-danger">Confirm Deletion of Equipment</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
+    </div>
+    </div>
 
         <!--CALENDAR-->
         <div id="calendar"></div>
