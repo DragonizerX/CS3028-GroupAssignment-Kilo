@@ -68,6 +68,7 @@
     {% if user.is_superuser %}
         <a href="{% url 'requests' %}">Requests</a>
         <a href="{% url 'requests' %}">Billing</a> <!-- UPDATE WHEN THE BILLING PAGE IS MADE -->
+        <a href="{% url 'archivePage' %}">Archive</a>
     {% endif %}
 
     <div class="sideCont">
