@@ -189,7 +189,7 @@
 
         <div class="collapse mt-3" id="deleteEquipForm">
             <div class="card card-body">
-                <form method="post" action="{% url 'delete_equipment' %}">
+                <form method="post" action="{% url 'delete_equipment' %}" onSubmit="return confirm('Are you sure you want to delete the selected Equipment?\nThis action cannot be undone.')">
                     {% csrf_token %}
                     <input type="hidden" id="deleteEquipmentInput" name="deleteEquipment" value="">
                     <div class="row mt-2">
