@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 from django.contrib.auth.models import User
 from django import forms
+from django.utils import timezone
+from dateutil.relativedelta import relativedelta
 
 from MCalendar.models import Users, Event
 
@@ -43,3 +45,32 @@ class EventForm(forms.ModelForm):
             'equipment': forms.Select(attrs={'class': 'form-control'})
 
         }
+
+
+class BillingFilterForm(forms.Form):
+    supervisors = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+    startDate = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=False,
+    )
+    endDate = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        supervisors = kwargs.pop('supervisors', [])
+        super().__init__(*args, **kwargs)
+
+        end = timezone.now().date()
+        start = end - relativedelta(months=1)
+
+        # initial dates
+        self.fields['startDate'].initial = start
+        self.fields['endDate'].initial = end
+
+        # supervisors checklist
+        self.fields['supervisors'].choices = [(sup.id, f"{sup.first_name} {sup.last_name}") for sup in supervisors]

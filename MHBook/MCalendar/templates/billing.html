@@ -3,6 +3,10 @@
 <head>
     <title>Billing</title>
     <script>
+
+        /* OBSOLETE??
+
+
         // Calculates the time difference between times in order to be able to calculate cost later
         function timeDiff(start, finish) { 
             const startTime = new Date(`1970-01-01T${start}:00`);
@@ -37,6 +41,7 @@
 
         // Necessary as bugs occured as function wasn't working. This basically waits until everything is loaded and then runs the function.
         document.addEventListener("DOMContentLoaded", displayTotalCost);
+        */
 
         function displaySupervisors() {
             // displays the checkboxes for supervisors
@@ -60,11 +65,6 @@
                 dropdown.style.display = 'none';
             }
         }
-        
-        function filter() {
-            // changes global variables so that the billings displayed are filtered
-        }
-
     </script>
 
     <style>
@@ -165,122 +165,74 @@
                 <!-- Supervisor selection -->
                 <button class="supervisorSearch" onclick="displaySupervisors()">-- Supervisors --</button>
                     <div id="supervisorDropdown">
-                        {% for sup in supervisor %}
-                            <div>
-                                <input type="checkbox" id="{{ sup.id }}" name="sup{{ sup.id }}" value="{{ sup.id }}">
-                                <label for="{{ sup.id }}">{{ sup.first_name }} {{ sup.last_name }}</label>
-                            </div>
-                        {% endfor %}
+                        {{ form.supervisors }}
                     </div>
             </div>
             <!-- Date inputs -->
             <div class="dates">
                 Start Date: 
-                <input type="date" style="max-width:100px;" name="st" value="">
+                {{ form.startDate }}
             </div>
             <div class="dates">
                 End Date: 
-                <input type="date" style="max-width:100px;" name="en" value="">
+                {{ form.endDate }}
             </div>
-            <input type="submit" id="filter" onclick="filter" value="Filter">
+            <input type="submit" id="filter" value="Filter">
         </div>
     </form>
 
     <!-- Konrad's Billing -->
+
+    <!-- Makes Duplicates for multiple supervisors selected
     {% for x in billing %}
-        <div class="billingLabel" onclick="displayBillingDropdown('{{x.invoiceRef}}')">
-            <div>{{ x.invoiceRef }}</div>
-            <div>
+        {% for sup in x.supervisor.all %}
+            {% if sup.id|stringformat:"s" in form.cleaned_data.supervisors %}
+                    <div class="billingLabel" onclick="displayBillingDropdown('{{x.invoiceRef}}')">
+                        <div>{{ x.invoiceRef }}</div>
+                        <div>
+                            <div>
+                            {% for y in x.supervisor.all %}
+                                <div>{{ y.first_name }} {{ y.last_name }}</div>
+                            {% endfor %}
+                            </div>
+                        </div>
+                        <div>{{ x.startDate }}</div>
+                        <div>{{ x.finishDate }}</div>
+                    </div>
+                    <div class="billingDropdown" id="{{x.invoiceRef}}"> 
+                        <div>ID: {{ x.id }}</div>
+                        <div>Issued: {{ x.issueDate }}</div>
+                        <div>Users: <div>{% for user in x.user.all %}{{ user.first_name }} {{ user.last_name }}{% endfor %}</div></n></div>
+                    </div>
+            {% endif %}
+        {% endfor %} 
+    {% endfor %}
+
+-->
+
+    {% for x in billing %}
+        {% if x.startDate >= form.cleaned_data.startDate %}
+        {% if x.finishDate <= form.cleaned_data.endDate %}
+            <div class="billingLabel" onclick="displayBillingDropdown('{{x.invoiceRef}}')">
+                <div>{{ x.invoiceRef }}</div>
                 <div>
-                {% for y in x.supervisor.all %}
-                    <div>{{ y.first_name }} {{ y.last_name }}</div>
-                {% endfor %}
-                </div>
-            </div>
-            <div>{{ x.startDate }}</div>
-            <div>{{ x.finishDate }}</div>
-        </div>
-        <div class="billingDropdown" id="{{x.invoiceRef}}"> 
-            <div>ID: {{ x.id }}</div>
-            <div>Issued: {{ x.issueDate }}</div>
-            <div>Users: <div>{% for user in x.user.all %}{{ user.first_name }} {{ user.last_name }}{% endfor %}</div></n></div>
-        </div>
-    {% endfor %}
-
-    <!-- Oli's Billing -->
-    {% for x in billing %}
-        <div class="billingStuff">
-            <h5 class="billingName">Billing ID: {{ x.id }}</h5>
-        </div>
-
-        <div class="detailsListItem">Invoice Reference no: {{ x.invoiceRef }}</div><br>
-        <div class="detailsListItem">Invoice date of issue: {{ x.issueDate }}</div><br>
-        <div class="detailsListItem">Start: {{ x.startDate }}</div>
-        <div class="detailsListItem">Finish: {{ x.finishDate }}</div><br>
-
-        <div class="detailsListItem">Supervisor:</div> {% comment %} Goes through all linked supervisors and displays thier names {% endcomment %}
-        <ul>
-            {% for y in x.supervisor.all %}
-                <li>Supervisor first name: {{ y.first_name }}</li>
-                <li>Supervisor last name: {{ y.last_name }}</li>
-            {% endfor %}
-        </ul>
-
-        <div class="detailsListItem">User:</div>
-        <ul>
-            {% for y in x.user.all %} {% comment %} Same thing as supervisors but for users {% endcomment %}
-                <li>User first name: {{ y.first_name }}</li>
-                <li>User last name: {{ y.last_name }}</li>
-            {% endfor %}
-        </ul>
-
-        <div class="detailsListItem">Booking: {{ x.bookingRef }}</div>
-        {% comment %} Basically this next part filters through everything and makes sure only bookings that are within the time frame and have the required supervisors get displayed {% endcomment %}
-        {% comment %} Also makes sure that only equipment with matching IDs gets displayed and charged {% endcomment %}
-        <ul>
-            {% for y in filterBooking %} {% comment %} Goes through all the filtered bookings. Filtering done in views, makes sure the bookings are within the date frame provided {% endcomment %}
-                {% if y.date >= x.startDate and y.date <= x.finishDate %} {% comment %} Checks if within frame. {% endcomment %}
-                    {% for supervisor in x.supervisor.all %} {% comment %} Goes through the linked supervisors {% endcomment %}
-                        {% with supervisor_full_name=supervisor.first_name|add:" "|add:supervisor.last_name %} {% comment %} Annoying as booking model had one name filed but supervisor had two. So it bascially joins the two fields into one {% endcomment %}
-                            {% if y.supervisor == supervisor_full_name %} {% comment %} Then compares the joint fields {% endcomment %}
-                                {% for z in equipment %} {% comment %} Goes through all the equipment by accessing the equipment model {% endcomment %}
-                                    {% if z.equipmentid == y.equipmentid %} {% comment %} If IDs match between the model and booking model {% endcomment %}
-                                        <li>Booking Reference: {{ y.id }}</li>
-                                        <ul>
-                                            <li>Equipment ID: {{ z.equipmentid }}</li>
-                                            <li>Equipment Name: {{ z.equipmentname }}</li>
-                                            <li>Rate: {{ z.rate }}</li>
-                                        </ul>
-                                        <li>Length of equipment use: 
-                                            <span id="length-{{ y.id }}"></span> {% comment %} Following lines call function to display length of equipment use {% endcomment %}
-                                            <script>
-                                                var startTime = "{{ y.start|time:'H:i' }}";
-                                                var finishTime = "{{ y.finish|time:'H:i' }}";
-                                                var length = timeDiff(startTime, finishTime);
-                                                document.getElementById("length-{{ y.id }}").textContent = length + " minutes";
-                                            </script>
-                                        </li>
-                                        <li>Cost of Equipment Use: 
-                                            <span id="cost-{{ y.id }}"></span> {% comment %} Following lines call functions to calculate its cost and add to the total {% endcomment %}
-                                            <script>
-                                                var rate = parseFloat("{{ z.rate }}");
-                                                var cost = calculateCost(rate, length);
-                                                document.getElementById("cost-{{ y.id }}").textContent = "£" + cost;
-                                                addCostToTotal(cost);
-                                            </script>
-                                        </li>
-                                        <br>
-                                    {% endif %}
-                                {% endfor %}
-                            {% endif %}
-                        {% endwith %}
+                    <div>
+                    {% for y in x.supervisor.all %}
+                        <div>{{ y.first_name }} {{ y.last_name }}</div>
                     {% endfor %}
-                {% endif %}
-            {% endfor %}
-        </ul>
+                    </div>
+                </div>
+                <div>{{ x.startDate }}</div>
+                <div>{{ x.finishDate }}</div>
+            </div>
+            <div class="billingDropdown" id="{{x.invoiceRef}}"> 
+                <div>ID: {{ x.id }}</div>
+                <div>Issued: {{ x.issueDate }}</div>
+                <div>Users: <div>{% for user in x.user.all %}{{ user.first_name }} {{ user.last_name }}{% endfor %}</div></n></div>
+            </div>
+        {% endif %}
+        {% endif %}
     {% endfor %}
-
-    <div class="detailsListItem">Total Cost: <span id="total-cost">£0.00</span></div> {% comment %} Total cost!!! {% endcomment %}
 
 </body>
 </html>

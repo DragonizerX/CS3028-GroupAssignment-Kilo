@@ -10,7 +10,7 @@ from django.template import loader
 from django.contrib.admin.views.decorators import staff_member_required
 
 from .models import Bookings, AccountRequest, Users, Event, Billing, Equipment, Supervisor
-from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm
+from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm, BillingFilterForm
 # Create your views here.b
 
 def loginPage(request):
@@ -243,21 +243,23 @@ def AdminCalendarView(request):
 def billing(request):
     billing = Billing.objects.all()
     equipment = Equipment.objects.all()
-
-    filterBooking = []
     supervisors = Supervisor.objects.all()
-    for x in billing:
-        filtered_bookings = Bookings.objects.filter(date__range=(x.startDate, x.finishDate))
-        filterBooking.extend(filtered_bookings)
 
-    template = loader.get_template('billing.html')
+    form = BillingFilterForm(request.GET or None, supervisors=supervisors)
+    
+    if request.method == 'GET':
+
+        if form.is_valid():
+            filterSupervisors = form.cleaned_data.get('supervisors')
+            startDate = form.cleaned_data.get('startDate')
+            endDate = form.cleaned_data.get('endDate')
+
     context = {
         'billing': billing,
         'equipment': equipment,
-        'filterBooking': filterBooking,
-        'supervisor': supervisors,
+        'form': form,
     }
-    return HttpResponse(template.render(context, request))
+    return render(request, 'billing.html', context)
 
 def equipment(request):
     return Equipment.objects.all().values()
