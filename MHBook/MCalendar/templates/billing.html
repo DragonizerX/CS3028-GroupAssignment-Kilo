@@ -104,16 +104,6 @@
             padding: 10px;
             cursor: pointer;
         }
-
-        #startDate {
-            margin: auto;
-            max-width: 80%;
-        }
-
-        #endDate {
-            margin: auto;
-            max-width: 80%;
-        }
         
         .dates {
             box-shadow: 2px 2px 5px hsl(265 0% 70%);
@@ -172,19 +162,25 @@
         <div>
         <button class="supervisorSearch" onclick="displaySupervisors()">-- Supervisors --</button>
             <div id="supervisorDropdown">
-                <input type="checkbox" checked=True>All</input>
-                {% for sup in supervisor.all %} <!-- Why doesnt this work?? -->
-                    <input type="checkbox">{{ sup.first_name }} {{ sup.last_name }}</input>
+                <div>
+                    <input type="checkbox" id="All" checked>
+                    <label for="All">All</label>
+                </div>
+                {% for sup in supervisor %}
+                    <div>
+                        <input type="checkbox" id="{{ sup.id }}" value="{{ sup.id }}">
+                        <label for="{{ sup.id }}">{{ sup.first_name }} {{ sup.last_name }}</label>
+                    </div>
                 {% endfor %}
             </div>
         </div>
         <div class="dates">
             Start Date: 
-            <input type="date" id="startDate">
+            <div>{{ FiltersDateInput.my_date_field }}</div>
         </div>
         <div class="dates">
             End Date: 
-            <input type="date" id="endDate">
+            <div>{{ FiltersDateInput.my_date_field }}</div>
         </div>
         <button id="filter" onclick="filter"> Filter </button>
     </div>

@@ -1,4 +1,4 @@
-from django.forms import ModelForm
+from django import forms
 from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 from django.contrib.auth.models import User
 from django import forms
@@ -45,4 +45,8 @@ class EventForm(forms.ModelForm):
         }
 
 
+class DateInput(forms.DateInput):
+    input_type = 'date'
 
+class FiltersDateInput(forms.Form):
+    my_date_field = forms.DateField(widget=DateInput)
