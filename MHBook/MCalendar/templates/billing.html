@@ -4,8 +4,6 @@
     <title>Billing</title>
     <script>
 
-        /* OBSOLETE??
-
 
         // Calculates the time difference between times in order to be able to calculate cost later
         function timeDiff(start, finish) { 
@@ -33,7 +31,7 @@
             costsArray.push(cost);
         }
 
-        // Function to then take those costs and display them. I probable over complicated this but whatevs
+        // Function to then take those costs and display them. I probably over complicated this but whatevs
         function displayTotalCost() {
             const total = costsArray.reduce((sum, cost) => sum + cost, 0);
             document.getElementById("total-cost").textContent = "£" + total.toFixed(2);
@@ -41,7 +39,7 @@
 
         // Necessary as bugs occured as function wasn't working. This basically waits until everything is loaded and then runs the function.
         document.addEventListener("DOMContentLoaded", displayTotalCost);
-        */
+        
 
         function displaySupervisors() {
             // displays the checkboxes for supervisors
@@ -50,17 +48,6 @@
             let computedStyle = window.getComputedStyle(dropdown).display;
             if (computedStyle === 'none') {
                 dropdown.style.display = 'block';
-            } else {
-                dropdown.style.display = 'none';
-            }
-        }
-
-        function displayBillingDropdown(ref) {
-            // displays the billing information for selected billing
-            let dropdown = document.getElementById(ref);
-            let computedStyle = window.getComputedStyle(dropdown).display;
-            if (computedStyle === 'none') {
-                dropdown.style.display = 'grid';
             } else {
                 dropdown.style.display = 'none';
             }
@@ -91,6 +78,7 @@
         }
 
         #supervisorDropdown {
+            margin: 50px 0 0 15px;
             border-radius: 5px;
             position: absolute;
             display: none;
@@ -135,20 +123,19 @@
             background-color: hsl(0 0 85%);
             border: none;
             padding: 5px;
-            width: 75%;
-            max-width: 500px;
-            cursor: pointer;
+            width: 80%;
+            max-width: 700px;
             display: grid;
             grid-template-columns: 25% 25% 25% 25%;
         }
 
         .billingDropdown {
-            margin: auto;
+            margin: 20px auto;
+            padding: 10px;
             border-radius: 10px;
             display: grid;
-            display: none;
-            width: 70%;
-            max-width: 450px;
+            width: 80%;
+            max-width: 600px;
             background-color: hsl(0 0 90%);
             box-shadow: 2px 2px 5px hsl(265 0% 70%);
             grid-template-columns: 50% 50%;
@@ -161,13 +148,9 @@
 
     <form method="GET">
         <div id="navBar">
-            <div>
-                <!-- Supervisor selection -->
-                <button class="supervisorSearch" onclick="displaySupervisors()">-- Supervisors --</button>
-                    <div id="supervisorDropdown">
-                        {{ form.supervisors }}
-                    </div>
-            </div>
+            <!-- Supervisor selection -->
+            <button class="supervisorSearch" onclick="displaySupervisors()">-- Supervisors --</button>
+            <div id="supervisorDropdown">{{ form.supervisors }}</div>
             <!-- Date inputs -->
             <div class="dates">
                 Start Date: 
@@ -181,39 +164,13 @@
         </div>
     </form>
 
-    <!-- Konrad's Billing -->
-
-    <!-- Makes Duplicates for multiple supervisors selected
-    {% for x in billing %}
-        {% for sup in x.supervisor.all %}
-            {% if sup.id|stringformat:"s" in form.cleaned_data.supervisors %}
-                    <div class="billingLabel" onclick="displayBillingDropdown('{{x.invoiceRef}}')">
-                        <div>{{ x.invoiceRef }}</div>
-                        <div>
-                            <div>
-                            {% for y in x.supervisor.all %}
-                                <div>{{ y.first_name }} {{ y.last_name }}</div>
-                            {% endfor %}
-                            </div>
-                        </div>
-                        <div>{{ x.startDate }}</div>
-                        <div>{{ x.finishDate }}</div>
-                    </div>
-                    <div class="billingDropdown" id="{{x.invoiceRef}}"> 
-                        <div>ID: {{ x.id }}</div>
-                        <div>Issued: {{ x.issueDate }}</div>
-                        <div>Users: <div>{% for user in x.user.all %}{{ user.first_name }} {{ user.last_name }}{% endfor %}</div></n></div>
-                    </div>
-            {% endif %}
-        {% endfor %} 
-    {% endfor %}
-
--->
+    <!-- Billings -->
 
     {% for x in billing %}
         {% if x.startDate >= form.cleaned_data.startDate %}
         {% if x.finishDate <= form.cleaned_data.endDate %}
-            <div class="billingLabel" onclick="displayBillingDropdown('{{x.invoiceRef}}')">
+            <!-- Label -->
+            <div class="billingLabel">
                 <div>{{ x.invoiceRef }}</div>
                 <div>
                     <div>
@@ -222,17 +179,126 @@
                     {% endfor %}
                     </div>
                 </div>
-                <div>{{ x.startDate }}</div>
+                <div> Total Cost: </div>
                 <div>{{ x.finishDate }}</div>
             </div>
-            <div class="billingDropdown" id="{{x.invoiceRef}}"> 
-                <div>ID: {{ x.id }}</div>
-                <div>Issued: {{ x.issueDate }}</div>
-                <div>Users: <div>{% for user in x.user.all %}{{ user.first_name }} {{ user.last_name }}{% endfor %}</div></n></div>
-            </div>
+            <!-- Bookings -->
+            {% for f in filterBooking %}
+                <div class="billingDropdown"> 
+                    <div>Booking ID: {{ f.id }}</div>
+                    <div>Supervisors: {{ f.supervisor }}</div>
+                    <!-- Users unordered list -->
+                    <ul style="padding: 0;">Users: {% for user in x.user.all %}<li style="list-style: none; padding-left: 20px;">{{ user.first_name }} {{ user.last_name }}</li>{% endfor %}</ul>
+                    <!-- Equipment unordered list -->
+                    <ul style="padding: 0;">Equipment: 
+                        {% for e in equipment %}
+                            {% if e.equipmentid == f.equipmentid %}
+                                <li style="list-style: none; padding: 5px 20px 0 0;">EquipmentID: {{ e.equipmentid }}</li>
+                                <li style="list-style: none; padding: 3px 20px 0 0;">Equipment Name: {{ e.equipmentname }}</li>
+                                <li style="list-style: none; padding: 3px 20px 0 0;">Equipment Rate: £{{ e.rate }}</li>
+                                <li style="list-style: none; padding: 3px 20px 0 0;">Length of equipment use: 
+                                    <span id="length-{{ f.id }}"></span> {% comment %} Following lines call function to display length of equipment use {% endcomment %}
+                                    <script>
+                                        var startTime = "{{ f.start|time:'H:i' }}";
+                                        var finishTime = "{{ f.finish|time:'H:i' }}";
+                                        var length = timeDiff(startTime, finishTime);
+                                        document.getElementById("length-{{ f.id }}").textContent = length + " minutes";
+                                    </script>
+                                </li>
+                                <li style="list-style: none; padding: 3px 20px 0 0;">Cost of Equipment Use:
+                                    <span id="cost-{{ f.id }}"></span> {% comment %} Following lines call functions to calculate its cost and add to the total {% endcomment %}
+                                    <script>
+                                        var rate = parseFloat("{{ f.rate }}");
+                                        var cost = calculateCost(rate, length);
+                                        document.getElementById("cost-{{ f.id }}").textContent = "£" + cost;
+                                        addCostToTotal(cost);
+                                    </script>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
         {% endif %}
         {% endif %}
     {% endfor %}
+
+
+
+    <!-- Oli's Billing -->
+    {% for x in billing %}
+        <div class="billingStuff">
+            <h5 class="billingName">Billing ID: {{ x.id }}</h5>
+        </div>
+
+        <div class="detailsListItem">Invoice Reference no: {{ x.invoiceRef }}</div><br>
+        <div class="detailsListItem">Invoice date of issue: {{ x.issueDate }}</div><br>
+        <div class="detailsListItem">Start: {{ x.startDate }}</div>
+        <div class="detailsListItem">Finish: {{ x.finishDate }}</div><br>
+
+        <div class="detailsListItem">Supervisor:</div> {% comment %} Goes through all linked supervisors and displays thier names {% endcomment %}
+        <ul>
+            {% for y in x.supervisor.all %}
+                <li>Supervisor first name: {{ y.first_name }}</li>
+                <li>Supervisor last name: {{ y.last_name }}</li>
+            {% endfor %}
+        </ul>
+
+        <div class="detailsListItem">User:</div>
+        <ul>
+            {% for y in x.user.all %} {% comment %} Same thing as supervisors but for users {% endcomment %}
+                <li>User first name: {{ y.first_name }}</li>
+                <li>User last name: {{ y.last_name }}</li>
+            {% endfor %}
+        </ul>
+
+        <div class="detailsListItem">Booking: {{ x.bookingRef }}</div>
+        {% comment %} Basically this next part filters through everything and makes sure only bookings that are within the time frame and have the required supervisors get displayed {% endcomment %}
+        {% comment %} Also makes sure that only equipment with matching IDs gets displayed and charged {% endcomment %}
+        <ul>
+            {% for y in filterBooking %} {% comment %} Goes through all the filtered bookings. Filtering done in views, makes sure the bookings are within the date frame provided {% endcomment %}
+                {% if y.date >= x.startDate and y.date <= x.finishDate %} {% comment %} Checks if within frame. {% endcomment %}
+                    {% for supervisor in x.supervisor.all %} {% comment %} Goes through the linked supervisors {% endcomment %}
+                        {% with supervisor_full_name=supervisor.first_name|add:" "|add:supervisor.last_name %} {% comment %} Annoying as booking model had one name filed but supervisor had two. So it bascially joins the two fields into one {% endcomment %}
+                            {% if y.supervisor == supervisor_full_name %} {% comment %} Then compares the joint fields {% endcomment %}
+                                {% for z in equipment %} {% comment %} Goes through all the equipment by accessing the equipment model {% endcomment %}
+                                    {% if z.equipmentid == y.equipmentid %} {% comment %} If IDs match between the model and booking model {% endcomment %}
+                                        <li>Booking Reference: {{ y.id }}</li>
+                                        <ul>
+                                            <li>Equipment ID: {{ z.equipmentid }}</li>
+                                            <li>Equipment Name: {{ z.equipmentname }}</li>
+                                            <li>Rate: {{ z.rate }}</li>
+                                        </ul>
+                                        <li>Length of equipment use: 
+                                            <span id="length-{{ y.id }}"></span> {% comment %} Following lines call function to display length of equipment use {% endcomment %}
+                                            <script>
+                                                var startTime = "{{ y.start|time:'H:i' }}";
+                                                var finishTime = "{{ y.finish|time:'H:i' }}";
+                                                var length = timeDiff(startTime, finishTime);
+                                                document.getElementById("length-{{ y.id }}").textContent = length + " minutes";
+                                            </script>
+                                        </li>
+                                        <li>Cost of Equipment Use: 
+                                            <span id="cost-{{ y.id }}"></span> {% comment %} Following lines call functions to calculate its cost and add to the total {% endcomment %}
+                                            <script>
+                                                var rate = parseFloat("{{ z.rate }}");
+                                                var cost = calculateCost(rate, length);
+                                                document.getElementById("cost-{{ y.id }}").textContent = "£" + cost;
+                                                addCostToTotal(cost);
+                                            </script>
+                                        </li>
+                                        <br>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% endfor %}
+
+    <div class="detailsListItem">Total Cost: <span id="total-cost">£0.00</span></div> {% comment %} Total cost!!! {% endcomment %}
 
 </body>
 </html>

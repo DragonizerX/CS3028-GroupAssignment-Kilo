@@ -244,20 +244,24 @@ def billing(request):
     billing = Billing.objects.all()
     equipment = Equipment.objects.all()
     supervisors = Supervisor.objects.all()
-
+    filterBooking = []
     form = BillingFilterForm(request.GET or None, supervisors=supervisors)
-    
-    if request.method == 'GET':
 
-        if form.is_valid():
-            filterSupervisors = form.cleaned_data.get('supervisors')
-            startDate = form.cleaned_data.get('startDate')
-            endDate = form.cleaned_data.get('endDate')
+    if request.method == 'GET' and form.is_valid():
+
+        filterSupervisors = form.cleaned_data.get('supervisors')
+        startDate = form.cleaned_data.get('startDate')
+        endDate = form.cleaned_data.get('endDate')
+
+        if startDate and endDate:
+            filtered_bookings = Bookings.objects.filter(date__range=(startDate, endDate))
+            filterBooking.extend(filtered_bookings)
 
     context = {
         'billing': billing,
         'equipment': equipment,
         'form': form,
+        'filterBooking': filterBooking,
     }
     return render(request, 'billing.html', context)
 
