@@ -68,6 +68,9 @@ class Supervisor(models.Model):
     password = models.CharField(max_length=128, null=True)  # Initially allow null
     telephone = models.CharField(max_length=15, blank=True)
 
+    
+
+""" - ahahahah
 class Bookings(models.Model):
     fullname = models.CharField(max_length=64, blank=False, null=False)
     phone = models.IntegerField(blank=False, null=False)
@@ -80,7 +83,9 @@ class Bookings(models.Model):
     room = models.CharField(max_length=16, blank=False, null=False)
     equipment = models.CharField(max_length=64, blank=False, null=False)
     equipmentid = models.CharField(max_length=32, default='N/A')
+"""
 
+""" --- Redundant, delete later
 class AccountRequest(models.Model):
     fullname = models.CharField(max_length=64, blank=False, null=False)
     phone = models.IntegerField(blank=False, null=False)
@@ -88,22 +93,25 @@ class AccountRequest(models.Model):
     supervisor = models.CharField(max_length=64, default='N/A')
     organisation = models.CharField(max_length=128, blank=False, null=False)
     isAccepted = models.BooleanField(default=False)
+"""
 
 class Event(models.Model):
     bookingName = models.CharField(max_length=80)
     supervisorName = models.CharField(max_length=80)
     bookingDate = models.DateField()
     startTime = models.TimeField()
+    finishTime = models.TimeField()
     allotedTime = models.TimeField()
     comments = models.TextField(max_length = 1000)
     equipment = models.CharField(max_length=100, default='Not specified')
 
-# -------------------
+class Equipment(models.Model):
+    equipmentID_auto = models.AutoField(primary_key=True)
+    equipmentName = models.CharField(max_length=100)
+    hourlyRate = models.FloatField(default=0.0)
 
-class Equipment(models.Model): # Temp equipment model for backend
-    equipmentid = models.CharField(max_length=32, blank=False, null=False)
-    equipmentname = models.CharField(max_length=64, default="N/A")
-    rate = models.FloatField(default=0.0)
+    def __str__(self):
+        return self.equipmentName
 
 class Billing(models.Model): 
     invoiceRef = models.CharField(max_length=10, blank=False, null=False)
