@@ -5,13 +5,12 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.template import loader
-from django.views.decorators.csrf import ensure_csrf_cookie
 
 
 from django.contrib.admin.views.decorators import staff_member_required
 
-from .models import Users, Event, Billing, Equipment, Supervisor
-from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm, BillingFilterForm, AddEquipmentForm
+from .models import Bookings, AccountRequest, Users, Event, Billing, Equipment, Supervisor
+from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm, BillingFilterForm
 # Create your views here.b
 
 def loginPage(request):
@@ -20,18 +19,11 @@ def loginPage(request):
         password = request.POST.get('password')
         print('email: ', email, 'password', password)
         user = authenticate(email=email, password=password) #authenticates users
-        #print(user)
+        print(user)
         if user is not None: #if user exists in database
             if user.verified == True:
-                #print(user.is_superuser)
-                if user.is_superuser:
-                    #print("A")
-                    login(request, user)
-                    return redirect('CalendarPageAdmin')
-                else:
-                    #print("B")
-                    login(request, user)
-                    return redirect('CalendarPage')
+                login(request, user)
+                return redirect('accountPage')
             else:
                 messages.info(request, 'Your account has not been approved by the admins yet!')
         else:
@@ -61,27 +53,24 @@ def registrationPage(request):
     return render(request, 'register.html', context)
 
 
-#@login_required(login_url='loginPage') #Method 1 for making sure user in logged in to access this page.
+@login_required(login_url='loginPage') #Method 1 for making sure user in logged in to access this page.
 def accountPage(request):
-    if request.user.is_authenticated:
-        user = Users.objects.get(id=request.user.id) #Get both current user and current form.
-        form = UpdateUserForm(request.POST or None, instance=user)
-        if request.method == 'POST':
-            form = UpdateUserForm(data=request.POST, instance=request.user)
+    user = Users.objects.get(id=request.user.id) #Get both current user and current form.
+    form = UpdateUserForm(request.POST or None, instance=user)
+    if request.method == 'POST':
+        form = UpdateUserForm(data=request.POST, instance=request.user)
 
-            if form.is_valid(): #If the form's data is valid then data is saved and redirected.
-                form.save()
-                messages.success(request, "User has been updated!")
-                return redirect("accountPage")
-            
-            else:
-                form = UpdateUserForm(instance=request.user) #Even if not valid, will display saved data.
-            
-            return render(request, 'account.html', {"form" :form} )
-        return render(request, 'account.html', {"form" :form})
-    else:
-        messages.success(request, "Please log in before entering that page!")
-        return redirect("loginPage")
+        if form.is_valid(): #If the form's data is valid then data is saved and redirected.
+            form.save()
+            messages.success(request, "User has been updated!")
+            return redirect("accountPage")
+        
+        else:
+            form = UpdateUserForm(instance=request.user) #Even if not valid, will display saved data.
+        
+        return render(request, 'account.html', {"form" :form} )
+    return render(request, 'account.html', {"form" :form})
+
 
 def changePasswordPage(request):
     if request.user.is_authenticated: #Method 2 for making sure user in logged in to access this page.
@@ -109,259 +98,145 @@ def changePasswordPage(request):
     
 
 def myBookings(request):
-    if request.user.is_authenticated:
-        myBookings = Event.objects.all().values()
-        template = loader.get_template('myBookings.html')
-        context = {
-            'myBookings': myBookings,
-        }
-        return HttpResponse(template.render(context, request))
-    else:
-        messages.success(request, "Please log in before entering that page!")
-        return redirect("loginPage")
+    myBookings = Bookings.objects.all().values()
+    template = loader.get_template('myBookings.html')
+    context = {
+        'myBookings': myBookings,
+    }
+    return HttpResponse(template.render(context, request))
 
 def requests(request):
-    if request.user.is_superuser:
-        requests = Users.objects.all().values()
-        template = loader.get_template('requests.html')
-        context = {
-            'requests': requests,
-        }
-        return HttpResponse(template.render(context, request))
-    else:
-        messages.success(request, "Please log in before entering that page! Admin access only.")
-        logout(request)
-        return redirect("loginPage")
+    requests = AccountRequest.objects.all().values()
+    template = loader.get_template('requests.html')
+    context = {
+        'requests': requests,
+    }
+    return HttpResponse(template.render(context, request))
 
 def cancelBooking(request, id):
-    booking = get_object_or_404(Event, id=id)
+    booking = get_object_or_404(Bookings, id=id)
     booking.delete()
-    return redirect('myBookings')
+    return redirect('MCalendar:myBookings')
 
 def confirmAccept(request, id):
-    requests = get_object_or_404(Users, id=id)
-    requests.verified = True
+    requests = get_object_or_404(AccountRequest, id=id)
+    requests.isAccepted = True
     requests.save()
-    return redirect('requests')
+    return redirect('MCalendar:requests')
 
 def confirmReject(request, id):
-    requests = get_object_or_404(Users, id=id)
+    requests = get_object_or_404(AccountRequest, id=id)
     requests.delete()
-    return redirect('requests')
+    return redirect('MCalendar:requests')
 
 def editBooking(request, id):
-    if request.user.is_authenticated:
-        booking = get_object_or_404(Event, id=id)
-        
-        if request.method == 'POST':
-            bookingName = request.POST.get('bookingName')
-            if bookingName:
-                booking.bookingName = bookingName
+    booking = get_object_or_404(Bookings, id=id)
+    
+    if request.method == 'POST':
+        fullname = request.POST.get('fullname')
+        if fullname:
+            booking.fullname = fullname
 
-            supervisorName = request.POST.get('supervisorName')
-            if supervisorName:
-                booking.supervisorName = supervisorName
+        phone = request.POST.get('phone')
+        if phone:
+            booking.phone = int(phone)
 
-            bookingDate = request.POST.get('bookingDate')
-            if bookingDate:
-                booking.bookingDate = bookingDate
+        email = request.POST.get('email')
+        if email:
+            booking.email = email
 
-            startTime = request.POST.get('startTime')
-            if startTime:
-                booking.startTime = startTime
+        supervisor = request.POST.get('supervisor')
+        if supervisor:
+            booking.supervisor = supervisor
 
-            finishTime = request.POST.get('finishTime')
-            if finishTime:
-                booking.finishTime = finishTime
-            
-            allotedTime = request.POST.get('allotedTime')
-            if allotedTime:
-                booking.allotedTime = allotedTime
+        organisation = request.POST.get('organisation')
+        if organisation:
+            booking.organisation = organisation
 
-            comments = request.POST.get('comments')
-            if comments:
-                booking.comments = comments
+        date = request.POST.get('date')
+        if date:
+            booking.date = date
 
-            equipment = request.POST.get('equipment')
-            if equipment:
-                booking.equipment = equipment
+        start = request.POST.get('start')
+        if start:
+            booking.start = start
 
-            booking.save()
-            return redirect('myBookings')
+        finish = request.POST.get('finish')
+        if finish:
+            booking.finish = finish
 
-        template = loader.get_template('editBooking.html')
-        context = {
-            'editBooking': [booking],
-        }
-        return HttpResponse(template.render(context, request))
-    else:
-        messages.success(request, "Please log in before entering that page!")
-        return redirect("loginPage")
+        room = request.POST.get('room')
+        if room:
+            booking.room = room
 
-@ensure_csrf_cookie
-def calendar_view(request):
-    return render(request, 'CalendarPage.html')
+        equipment = request.POST.get('equipment')
+        if equipment:
+            booking.equipment = equipment
 
-@ensure_csrf_cookie
+        equipmentid = request.POST.get('equipmentid')
+        if equipmentid:
+            booking.equipmentid = equipmentid
+
+        booking.save()
+        return redirect('myBookings')
+
+    template = loader.get_template('editBooking.html')
+    context = {
+        'editBooking': [booking],
+    }
+    return HttpResponse(template.render(context, request))
+
 def create_event(request):
     if request.method == 'POST':
-        try:
-            
-            booking_Name = request.POST.get('bookingName')
-            supervisor_Name = request.POST.get('supervisorName')
-            booking_Date = request.POST.get('bookingDate')
-            start_Time = request.POST.get('startTime')
-            alloted_Time = request.POST.get('allottedTime')
-            comments_ = request.POST.get('comments')
-            equipment_ = request.POST.get('equipment')
-        
-            event = Event(
-                bookingName=booking_Name,
-                supervisorName=supervisor_Name,
-                bookingDate=booking_Date,
-                startTime=start_Time,
-                allotedTime=alloted_Time,
-                comments=comments_,
-                equipment=equipment_
-            )
-            event.save()
+        booking_Name = request.POST.get('bookingName')
+        supervisor_Name = request.POST.get('supervisorName')
+        booking_Date = request.POST.get('bookingDate')
+        start_Time = request.POST.get('startTime')
+        alloted_Time = request.POST.get('allottedTime')
+        comments_ = request.POST.get('comments')
+        equipment_ = request.POST.get('equipment')
+    
+        event = Event(
+            bookingName = booking_Name,
+            supervisorName = supervisor_Name,
+            bookingDate = booking_Date,
+            startTime = start_Time,
+            allotedTime = alloted_Time,
+            comments = comments_,
+            equipment = equipment_
+        )
+        event.save()
 
-            return JsonResponse({
-                'status': 'success',
-                'event': {
-                    'title': f"{event.bookingName} - {event.equipment}",
-                    'start': f"{event.bookingDate}T{event.startTime}",
-                    'end': f"{event.bookingDate}T{event.allotedTime}",
-                }
-            })
-        except Exception as e:
-            return JsonResponse({
-                'status': 'error',
-                'message': str(e)
-            }, status=400)
-
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
-
-def get_events(request):
-    try:
-        equipment = request.GET.get('equipment', '')
-        
-        if equipment:
-            events = Event.objects.filter(equipment=equipment)
-        else:
-            events = Event.objects.none()
-            
-        event_list = []
-        for event in events:
-            event_data = {
+        return JsonResponse({
+            'status': 'success',
+            'event': {
                 'title': f"{event.bookingName} - {event.equipment}",
                 'start': f"{event.bookingDate}T{event.startTime}",
                 'end': f"{event.bookingDate}T{event.allotedTime}",
-                'supervisorName': event.supervisorName,
-                'comments': event.comments
             }
-            event_list.append(event_data)
-            
-        return JsonResponse(event_list, safe=False)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=400)
+        })
 
-def add_equipment(request):
-    if request.method == 'POST':
-        form = AddEquipmentForm(request.POST)
-        if form.is_valid():
-            form.save()
-            if request.user.is_superuser:
-                return redirect('CalendarPageAdmin')  # Redirect to a success page or another view
-            else:
-                return redirect('CalendarPage')
-        else:
-            return JsonResponse({'errors': form.errors}, status=400)
-    else:
-        form = AddEquipmentForm()
-    
-    # Render the form in case of GET request or invalid POST
-    if request.user.is_superuser:
-        return render(request, 'CalendarPageAdmin.html', {'form': form})
-    else:
-        return render(request, 'CalendarPage.html', {'form': form})
-    
-def delete_equipment(request):
-    if request.method == 'POST':
-        equipment_id = request.POST.get('delete_equipment')
-        try:
-            equipment = Equipment.objects.get(equipmentID_auto=equipment_id)
-            equipment.delete()
-            return redirect('CalendarPageAdmin')  # Redirect after deletion
-        except Equipment.DoesNotExist:
-            return HttpResponse("Equipment not found.", status=404)
-    
-    # If it's a GET request, render the deletion form with the dropdown
-    equipment_list = Equipment.objects.all()
-    return render(request, 'CalendarPageAdmin.html', {'equipmentList': equipment_list})
+        return HttpResponse("Booking created!")
+    return HttpResponse(request='CalendarPage.html')
 
-def CalendarPage(request):
-    if request.user.is_authenticated:
-        equipment_list = Equipment.objects.all()
-        return render(request, 'CalendarPage.html', {'equipmentList': equipment_list})
-    else:
-        messages.success(request, "Please log in before entering that page!")
-        return redirect("loginPage")
+def get_events(request):
+    events = Event.objects.all()
+    print(events)
+    event_list = []
+    for event in events:
+        event_list.append({
+            'title': f"{event.bookingName} - {event.equipment}",
+            'start': f"{event.bookingDate}T{event.startTime}",
+            'end': f"{event.bookingDate}T{event.allotedTime}",
+        })
+    return JsonResponse(event_list, safe=False)
 
+def home(request):
+    return render(request,"CalendarPage.html")
 
+@staff_member_required
 def AdminCalendarView(request):
-    if request.user.is_superuser:
-        equipment_list = Equipment.objects.all()
-        return render(request, 'CalendarPageAdmin.html', {'equipmentList': equipment_list})
-    else:
-        messages.success(request, "Please log in before entering that page! Admin access only.")
-        logout(request)
-        return redirect("loginPage")
-    
-
-def archivePage(request):
-    if request.user.is_superuser:
-        eventList = Event.objects.all()
-        equipmentList = Equipment.objects.all()
-
-        bookingName = request.GET.get('bookingName')
-        supervisorName = request.GET.get('supervisorName')
-        dateMin = request.GET.get('dateMin')
-        dateMax = request.GET.get('dateMax')
-        equipment = request.GET.get('equipment')
-        #print(bookingName, supervisorName)
-
-        if archiveValidQuery(bookingName):
-            eventList = eventList.filter(bookingName__icontains=bookingName)
-
-        if archiveValidQuery(supervisorName):
-            eventList = eventList.filter(supervisorName__icontains=supervisorName)
-
-        if archiveValidQuery(dateMin):
-            eventList = eventList.filter(bookingDate__gte=dateMin)
-
-        if archiveValidQuery(dateMax):
-            eventList = eventList.filter(bookingDate__lte=dateMax)
-
-        if archiveValidQuery(equipment) and equipment != 'Select...':
-            eventList = eventList.filter(equipment__name=equipment)
-
-
-        context = {
-            'eventList': eventList,
-            'equipmentList': equipmentList
-        }
-
-        return render(request, 'archive.html', context)
-    
-    else:
-        messages.success(request, "Please log in before entering that page! Admin access only.")
-        logout(request)
-        return redirect("loginPage")
-
-
-def archiveValidQuery(param):
-    return param != '' and param is not None
+    return render(request, 'CalendarPageAdmin.html')
 
 # --------------
 
@@ -379,7 +254,7 @@ def billing(request):
         endDate = form.cleaned_data.get('endDate')
 
         if startDate and endDate:
-            filtered_bookings = Event.objects.filter(date__range=(startDate, endDate))
+            filtered_bookings = Bookings.objects.filter(date__range=(startDate, endDate))
             filterBooking.extend(filtered_bookings)
 
     context = {
