@@ -67,7 +67,7 @@ class Supervisor(models.Model):
 
     
 
-
+""" - ahahahah
 class Bookings(models.Model):
     fullname = models.CharField(max_length=64, blank=False, null=False)
     phone = models.IntegerField(blank=False, null=False)
@@ -80,6 +80,7 @@ class Bookings(models.Model):
     room = models.CharField(max_length=16, blank=False, null=False)
     equipment = models.CharField(max_length=64, blank=False, null=False)
     equipmentid = models.CharField(max_length=32, default='N/A')
+"""
 
 """ --- Redundant, delete later
 class AccountRequest(models.Model):
@@ -96,10 +97,10 @@ class Event(models.Model):
     supervisorName = models.CharField(max_length=80)
     bookingDate = models.DateField()
     startTime = models.TimeField()
+    finishTime = models.TimeField()
     allotedTime = models.TimeField()
     comments = models.TextField(max_length = 1000)
     equipment = models.CharField(max_length=100, default='Not specified')
-
 
 class Equipment(models.Model):
     equipmentID_auto = models.AutoField(primary_key=True)
