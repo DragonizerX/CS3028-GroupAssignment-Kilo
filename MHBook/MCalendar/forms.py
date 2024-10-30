@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 from django.contrib.auth.models import User
 from django import forms
 from django.utils import timezone
-from dateutil.relativedelta import relativedelta
+from dateutil.relativedelta import relativedelta # type: ignore
 
 from MCalendar.models import Users, Event, Equipment
 
