@@ -117,7 +117,7 @@ class Billing(models.Model):
     invoiceRef = models.CharField(max_length=10, blank=False, null=False)
     supervisor = models.ManyToManyField(Supervisor) # includes first and last name, can be changed in billing.html
     user = models.ManyToManyField(Users) # includes first and last name, can be changed in billing.html
-    bookingStuff = models.ManyToManyField(Event) # includes booking reference no which for now is the booking id, and takes the start and finish time parameters to calculate the differnce in minutes to display time used
+    bookingStuff = models.ManyToManyField(Bookings) # includes booking reference no which for now is the booking id, and takes the start and finish time parameters to calculate the differnce in minutes to display time used
     issueDate = models.DateField(default=timezone.now)
     startDate = models.DateField(default=(timezone.now().date() - relativedelta(months=3))) # Default is 3 months difference but we need to be able to change this and finish date
     finishDate = models.DateField(default=timezone.now)
