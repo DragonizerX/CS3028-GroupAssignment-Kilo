@@ -10,7 +10,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 from django.contrib.admin.views.decorators import staff_member_required
 
-from .models import Bookings, Users, Event, Equipment
+from .models import Users, Event, Equipment
 from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm, AddEquipmentForm
 # Create your views here.b
 
@@ -110,7 +110,7 @@ def changePasswordPage(request):
 
 def myBookings(request):
     if request.user.is_authenticated:
-        myBookings = Bookings.objects.all().values()
+        myBookings = Event.objects.all().values()
         template = loader.get_template('myBookings.html')
         context = {
             'myBookings': myBookings,
@@ -134,7 +134,7 @@ def requests(request):
         return redirect("loginPage")
 
 def cancelBooking(request, id):
-    booking = get_object_or_404(Bookings, id=id)
+    booking = get_object_or_404(Event, id=id)
     booking.delete()
     return redirect('myBookings')
 
@@ -151,55 +151,43 @@ def confirmReject(request, id):
 
 def editBooking(request, id):
     if request.user.is_authenticated:
-        booking = get_object_or_404(Bookings, id=id)
+        booking = get_object_or_404(Event, id=id)
         
         if request.method == 'POST':
-            fullname = request.POST.get('fullname')
-            if fullname:
-                booking.fullname = fullname
+            bookingName = request.POST.get('bookingName')
+            if bookingName:
+                booking.bookingName = bookingName
 
-            phone = request.POST.get('phone')
-            if phone:
-                booking.phone = int(phone)
+            supervisorName = request.POST.get('supervisorName')
+            if supervisorName:
+                booking.supervisorName = supervisorName
 
-            email = request.POST.get('email')
-            if email:
-                booking.email = email
+            bookingDate = request.POST.get('bookingDate')
+            if bookingDate:
+                booking.bookingDate = bookingDate
 
-            supervisor = request.POST.get('supervisor')
-            if supervisor:
-                booking.supervisor = supervisor
+            startTime = request.POST.get('startTime')
+            if startTime:
+                booking.startTime = startTime
 
-            organisation = request.POST.get('organisation')
-            if organisation:
-                booking.organisation = organisation
+            finishTime = request.POST.get('finishTime')
+            if finishTime:
+                booking.finishTime = finishTime
+            
+            allotedTime = request.POST.get('allotedTime')
+            if allotedTime:
+                booking.allotedTime = allotedTime
 
-            date = request.POST.get('date')
-            if date:
-                booking.date = date
-
-            start = request.POST.get('start')
-            if start:
-                booking.start = start
-
-            finish = request.POST.get('finish')
-            if finish:
-                booking.finish = finish
-
-            room = request.POST.get('room')
-            if room:
-                booking.room = room
+            comments = request.POST.get('comments')
+            if comments:
+                booking.comments = comments
 
             equipment = request.POST.get('equipment')
             if equipment:
                 booking.equipment = equipment
 
-            equipmentid = request.POST.get('equipmentid')
-            if equipmentid:
-                booking.equipmentid = equipmentid
-
             booking.save()
-            return redirect('MCalendar:myBookings')
+            return redirect('myBookings')
 
         template = loader.get_template('editBooking.html')
         context = {
