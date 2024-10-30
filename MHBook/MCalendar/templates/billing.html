@@ -40,6 +40,7 @@
 
         function displaySupervisors() {
             // displays the checkboxes for supervisors
+            event.preventDefault();
             let dropdown = document.getElementById('supervisorDropdown');
             let computedStyle = window.getComputedStyle(dropdown).display;
             if (computedStyle === 'none') {
@@ -79,7 +80,7 @@
 
         .supervisorSearch {
             box-shadow: 2px 2px 5px hsl(265 0% 70%);
-            border-radius: 5px;
+            border-radius: 10px;
             height: 40px;
             margin: auto;
             background-color: hsl(0 0 85%);
@@ -107,7 +108,7 @@
         
         .dates {
             box-shadow: 2px 2px 5px hsl(265 0% 70%);
-            border-radius: 5px;
+            border-radius: 10px;
             text-align: center;
             height: 40px;
             width: 90%;
@@ -117,7 +118,7 @@
 
         #filter {
             box-shadow: 2px 2px 5px hsl(265 0% 70%);
-            border-radius: 5px;
+            border-radius: 10px;
             height: 40px;
             margin: auto;
             background-color: hsl(0 0 85%);
@@ -129,7 +130,7 @@
 
         .billingLabel {
             box-shadow: 2px 2px 5px hsl(265 0% 70%);
-            border-radius: 5px;
+            border-radius: 10px;
             margin: 20px auto;
             background-color: hsl(0 0 85%);
             border: none;
@@ -143,7 +144,7 @@
 
         .billingDropdown {
             margin: auto;
-            border-radius: 5px;
+            border-radius: 10px;
             display: grid;
             display: none;
             width: 70%;
@@ -158,32 +159,32 @@
 
 <body>
 
-    <div id="navBar">
-        <div>
-        <button class="supervisorSearch" onclick="displaySupervisors()">-- Supervisors --</button>
-            <div id="supervisorDropdown">
-                <div>
-                    <input type="checkbox" id="All" checked>
-                    <label for="All">All</label>
-                </div>
-                {% for sup in supervisor %}
-                    <div>
-                        <input type="checkbox" id="{{ sup.id }}" value="{{ sup.id }}">
-                        <label for="{{ sup.id }}">{{ sup.first_name }} {{ sup.last_name }}</label>
+    <form method="GET">
+        <div id="navBar">
+            <div>
+                <!-- Supervisor selection -->
+                <button class="supervisorSearch" onclick="displaySupervisors()">-- Supervisors --</button>
+                    <div id="supervisorDropdown">
+                        {% for sup in supervisor %}
+                            <div>
+                                <input type="checkbox" id="{{ sup.id }}" name="sup{{ sup.id }}" value="{{ sup.id }}">
+                                <label for="{{ sup.id }}">{{ sup.first_name }} {{ sup.last_name }}</label>
+                            </div>
+                        {% endfor %}
                     </div>
-                {% endfor %}
             </div>
+            <!-- Date inputs -->
+            <div class="dates">
+                Start Date: 
+                <input type="date" style="max-width:100px;" name="st" value="">
+            </div>
+            <div class="dates">
+                End Date: 
+                <input type="date" style="max-width:100px;" name="en" value="">
+            </div>
+            <input type="submit" id="filter" onclick="filter" value="Filter">
         </div>
-        <div class="dates">
-            Start Date: 
-            <div>{{ FiltersDateInput.my_date_field }}</div>
-        </div>
-        <div class="dates">
-            End Date: 
-            <div>{{ FiltersDateInput.my_date_field }}</div>
-        </div>
-        <button id="filter" onclick="filter"> Filter </button>
-    </div>
+    </form>
 
     <!-- Konrad's Billing -->
     {% for x in billing %}

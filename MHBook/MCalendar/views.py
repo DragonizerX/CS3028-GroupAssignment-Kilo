@@ -10,7 +10,7 @@ from django.template import loader
 from django.contrib.admin.views.decorators import staff_member_required
 
 from .models import Bookings, AccountRequest, Users, Event, Billing, Equipment, Supervisor
-from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm, FiltersDateInput
+from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm
 # Create your views here.b
 
 def loginPage(request):
@@ -243,7 +243,6 @@ def AdminCalendarView(request):
 def billing(request):
     billing = Billing.objects.all()
     equipment = Equipment.objects.all()
-    filtersForm = FiltersDateInput()
 
     filterBooking = []
     supervisors = Supervisor.objects.all()
@@ -256,7 +255,6 @@ def billing(request):
         'billing': billing,
         'equipment': equipment,
         'filterBooking': filterBooking,
-        'FiltersDateInput': filtersForm,
         'supervisor': supervisors,
     }
     return HttpResponse(template.render(context, request))

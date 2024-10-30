@@ -43,10 +43,3 @@ class EventForm(forms.ModelForm):
             'equipment': forms.Select(attrs={'class': 'form-control'})
 
         }
-
-
-class DateInput(forms.DateInput):
-    input_type = 'date'
-
-class FiltersDateInput(forms.Form):
-    my_date_field = forms.DateField(widget=DateInput)
