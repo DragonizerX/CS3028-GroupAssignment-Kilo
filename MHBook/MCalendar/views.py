@@ -221,7 +221,7 @@ def create_event(request):
             supervisor_Name = request.POST.get('supervisorName')
             booking_Date = request.POST.get('bookingDate')
             start_Time = request.POST.get('startTime')
-            alloted_Time = request.POST.get('allottedTime')
+            finish_Time = request.POST.get('allottedTime')
             comments_ = request.POST.get('comments')
             equipment_ = request.POST.get('equipment')
         
@@ -230,7 +230,7 @@ def create_event(request):
                 supervisorName=supervisor_Name,
                 bookingDate=booking_Date,
                 startTime=start_Time,
-                allotedTime=alloted_Time,
+                finishTime = finish_Time,
                 comments=comments_,
                 equipment=equipment_
             )
@@ -241,7 +241,7 @@ def create_event(request):
                 'event': {
                     'title': f"{event.bookingName} - {event.equipment}",
                     'start': f"{event.bookingDate}T{event.startTime}",
-                    'end': f"{event.bookingDate}T{event.allotedTime}",
+                    'end': f"{event.bookingDate}T{event.finishTime}",
                 }
             })
         except Exception as e:
@@ -266,7 +266,7 @@ def get_events(request):
             event_data = {
                 'title': f"{event.bookingName} - {event.equipment}",
                 'start': f"{event.bookingDate}T{event.startTime}",
-                'end': f"{event.bookingDate}T{event.allotedTime}",
+                'end': f"{event.bookingDate}T{event.finishTime}",
                 'supervisorName': event.supervisorName,
                 'comments': event.comments
             }

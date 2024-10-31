@@ -31,14 +31,14 @@ class ChangePasswordForm(SetPasswordForm):
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['bookingName', 'supervisorName', 'bookingDate', 'startTime', 'allotedTime', 'comments', 'equipment']
+        fields = ['bookingName', 'supervisorName', 'bookingDate', 'startTime', 'finishTime', 'comments', 'equipment']
 
         widgets = {
             'bookingName': forms.TextInput(attrs={'class': 'form-control'}),
             'supervisorName':forms.TextInput(attrs={'class': 'form-control'}),
             'bookingDate': forms.DateInput(attrs={'class':'form-control','type':'date'}),
             'start_time':forms.TimeInput(attrs={'class':'form-control','type':'time'}),
-            'alloted_time': forms.TimeInput(attrs={'class':'form-control','type':'time'}),
+            'finish_time': forms.TimeInput(attrs={'class':'form-control','type':'time'}),
             'comments':forms.Textarea(attrs={'class':'form-contorl','rows':3}),
             'equipment': forms.Select(attrs={'class': 'form-control'})
 

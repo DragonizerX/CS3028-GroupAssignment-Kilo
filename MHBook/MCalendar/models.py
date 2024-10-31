@@ -98,7 +98,7 @@ class Event(models.Model):
     bookingDate = models.DateField()
     startTime = models.TimeField()
     finishTime = models.TimeField()
-    allotedTime = models.TimeField()
+    #allotedTime = models.TimeField()
     comments = models.TextField(max_length = 1000)
     equipment = models.CharField(max_length=100, default='Not specified')
 
