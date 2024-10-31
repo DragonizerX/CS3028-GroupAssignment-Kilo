@@ -221,7 +221,7 @@ def create_event(request):
             supervisor_Name = request.POST.get('supervisorName')
             booking_Date = request.POST.get('bookingDate')
             start_Time = request.POST.get('startTime')
-            finish_Time = request.POST.get('allottedTime')
+            finish_Time = request.POST.get('finishTime')
             comments_ = request.POST.get('comments')
             equipment_ = request.POST.get('equipment')
         

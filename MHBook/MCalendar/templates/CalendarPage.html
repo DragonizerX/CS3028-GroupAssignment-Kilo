@@ -217,10 +217,10 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-sm-3">
-                                <label for="allottedTime" class="control-label">End Time:</label>
+                                <label for="finishTime" class="control-label">End Time:</label>
                             </div>
                             <div class="col-sm-9">
-                                <select class="form-control" id="allottedTime" name="allottedTime" required>
+                                <select class="form-control" id="finishTime" name="finishTime" required>
                                     <option value="00:00">00:00</option>
                                     <option value="01:00">01:00</option>
                                     <option value="02:00">02:00</option>
@@ -294,6 +294,8 @@
                 var time = info.start.toTimeString().split(' ')[0].slice(0, 5);
                 document.getElementById('bookingDate').value = date;
                 document.getElementById('startTime').value = time;
+                var endTime = info.end.toTimeString().split(' ')[0].slice(0, 5);
+                document.getElementById('finishTime').value = endTime;
                 $('#bookingForm').collapse('show');
             },
             height: 'auto',
