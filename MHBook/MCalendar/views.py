@@ -12,6 +12,9 @@ from django.contrib.admin.views.decorators import staff_member_required
 
 from .models import Users, Event, Equipment
 from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm, AddEquipmentForm
+
+from django.core.mail import send_mail
+from django.conf import settings
 # Create your views here.b
 
 def loginPage(request):
@@ -141,6 +144,13 @@ def cancelBooking(request, id):
 def confirmAccept(request, id):
     requests = get_object_or_404(Users, id=id)
     requests.verified = True
+    send_mail(
+        "Your Account Is Verified!",
+        "Congratulations!\n\nYour account has been verified and is in our HistoTrack system. You may now log in.",
+        "histotrackltd@gmail.com",
+        [requests.email],
+        fail_silently=False,
+    )
     requests.save()
     return redirect('requests')
 
