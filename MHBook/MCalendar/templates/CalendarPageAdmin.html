@@ -119,7 +119,7 @@
     </div>
 
     <!-- top bar (includes sidebar button and whatever else)-->
-    <div class="container-fluid bg-dark text-white topbar">
+    <div class="container-fluid text-white topbar">
         <div class="row">
             <div class="col-2 container-fluid text-left">
             <span class="sidebarButton" style="position:relative; top: 11px;" onclick="toggleNav()">&#9776;</span>
@@ -131,7 +131,7 @@
         </div>
     </div>
 
-    <div class="container rounded bg-white mt-5 mb-5">
+    <div class="container rounded bg-white mt-5 mb-5 pb-5">
         <div class="container">
         <!--EQUIPMENT SELECTION-->
         <div id="equipmentSelect" class="form-group">
@@ -150,11 +150,11 @@
         <div class="text-center mt-4">
 
             {% if user.is_superuser %}
-            <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#addEquipForm" aria-expanded="false" aria-controls="addEquipForm">
+            <button class="btn btn-sty" type="button" data-toggle="collapse" data-target="#addEquipForm" aria-expanded="false" aria-controls="addEquipForm">
                 Add Equipment 
             </button>
 
-            <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#deleteEquipForm" aria-expanded="false" aria-controls="deleteEquipForm">
+            <button class="btn btn-sty" type="button" data-toggle="collapse" data-target="#deleteEquipForm" aria-expanded="false" aria-controls="deleteEquipForm">
                 Delete Equipment 
             </button>
             {% endif %}
@@ -226,7 +226,7 @@
             
             <!--BOOKING FORM-->
             <div class="text-center mt-4">
-                <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#bookingForm" aria-expanded="false" aria-controls="bookingForm">
+                <button class="btn btn-sty" type="button" data-toggle="collapse" data-target="#bookingForm" aria-expanded="false" aria-controls="bookingForm">
                     Make New Booking 
                 </button>
                 
