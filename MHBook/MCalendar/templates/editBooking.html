@@ -96,37 +96,22 @@
         {% for x in editBooking %}
         
         <label for="name">Full Name: </label>
-        <input type="text" id="name" name="fullname" placeholder="{{ x.fullname }}">
-
-        <label for="phone">Phone Number: </label>
-        <input type="tel" id="phone" name="phone" placeholder="{{ x.phone }}">
-
-        <label for="email">Email: </label>
-        <input type="email" id="email" name="email" placeholder="{{ x.email }}">
+        <input type="text" id="name" name="bookingName" placeholder="{{ x.bookingName }}">
 
         <label for="supervisor">Supervisor: </label>
-        <input type="text" id="supervisor" name="supervisor" placeholder="{{ x.supervisor }}">
-
-        <label for="organisation">Organisation: </label>
-        <input type="text" id="organisation" name="organisation" placeholder="{{ x.organisation }}">
+        <input type="text" id="supervisor" name="supervisorName" placeholder="{{ x.supervisorName }}">
 
         <label for="date">Date: </label>
-        <input type="date" id="date" name="date" value="{{ x.date|date:'Y-m-d' }}">
+        <input type="date" id="date" name="bookingDate" value="{{ x.bookingDate|date:'Y-m-d' }}">
 
         <label for="start">Start time: </label>
-        <input type="time" id="start" name="start" value="{{ x.start|time:'H:i' }}">
+        <input type="time" id="start" name="startTime" value="{{ x.startTime|time:'H:i' }}">
 
         <label for="finish">Finish time: </label>
-        <input type="time" id="finish" name="finish" value="{{ x.finish|time:'H:i' }}">
-
-        <label for="room">Room: </label>
-        <input type="text" id="room" name="room" placeholder="{{ x.room }}">
+        <input type="time" id="finish" name="finishTime" value="{{ x.finishTime|time:'H:i' }}">
 
         <label for="equipment">Equipment: </label>
         <input type="text" id="equipment" name="equipment" placeholder="{{ x.equipment }}">
-
-        <label for="equipmentid">Equipment ID: </label>
-        <input type="text" id="equipmentid" name="equipmentid" placeholder="{{ x.equipmentid }}">
 
         <input type="submit" value="Submit" style="width: 80%; margin: auto;">
 
