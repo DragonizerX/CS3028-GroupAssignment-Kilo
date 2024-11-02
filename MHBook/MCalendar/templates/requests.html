@@ -17,35 +17,6 @@
 
         <style>
 
-            #menuIcon {
-                margin-left: 10px;
-                cursor: pointer;
-                position: sticky;
-                top: 0px;
-                background-color: lightgrey;
-                width: 40px;
-                height: 39px;
-                border: 3px solid black;
-            }
-
-            .menuBar {
-                opacity: 1;
-                transition: opacity 0.4s ease-in-out;
-                margin: auto;
-                padding-top: 10px;
-                width: 25px;
-                color: black;
-                border-bottom: 3px solid black;
-            }
-
-            .menuBar.fade{
-                opacity: 0;
-            }
-
-            .menuBarPadding {
-                padding-top: 5px;
-            }
-
             #requestsHeader {
                 margin-left: 20px;
                 margin-bottom: 30px;
@@ -71,18 +42,6 @@
                 margin: auto;
             }
 
-            .accept {
-                max-width: 60px;
-                max-height: 30px;
-                margin: auto 0 auto auto;
-            }
-
-            .reject {
-                max-width: 60px;
-                max-height: 30px;
-                margin: auto 0 auto 0;
-            }
-
             .requestDetailsContainer {
                 grid-column: 1 / span 3;
                 display: flex;
@@ -93,18 +52,21 @@
                 margin: auto;
             }
 
+            .reqDetail {
+                display: flex;
+                justify-content: space-evenly;
+                flex-wrap: flex;
+                padding: 5px;
+                background-color: #111;
+            }
+
+            .req-container {
+                padding: 10px;
+            }
+
         </style>
         
         <script>
-
-            document.addEventListener("DOMContentLoaded", function()
-                {
-                    let menuIcon = document.getElementById('menuIcon');
-                    let menuBars = document.querySelectorAll('.menuBar');
-                    menuIcon.onclick = function() {
-                    menuBars.forEach(bar => bar.classList.toggle('fade'));
-                    }
-                })
 
             function confirmAccept(id) {
                 const dialog = window.confirm('Are you sure you want to accept this request?');
@@ -135,6 +97,8 @@
                     none;
                 }
             }
+
+            
 
         </script>
 
@@ -178,30 +142,48 @@
             </div>
         </div>
 
-        <div class="container rounded bg-white mt-5 mb-5 pb-5">
-
-            <div style="padding: 50px 0 0 50px;margin-top: 50px;">
-
-                <div id="requestsHeader">
-                    <h3>Requests</h3>
-                </div>
-                
-                {% for x in requests %}
-                    {% if x.verified == False %}
-                        <div class="accountRequestObject">
-                            <h4 class="accountName">Account request: {{ x.first_name }} {{x.last_name}} </h5>
-                            <button class="accept" onclick="confirmAccept({{ x.id }})">Accept</button>
-                            <button class="reject" onclick="confirmReject({{ x.id }})">Reject</button>
-                            <div class="requestDetailsContainer">
-                                <div class="requestDetails">Phone: {{ x.telephone }}</div>
-                                <div class="requestDetails">Email: {{ x.email }}</div>
-                                <!-- <div class="requestDetails">Organisation: {{ x.organisation }}</div> -->
-                            </div>
+        <div class="container rounded bg-white mt-5 mb-5">
+            
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="p-3 py-5">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="text-right">Requests</h2>
                         </div>
-                    {% endif %}
-                {% endfor %}
+                
+                        {% for x in requests %}
+                            {% if x.verified == False %}
 
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h4 class="text-right">Account request: {{ x.first_name }} {{x.last_name}} </h4>
+                                        
+                                            <div class="text-center">
+                                            <button class="btn btn-success" onclick="confirmAccept({{ x.id }})">Accept</button>
+                                            <button class="btn btn-danger" onclick="confirmReject({{ x.id }})">Reject</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="card-body">
+                                        <p class="card-text">
+                                            <ul>
+                                                <li>Phone: {{ x.telephone }}</li>
+                                                <li>Email: {{ x.email }}</li>
+                                            </ul>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <br>
+
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
+
         </div>
     </body>
 </html>
