@@ -1,0 +1,26 @@
+body {
+    background: #f8f2ef;
+    margin-top:100px;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #006a6a !important;
+}
+
+.btn-sty {
+    color: #ffffff;
+    background: #008080;
+    box-shadow: none;
+    border: none;
+    padding: 5px;
+}
+
+.btn-sty:hover {
+    color: #a9a9a9;
+    background: #006a6a;
+}
+
+.labels {
+    font-size: 11px;
+}
