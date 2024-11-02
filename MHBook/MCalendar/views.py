@@ -224,7 +224,7 @@ def create_event(request):
             finish_Time = request.POST.get('finishTime')
             comments_ = request.POST.get('comments')
             equipment_ = request.POST.get('equipment')
-            total_Time = request.POST.get('totalTime')
+            
         
             event = Event(
                 bookingName=booking_Name,
@@ -234,7 +234,6 @@ def create_event(request):
                 finishTime = finish_Time,
                 comments=comments_,
                 equipment=equipment_,
-                totalTime=total_Time
             )
             event.save()
 
@@ -271,7 +270,7 @@ def get_events(request):
                 'end': f"{event.bookingDate}T{event.finishTime}",
                 'supervisorName': event.supervisorName,
                 'comments': event.comments,
-                #'duration': event.totalTime
+                'totalTime': event.totalTime
             }
             event_list.append(event_data)
             

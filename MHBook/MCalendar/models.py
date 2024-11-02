@@ -109,11 +109,26 @@ class Event(models.Model):
     
     @property
     def calctotalTime(self):
-        startTime = datetime.combine(self.bookingDate, self.startTime)
-        finishTime = datetime.combine(self.bookingDate, self.finishTime)  
+        if isinstance(self.bookingDate, str):
+            booking_date = datetime.strptime(self.bookingDate, '%Y-%m-%d').date()
+        else:
+            booking_date = self.bookingDate
+
+        if isinstance(self.startTime, str):
+            start_time = datetime.strptime(self.startTime, '%H:%M').time()
+        else:
+            start_time = self.startTime
+
+        if isinstance(self.finishTime, str):
+            finish_time = datetime.strptime(self.finishTime, '%H:%M').time()
+        else:
+            finish_time = self.finishTime
+
+        startTime = datetime.combine(booking_date, start_time)
+        finishTime = datetime.combine(booking_date, finish_time)  
     
         if finishTime < startTime:
-            finishTime += timedelta(days =1)
+            finishTime += timedelta(days=1)
 
         duration = finishTime - startTime
         return int(duration.total_seconds()//3600) 
