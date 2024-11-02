@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime, timedelta
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import UserManager, PermissionsMixin, AbstractBaseUser
 
@@ -101,6 +102,33 @@ class Event(models.Model):
     #allotedTime = models.TimeField()
     comments = models.TextField(max_length = 1000)
     equipment = models.CharField(max_length=100, default='Not specified')
+    totalTime = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.bookingName
+    
+    @property
+    def calctotalTime(self):
+        startTime = datetime.combine(self.bookingDate, self.startTime)
+        finishTime = datetime.combine(self.bookingDate, self.finishTime)  
+    
+        if finishTime < startTime:
+            finishTime += timedelta(days =1)
+
+        duration = finishTime - startTime
+        return int(duration.total_seconds()//3600) 
+    
+    def save(self, *args, **kwargs):
+        self.totalTime = self.calctotalTime
+        super(Event,self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.bookingName} - {self.totalTime} hours"
+
+    #@property
+    #def totalTime(self):
+    #    pass    
+
 
 class Equipment(models.Model):
     equipmentID_auto = models.AutoField(primary_key=True)
