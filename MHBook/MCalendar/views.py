@@ -112,8 +112,16 @@ def changePasswordPage(request):
     
 
 def myBookings(request):
-    if request.user.is_authenticated:
+    if request.user.is_superuser:
         myBookings = Event.objects.all().values()
+        template = loader.get_template('myBookings.html')
+        context = {
+            'myBookings': myBookings,
+        }
+        return HttpResponse(template.render(context, request))
+    if request.user.is_authenticated: ####
+        current_user = request.user.email
+        myBookings = Event.objects.filter(email=current_user)
         template = loader.get_template('myBookings.html')
         context = {
             'myBookings': myBookings,
@@ -215,6 +223,7 @@ def create_event(request):
             
             booking_Name = request.POST.get('bookingName')
             supervisor_Name = request.POST.get('supervisorName')
+            email_ = request.user.email
             booking_Date = request.POST.get('bookingDate')
             start_Time = request.POST.get('startTime')
             finish_Time = request.POST.get('finishTime')
@@ -225,6 +234,7 @@ def create_event(request):
             event = Event(
                 bookingName=booking_Name,
                 supervisorName=supervisor_Name,
+                email=email_,
                 bookingDate=booking_Date,
                 startTime=start_Time,
                 finishTime = finish_Time,
