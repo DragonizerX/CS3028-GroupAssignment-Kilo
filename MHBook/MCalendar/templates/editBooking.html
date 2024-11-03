@@ -13,22 +13,6 @@
 
     <link rel="stylesheet" href="{% static 'global.css' %}">
 
-    <style>
-
-        .details {
-            background-color: lightgrey;
-            display: grid;
-            grid-template-columns: 40% 60%;
-            gap: 2px 0;
-            padding: 5px;
-        }
-
-        #cancelButton {
-            padding: 5px;
-            margin: 20px;
-        }
-
-    </style>
     <script>
         function confirmCancel(id) {
             const dialog = window.confirm('Are you sure you want to cancel this booking?');
@@ -156,92 +140,100 @@
         </div>
     </div>
 
-    <div class="container rounded bg-white mt-5 mb-5 pb-5">
+    <div class="container rounded bg-white mt-5 mb-5 pb-5 pt-3">
     
-    <form class="details" method="POST">
+    <form method="POST">
         {% csrf_token %}
         {% for x in editBooking %}
-        
-        <label for="name">Full Name: </label>
-        <input type="text" id="name" name="bookingName" placeholder="{{ x.bookingName }}">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-text">
+                        <div class="details">
+                            
+                            <label for="name">Full Name: </label>
+                            <input type="text" id="name" name="bookingName" placeholder="{{ x.bookingName }}">
 
-        <label for="supervisor">Supervisor: </label>
-        <input type="text" id="supervisor" name="supervisorName" placeholder="{{ x.supervisorName }}">
+                            <label for="supervisor">Supervisor: </label>
+                            <input type="text" id="supervisor" name="supervisorName" placeholder="{{ x.supervisorName }}">
 
-        <label for="date">Date: </label>
-        <input type="date" id="date" name="bookingDate" value="{{ x.bookingDate|date:'Y-m-d' }}">
+                            <label for="date">Date: </label>
+                            <input type="date" id="date" name="bookingDate" value="{{ x.bookingDate|date:'Y-m-d' }}">
 
-        <label for="start">Start time: </label>
-        <select class="form-control" id="start" name="startTime" required>
-            <option value="00:00" {% if x.startTime|time:'H:i' == '00:00' %}selected{% endif %}>00:00</option>
-            <option value="01:00" {% if x.startTime|time:'H:i' == '01:00' %}selected{% endif %}>01:00</option>
-            <option value="02:00" {% if x.startTime|time:'H:i' == '02:00' %}selected{% endif %}>02:00</option>
-            <option value="03:00" {% if x.startTime|time:'H:i' == '03:00' %}selected{% endif %}>03:00</option>
-            <option value="04:00" {% if x.startTime|time:'H:i' == '04:00' %}selected{% endif %}>04:00</option>
-            <option value="05:00" {% if x.startTime|time:'H:i' == '05:00' %}selected{% endif %}>05:00</option>
-            <option value="06:00" {% if x.startTime|time:'H:i' == '06:00' %}selected{% endif %}>06:00</option>
-            <option value="07:00" {% if x.startTime|time:'H:i' == '07:00' %}selected{% endif %}>07:00</option>
-            <option value="08:00" {% if x.startTime|time:'H:i' == '08:00' %}selected{% endif %}>08:00</option>
-            <option value="09:00" {% if x.startTime|time:'H:i' == '09:00' %}selected{% endif %}>09:00</option>
-            <option value="10:00" {% if x.startTime|time:'H:i' == '10:00' %}selected{% endif %}>10:00</option>
-            <option value="11:00" {% if x.startTime|time:'H:i' == '11:00' %}selected{% endif %}>11:00</option>
-            <option value="12:00" {% if x.startTime|time:'H:i' == '12:00' %}selected{% endif %}>12:00</option>
-            <option value="13:00" {% if x.startTime|time:'H:i' == '13:00' %}selected{% endif %}>13:00</option>
-            <option value="14:00" {% if x.startTime|time:'H:i' == '14:00' %}selected{% endif %}>14:00</option>
-            <option value="15:00" {% if x.startTime|time:'H:i' == '15:00' %}selected{% endif %}>15:00</option>
-            <option value="16:00" {% if x.startTime|time:'H:i' == '16:00' %}selected{% endif %}>16:00</option>
-            <option value="17:00" {% if x.startTime|time:'H:i' == '17:00' %}selected{% endif %}>17:00</option>
-            <option value="18:00" {% if x.startTime|time:'H:i' == '18:00' %}selected{% endif %}>18:00</option>
-            <option value="19:00" {% if x.startTime|time:'H:i' == '19:00' %}selected{% endif %}>19:00</option>
-            <option value="20:00" {% if x.startTime|time:'H:i' == '20:00' %}selected{% endif %}>20:00</option>
-            <option value="21:00" {% if x.startTime|time:'H:i' == '21:00' %}selected{% endif %}>21:00</option>
-            <option value="22:00" {% if x.startTime|time:'H:i' == '22:00' %}selected{% endif %}>22:00</option>
-            <option value="23:00" {% if x.startTime|time:'H:i' == '23:00' %}selected{% endif %}>23:00</option>
-        </select>
+                            <label for="start">Start time: </label>
+                            <select class="form-control" id="start" name="startTime" required>
+                                <option value="00:00" {% if x.startTime|time:'H:i' == '00:00' %}selected{% endif %}>00:00</option>
+                                <option value="01:00" {% if x.startTime|time:'H:i' == '01:00' %}selected{% endif %}>01:00</option>
+                                <option value="02:00" {% if x.startTime|time:'H:i' == '02:00' %}selected{% endif %}>02:00</option>
+                                <option value="03:00" {% if x.startTime|time:'H:i' == '03:00' %}selected{% endif %}>03:00</option>
+                                <option value="04:00" {% if x.startTime|time:'H:i' == '04:00' %}selected{% endif %}>04:00</option>
+                                <option value="05:00" {% if x.startTime|time:'H:i' == '05:00' %}selected{% endif %}>05:00</option>
+                                <option value="06:00" {% if x.startTime|time:'H:i' == '06:00' %}selected{% endif %}>06:00</option>
+                                <option value="07:00" {% if x.startTime|time:'H:i' == '07:00' %}selected{% endif %}>07:00</option>
+                                <option value="08:00" {% if x.startTime|time:'H:i' == '08:00' %}selected{% endif %}>08:00</option>
+                                <option value="09:00" {% if x.startTime|time:'H:i' == '09:00' %}selected{% endif %}>09:00</option>
+                                <option value="10:00" {% if x.startTime|time:'H:i' == '10:00' %}selected{% endif %}>10:00</option>
+                                <option value="11:00" {% if x.startTime|time:'H:i' == '11:00' %}selected{% endif %}>11:00</option>
+                                <option value="12:00" {% if x.startTime|time:'H:i' == '12:00' %}selected{% endif %}>12:00</option>
+                                <option value="13:00" {% if x.startTime|time:'H:i' == '13:00' %}selected{% endif %}>13:00</option>
+                                <option value="14:00" {% if x.startTime|time:'H:i' == '14:00' %}selected{% endif %}>14:00</option>
+                                <option value="15:00" {% if x.startTime|time:'H:i' == '15:00' %}selected{% endif %}>15:00</option>
+                                <option value="16:00" {% if x.startTime|time:'H:i' == '16:00' %}selected{% endif %}>16:00</option>
+                                <option value="17:00" {% if x.startTime|time:'H:i' == '17:00' %}selected{% endif %}>17:00</option>
+                                <option value="18:00" {% if x.startTime|time:'H:i' == '18:00' %}selected{% endif %}>18:00</option>
+                                <option value="19:00" {% if x.startTime|time:'H:i' == '19:00' %}selected{% endif %}>19:00</option>
+                                <option value="20:00" {% if x.startTime|time:'H:i' == '20:00' %}selected{% endif %}>20:00</option>
+                                <option value="21:00" {% if x.startTime|time:'H:i' == '21:00' %}selected{% endif %}>21:00</option>
+                                <option value="22:00" {% if x.startTime|time:'H:i' == '22:00' %}selected{% endif %}>22:00</option>
+                                <option value="23:00" {% if x.startTime|time:'H:i' == '23:00' %}selected{% endif %}>23:00</option>
+                            </select>
 
-        <label for="finish">Finish time: </label>
-        <select class="form-control" id="finish" name="finishTime" required>
-            <option value="00:00" {% if x.finishTime|time:'H:i' == '00:00' %}selected{% endif %}>00:00</option>
-            <option value="01:00" {% if x.finishTime|time:'H:i' == '01:00' %}selected{% endif %}>01:00</option>
-            <option value="02:00" {% if x.finishTime|time:'H:i' == '02:00' %}selected{% endif %}>02:00</option>
-            <option value="03:00" {% if x.finishTime|time:'H:i' == '03:00' %}selected{% endif %}>03:00</option>
-            <option value="04:00" {% if x.finishTime|time:'H:i' == '04:00' %}selected{% endif %}>04:00</option>
-            <option value="05:00" {% if x.finishTime|time:'H:i' == '05:00' %}selected{% endif %}>05:00</option>
-            <option value="06:00" {% if x.finishTime|time:'H:i' == '06:00' %}selected{% endif %}>06:00</option>
-            <option value="07:00" {% if x.finishTime|time:'H:i' == '07:00' %}selected{% endif %}>07:00</option>
-            <option value="08:00" {% if x.finishTime|time:'H:i' == '08:00' %}selected{% endif %}>08:00</option>
-            <option value="09:00" {% if x.finishTime|time:'H:i' == '09:00' %}selected{% endif %}>09:00</option>
-            <option value="10:00" {% if x.finishTime|time:'H:i' == '10:00' %}selected{% endif %}>10:00</option>
-            <option value="11:00" {% if x.finishTime|time:'H:i' == '11:00' %}selected{% endif %}>11:00</option>
-            <option value="12:00" {% if x.finishTime|time:'H:i' == '12:00' %}selected{% endif %}>12:00</option>
-            <option value="13:00" {% if x.finishTime|time:'H:i' == '13:00' %}selected{% endif %}>13:00</option>
-            <option value="14:00" {% if x.finishTime|time:'H:i' == '14:00' %}selected{% endif %}>14:00</option>
-            <option value="15:00" {% if x.finishTime|time:'H:i' == '15:00' %}selected{% endif %}>15:00</option>
-            <option value="16:00" {% if x.finishTime|time:'H:i' == '16:00' %}selected{% endif %}>16:00</option>
-            <option value="17:00" {% if x.finishTime|time:'H:i' == '17:00' %}selected{% endif %}>17:00</option>
-            <option value="18:00" {% if x.finishTime|time:'H:i' == '18:00' %}selected{% endif %}>18:00</option>
-            <option value="19:00" {% if x.finishTime|time:'H:i' == '19:00' %}selected{% endif %}>19:00</option>
-            <option value="20:00" {% if x.finishTime|time:'H:i' == '20:00' %}selected{% endif %}>20:00</option>
-            <option value="21:00" {% if x.finishTime|time:'H:i' == '21:00' %}selected{% endif %}>21:00</option>
-            <option value="22:00" {% if x.finishTime|time:'H:i' == '22:00' %}selected{% endif %}>22:00</option>
-            <option value="23:00" {% if x.finishTime|time:'H:i' == '23:00' %}selected{% endif %}>23:00</option>
-        </select>
+                            <label for="finish">Finish time: </label>
+                            <select class="form-control" id="finish" name="finishTime" required>
+                                <option value="00:00" {% if x.finishTime|time:'H:i' == '00:00' %}selected{% endif %}>00:00</option>
+                                <option value="01:00" {% if x.finishTime|time:'H:i' == '01:00' %}selected{% endif %}>01:00</option>
+                                <option value="02:00" {% if x.finishTime|time:'H:i' == '02:00' %}selected{% endif %}>02:00</option>
+                                <option value="03:00" {% if x.finishTime|time:'H:i' == '03:00' %}selected{% endif %}>03:00</option>
+                                <option value="04:00" {% if x.finishTime|time:'H:i' == '04:00' %}selected{% endif %}>04:00</option>
+                                <option value="05:00" {% if x.finishTime|time:'H:i' == '05:00' %}selected{% endif %}>05:00</option>
+                                <option value="06:00" {% if x.finishTime|time:'H:i' == '06:00' %}selected{% endif %}>06:00</option>
+                                <option value="07:00" {% if x.finishTime|time:'H:i' == '07:00' %}selected{% endif %}>07:00</option>
+                                <option value="08:00" {% if x.finishTime|time:'H:i' == '08:00' %}selected{% endif %}>08:00</option>
+                                <option value="09:00" {% if x.finishTime|time:'H:i' == '09:00' %}selected{% endif %}>09:00</option>
+                                <option value="10:00" {% if x.finishTime|time:'H:i' == '10:00' %}selected{% endif %}>10:00</option>
+                                <option value="11:00" {% if x.finishTime|time:'H:i' == '11:00' %}selected{% endif %}>11:00</option>
+                                <option value="12:00" {% if x.finishTime|time:'H:i' == '12:00' %}selected{% endif %}>12:00</option>
+                                <option value="13:00" {% if x.finishTime|time:'H:i' == '13:00' %}selected{% endif %}>13:00</option>
+                                <option value="14:00" {% if x.finishTime|time:'H:i' == '14:00' %}selected{% endif %}>14:00</option>
+                                <option value="15:00" {% if x.finishTime|time:'H:i' == '15:00' %}selected{% endif %}>15:00</option>
+                                <option value="16:00" {% if x.finishTime|time:'H:i' == '16:00' %}selected{% endif %}>16:00</option>
+                                <option value="17:00" {% if x.finishTime|time:'H:i' == '17:00' %}selected{% endif %}>17:00</option>
+                                <option value="18:00" {% if x.finishTime|time:'H:i' == '18:00' %}selected{% endif %}>18:00</option>
+                                <option value="19:00" {% if x.finishTime|time:'H:i' == '19:00' %}selected{% endif %}>19:00</option>
+                                <option value="20:00" {% if x.finishTime|time:'H:i' == '20:00' %}selected{% endif %}>20:00</option>
+                                <option value="21:00" {% if x.finishTime|time:'H:i' == '21:00' %}selected{% endif %}>21:00</option>
+                                <option value="22:00" {% if x.finishTime|time:'H:i' == '22:00' %}selected{% endif %}>22:00</option>
+                                <option value="23:00" {% if x.finishTime|time:'H:i' == '23:00' %}selected{% endif %}>23:00</option>
+                            </select>
 
-        <label for="comments">Comments: </label>
-        <input type="text" id="comments" name="comments" placeholder="{{ x.comments }}">
+                            <label for="comments">Comments: </label>
+                            <input type="text" id="comments" name="comments" placeholder="{{ x.comments }}">
+                        
 
-        <label for="equipment">Equipment: </label>
-        <input type="text" id="equipment" name="equipment" placeholder="{{ x.equipment }}">
+                            <label for="equipment">Equipment: </label>
+                            <input type="text" id="equipment" name="equipment" placeholder="{{ x.equipment }}">
 
-            <input type="submit" value="Submit" style="width: 80%; margin: auto;">
+                        </div>
+                        <br>
+                        <input class="btn btn-success btn-block" type="submit" value="Submit" style="width: 80%; margin: auto;">
+                    </p>
+                </div>
+            </div>
 
-            
-        </form>
-
-        <button id="cancelButton" onclick="confirmCancel({{ x.id }})">Cancel Booking</button>
-
+            <br>
+            <button class="btn btn-danger btn-block" style="width: 80%; margin: auto;" onclick="confirmCancel({{ x.id }})">Cancel Booking</button>
         {% endfor %}
 
+    </form>
     </div>
 
 </body>
