@@ -73,10 +73,10 @@ class Event(models.Model):
     bookingDate = models.DateField()
     startTime = models.TimeField()
     finishTime = models.TimeField()
-    #allotedTime = models.TimeField()
     comments = models.TextField(max_length = 1000)
     equipment = models.CharField(max_length=100, default='Not specified')
     totalTime = models.IntegerField(default=0)
+    hourlyRate = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def __str__(self):
         return self.bookingName

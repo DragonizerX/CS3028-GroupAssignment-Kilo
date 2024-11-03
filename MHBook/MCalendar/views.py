@@ -219,8 +219,17 @@ def create_event(request):
             start_Time = request.POST.get('startTime')
             finish_Time = request.POST.get('finishTime')
             comments_ = request.POST.get('comments')
-            equipment_ = request.POST.get('equipment')
-            
+            equipment_id = request.POST.get('equipment')
+            equipment = Equipment.objects.get(equipmentID_auto=equipment_id)
+            hourly_rate = equipment.hourlyRate
+
+            custom_price = request.POST.get('customPrice')
+            if request.user.is_superuser and custom_price:
+                try:
+                    hourly_rate = float(custom_price)
+                except ValueError:
+                    # Handle case where custom price is not a valid number
+                    hourly_rate = equipment.hourlyRate
         
             event = Event(
                 bookingName=booking_Name,
@@ -229,7 +238,8 @@ def create_event(request):
                 startTime=start_Time,
                 finishTime = finish_Time,
                 comments=comments_,
-                equipment=equipment_,
+                equipment=equipment.equipmentName,
+                hourlyRate=hourly_rate,
             )
             event.save()
 
@@ -251,10 +261,11 @@ def create_event(request):
 
 def get_events(request):
     try:
-        equipment = request.GET.get('equipment', '')
+        equipment_id = request.GET.get('equipment', '')
         
-        if equipment:
-            events = Event.objects.filter(equipment=equipment)
+        if equipment_id:
+            equipment = Equipment.objects.get(equipmentID_auto=equipment_id)
+            events = Event.objects.filter(equipment=equipment.equipmentName)
         else:
             events = Event.objects.none()
             
@@ -266,7 +277,8 @@ def get_events(request):
                 'end': f"{event.bookingDate}T{event.finishTime}",
                 'supervisorName': event.supervisorName,
                 'comments': event.comments,
-                'totalTime': event.totalTime
+                'totalTime': event.totalTime,
+                'hourlyRate': event.hourlyRate
             }
             event_list.append(event_data)
             
