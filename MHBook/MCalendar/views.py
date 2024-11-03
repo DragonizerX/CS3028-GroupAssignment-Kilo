@@ -425,7 +425,10 @@ def createBilling(request):
                 return render(request, 'createBilling.html', context)
 
             billing = Billing()
-            billing.invoiceRef = generateInvoiceRef()          
+            billing.invoiceRef = generateInvoiceRef()
+            for event in selectedEventObjects:
+                event.invoiceRef = billing.invoiceRef
+                event.save()
             billing.supervisor = supervisors.first()
             billing.save()
 

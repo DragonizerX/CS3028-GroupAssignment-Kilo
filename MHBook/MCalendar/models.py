@@ -72,6 +72,7 @@ class Supervisor(models.Model):
 
 
 class Event(models.Model):
+    invoiceRef = models.CharField(max_length=10, default="None")
     bookingName = models.CharField(max_length=80)
     supervisorName = models.CharField(max_length=80)
     email = models.EmailField()
