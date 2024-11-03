@@ -510,6 +510,10 @@
                     alert('Please select equipment before submitting the booking.');
                     return;
                 }
+
+                const selectedOption = document.getElementById('equipment').options[document.getElementById('equipment').selectedIndex];
+                const hourlyRate = selectedOption.text.split('--')[2].trim(); 
+                formData.append('hourlyRate', hourlyRate);
         
                 fetch("{% url 'create_event' %}", {
                     method: 'POST',

@@ -219,7 +219,8 @@ def create_event(request):
             start_Time = request.POST.get('startTime')
             finish_Time = request.POST.get('finishTime')
             comments_ = request.POST.get('comments')
-            equipment_ = request.POST.get('equipment')
+            equipment_id = request.POST.get('equipment')
+            equipment = Equipment.objects.get(equipmentID_auto=equipment_id)
             custom_price = None
             if request.user.is_superuser:
                 price = request.POST.get('customPrice')
@@ -236,7 +237,8 @@ def create_event(request):
                 startTime=start_Time,
                 finishTime = finish_Time,
                 comments=comments_,
-                equipment=equipment_,
+                equipment=equipment.equipmentName,
+                hourlyRate=equipment.hourlyRate,
                 customPrice=custom_price
             )
             event.save()
@@ -259,10 +261,11 @@ def create_event(request):
 
 def get_events(request):
     try:
-        equipment = request.GET.get('equipment', '')
+        equipment_id = request.GET.get('equipment', '')
         
-        if equipment:
-            events = Event.objects.filter(equipment=equipment)
+        if equipment_id:
+            equipment = Equipment.objects.get(equipmentID_auto=equipment_id)
+            events = Event.objects.filter(equipment=equipment.equipmentName)
         else:
             events = Event.objects.none()
             
@@ -274,7 +277,8 @@ def get_events(request):
                 'end': f"{event.bookingDate}T{event.finishTime}",
                 'supervisorName': event.supervisorName,
                 'comments': event.comments,
-                'totalTime': event.totalTime
+                'totalTime': event.totalTime,
+                'hourlyRate': event.hourlyRate
             }
             event_list.append(event_data)
             
