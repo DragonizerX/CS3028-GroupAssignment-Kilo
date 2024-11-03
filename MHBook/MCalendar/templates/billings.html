@@ -70,12 +70,28 @@
             box-shadow: 2px 2px 5px hsl(265 0% 70%);
             border-radius: 10px;
             height: 40px;
-            margin: auto;
+            margin: 40px auto 0 auto;
             background-color: hsl(0 0 85%);
             border: none;
             padding: 10px;
             max-width: 600px;
             cursor: pointer;
+        }
+
+        .event {
+            display: grid;
+            grid-template-columns: 50% 50%;
+            box-shadow: 2px 2px 5px hsl(265 0% 70%);
+            border-radius: 10px;
+            margin: 30px auto 0 auto;
+            background-color: hsl(0 0 85%);
+            border: none;
+            padding: 10px;
+            max-width: 500px;
+        }
+
+        .eventItem {
+            margin: 5px 3px;
         }
 
     </style>
@@ -105,16 +121,29 @@
     <!-- Billings -->
     {% for b in billingsList %}
         <!-- Billings Label -->
-        <div class="billingsLabel">
+        <div class="billingsLabel" onclick="displayEvents({{ b.id }})">
             <div> Supervisor {{ b.supervisor }}</div>
             <div> Issued: {{ b.issueDate }}</div>
             <div> Billing ID: {{ b.id }}</div>
             <div> Total Cost: £{{ b.totalCost }}</div>
         </div>
         <!-- Events Dropdowns -->
+
+        <!-- NEED TO CHANGE, currently filters by supervisor, not by events in billing, should share an id field where e.billingID = b.id-->
         {% for e in events %}
             {% if e.supervisorName in b.supervisor %}
-                <div>{{ e.supervisorName }}</div>
+                <div class="event">
+                    <div class="eventItem"> Booking: {{ e.bookingName }}</div>
+                    <div class="eventItem"> Supervisor: {{ e.supervisorName }}</div>
+                    <div class="eventItem"> Event ID: {{ e.id }}</div>
+                    <div></div>
+                    <div class="eventItem"> Date: {{ e.bookingDate }}</div>
+                    <div></div>
+                    <div class="eventItem"> Start: {{ e.startTime|time:'H:i' }}</div>
+                    <div class="eventItem"> End: {{ e.finishTime|time:'H:i' }}</div>
+                    <div class="eventItem"> Equipment: {{ e.equipment }}</div>
+                    <div class="eventItem"> Total Time: {{ e.totalTime }}</div>
+                </div>
             {% endif %}
         {% endfor %}
     {% endfor %}
