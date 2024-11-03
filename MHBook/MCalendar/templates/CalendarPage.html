@@ -409,6 +409,11 @@
                 const selectedOption = document.getElementById('equipment').options[document.getElementById('equipment').selectedIndex];
                 const hourlyRate = selectedOption.text.split('--')[2].trim(); 
                 formData.append('hourlyRate', hourlyRate);
+
+                const customPrice = document.getElementById('customPrice') ? document.getElementById('customPrice').value : null;
+                if (customPrice) {
+                    formData.append('customPrice', customPrice);  // Add custom price to form data
+                    }
         
                 fetch("{% url 'create_event' %}", {
                     method: 'POST',

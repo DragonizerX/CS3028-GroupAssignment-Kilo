@@ -221,14 +221,15 @@ def create_event(request):
             comments_ = request.POST.get('comments')
             equipment_id = request.POST.get('equipment')
             equipment = Equipment.objects.get(equipmentID_auto=equipment_id)
-            custom_price = None
-            if request.user.is_superuser:
-                price = request.POST.get('customPrice')
-                if price:
-                    try:
-                        custom_price = float(price)
-                    except ValueError:
-                        custom_price = None
+            hourly_rate = equipment.hourlyRate
+
+            custom_price = request.POST.get('customPrice')
+            if request.user.is_superuser and custom_price:
+                try:
+                    hourly_rate = float(custom_price)
+                except ValueError:
+                    # Handle case where custom price is not a valid number
+                    hourly_rate = equipment.hourlyRate
         
             event = Event(
                 bookingName=booking_Name,
@@ -238,8 +239,7 @@ def create_event(request):
                 finishTime = finish_Time,
                 comments=comments_,
                 equipment=equipment.equipmentName,
-                hourlyRate=equipment.hourlyRate,
-                customPrice=custom_price
+                hourlyRate=hourly_rate,
             )
             event.save()
 
