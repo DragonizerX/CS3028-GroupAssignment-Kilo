@@ -169,7 +169,6 @@
                                     <div class="card-body">
                                         <p class="card-text">
                                             <ul>
-                                                <li>Phone: {{ x.telephone }}</li>
                                                 <li>Email: {{ x.email }}</li>
                                             </ul>
                                         </p>
@@ -177,9 +176,11 @@
                                 </div>
 
                                 <br>
-
                             {% endif %}
                         {% endfor %}
+                        {% if hasRequest == False%}
+                            <p>You have no current account requests.</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>

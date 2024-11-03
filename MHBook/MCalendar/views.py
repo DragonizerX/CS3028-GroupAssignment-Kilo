@@ -136,8 +136,10 @@ def requests(request):
     if request.user.is_superuser:
         requests = Users.objects.all().values()
         template = loader.get_template('requests.html')
+        hasRequest = requests.filter(verified=False).exists()
         context = {
             'requests': requests,
+            'hasRequest': hasRequest
         }
         return HttpResponse(template.render(context, request))
     else:
@@ -171,6 +173,7 @@ def confirmReject(request, id):
 def editBooking(request, id):
     if request.user.is_authenticated:
         booking = get_object_or_404(Event, id=id)
+        equipmentList = Equipment.objects.all()
         
         if request.method == 'POST':
             bookingName = request.POST.get('bookingName')
@@ -207,6 +210,7 @@ def editBooking(request, id):
         template = loader.get_template('editBooking.html')
         context = {
             'editBooking': [booking],
+            'equipmentList': equipmentList
         }
         return HttpResponse(template.render(context, request))
     else:
