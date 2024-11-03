@@ -64,6 +64,20 @@
             cursor: pointer;
         }
 
+        .billingsLabel {
+            display: grid;
+            grid-template-columns: 50% 50%;
+            box-shadow: 2px 2px 5px hsl(265 0% 70%);
+            border-radius: 10px;
+            height: 40px;
+            margin: auto;
+            background-color: hsl(0 0 85%);
+            border: none;
+            padding: 10px;
+            max-width: 600px;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 
@@ -90,8 +104,19 @@
 
     <!-- Billings -->
     {% for b in billingsList %}
-        <div>{{ b.supervisor }}</div>
-        <div>{{ b.issueDate }}</div>
+        <!-- Billings Label -->
+        <div class="billingsLabel">
+            <div> Supervisor {{ b.supervisor }}</div>
+            <div> Issued: {{ b.issueDate }}</div>
+            <div> Billing ID: {{ b.id }}</div>
+            <div> Total Cost: £{{ b.totalCost }}</div>
+        </div>
+        <!-- Events Dropdowns -->
+        {% for e in events %}
+            {% if e.supervisorName in b.supervisor %}
+                <div>{{ e.supervisorName }}</div>
+            {% endif %}
+        {% endfor %}
     {% endfor %}
 
 </body>
