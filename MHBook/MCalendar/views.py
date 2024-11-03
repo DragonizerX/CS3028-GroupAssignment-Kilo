@@ -406,10 +406,20 @@ def createBilling(request):
         if archiveValidQuery(dateMax):
             eventList = eventList.filter(bookingDate__lte=dateMax)
 
+        context = {
+        'eventList': eventList,
+        'equipmentList': equipmentList
+        }
 
         if request.method == "POST":
             selectedEvents = request.POST.getlist('selectEvent')
             selectedEventObjects = Event.objects.filter(id__in=selectedEvents)
+
+            supervisors = selectedEventObjects.values_list('supervisorName').distinct()
+
+            if supervisors.count() > 1:
+                messages.error(request, "Can only create billings for one Supervisor at most.")
+                return render(request, 'createBilling.html', context)
 
             billing = Billing()
             billing.invoiceRef = generateInvoiceRef()
@@ -421,14 +431,7 @@ def createBilling(request):
 
             messages.success(request, "Billing created")
 
-        context = {
-        'eventList': eventList,
-        'equipmentList': equipmentList
-        }
-
         return render(request, 'createBilling.html', context)
-    
-
     
     else:
         messages.success(request, "Please log in before entering that page! Admin access only.")
