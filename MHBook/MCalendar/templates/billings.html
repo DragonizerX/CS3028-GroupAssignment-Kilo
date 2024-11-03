@@ -69,20 +69,12 @@
 
 <body>
 
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
     <button id="createBilling" onclick="location.href = '/MCalendar/createBilling'"> Create Billing </button>
 
     <form method="GET" action=".">
         <div id="navBar">
             <!-- Supervisor selection -->
-            <input class="supervisorSearch" type="search" name="supervisorName" placeholder="-- Supervisor --" />
+            <input class="supervisorSearch" type="search" name="supervisorName" placeholder="-- Supervisor --"/>
             <!-- Date inputs -->
             <div class="dates">
                 <label for="startDate">Start Date</label>
@@ -95,6 +87,12 @@
             <input type="submit" id="filter" value="Filter">
         </div>
     </form>
+
+    <!-- Billings -->
+    {% for b in billingsList %}
+        <div>{{ b.supervisor }}</div>
+        <div>{{ b.issueDate }}</div>
+    {% endfor %}
 
 </body>
 </html>

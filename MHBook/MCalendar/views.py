@@ -445,7 +445,7 @@ def createBilling(request):
 def billings(request):
 
     if request.user.is_superuser:
-        eventList = Event.objects.all()
+        billingsList = Billing.objects.all()
         equipmentList = Equipment.objects.all()
 
         supervisorName = request.GET.get('supervisorName')
@@ -453,16 +453,16 @@ def billings(request):
         dateMax = request.GET.get('dateMax')
 
         if archiveValidQuery(supervisorName):
-            eventList = eventList.filter(supervisorName__icontains=supervisorName)
+            billingsList = billingsList.filter(supervisor__icontains=supervisorName)
 
         if archiveValidQuery(dateMin):
-            eventList = eventList.filter(bookingDate__gte=dateMin)
+            billingsList = billingsList.filter(issueDate__gte=dateMin)
 
         if archiveValidQuery(dateMax):
-            eventList = eventList.filter(bookingDate__lte=dateMax)
+            billingsList = billingsList.filter(issueDate__lte=dateMax)
 
         context = {
-        'eventList': eventList,
+        'billingsList': billingsList,
         'equipmentList': equipmentList
         }
 
