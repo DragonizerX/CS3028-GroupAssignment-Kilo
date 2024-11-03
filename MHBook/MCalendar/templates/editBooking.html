@@ -98,9 +98,11 @@
         {% csrf_token %}
         {% for x in editBooking %}
         
+        <!--
         <label for="name">Full Name: </label>
         <input type="text" id="name" name="bookingName" placeholder="{{ x.bookingName }}">
-
+        -->
+        
         <label for="supervisor">Supervisor: </label>
         <input type="text" id="supervisor" name="supervisorName" placeholder="{{ x.supervisorName }}">
 

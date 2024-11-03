@@ -156,11 +156,11 @@
                 </div>
 
                 <div class="details">
-                    <div class="detailsListItem">Name: {{ z.bookingName }}</div>
+                    <!--<div class="detailsListItem">Name: {{ z.bookingName }}</div>-->
                     <div class="detailsListItem">Date: {{ z.bookingDate }}</div>
+                    <div class="detailsListItem">Equipment: {{ z.equipment }}</div>
                     <div class="detailsListItem">Start: {{ z.startTime|time:"H:i" }}</div>
                     <div class="detailsListItem">Finish: {{ z.finishTime|time:"H:i" }}</div>
-                    <div class="detailsListItem">Equipment: {{ z.equipment }}</div>
                 </div>
             </div>
             {%endfor%}
