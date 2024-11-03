@@ -10,7 +10,8 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 from django.contrib.admin.views.decorators import staff_member_required
 
-from .models import Users, Event, Equipment
+import uuid
+from .models import Users, Event, Equipment, Billing
 from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm, AddEquipmentForm
 
 from django.core.mail import send_mail
@@ -386,4 +387,55 @@ def archiveValidQuery(param):
     return param != '' and param is not None
 
 
+# createBilling functions
+def generateInvoiceRef():
+    return str(uuid.uuid4())[:10]
 
+def createBilling(request):
+
+    if request.user.is_superuser:
+        eventList = Event.objects.all()
+        equipmentList = Equipment.objects.all()
+
+        supervisorName = request.GET.get('supervisorName')
+        dateMin = request.GET.get('dateMin')
+        dateMax = request.GET.get('dateMax')
+
+        if archiveValidQuery(supervisorName):
+            eventList = eventList.filter(supervisorName__icontains=supervisorName)
+
+        if archiveValidQuery(dateMin):
+            eventList = eventList.filter(bookingDate__gte=dateMin)
+
+        if archiveValidQuery(dateMax):
+            eventList = eventList.filter(bookingDate__lte=dateMax)
+
+
+        if request.method == "POST":
+            selectedEvents = request.POST.getlist('selectEvent')
+            selectedEventObjects = Event.objects.filter(id__in=selectedEvents)
+
+            billing = Billing()
+            billing.invoiceRef = generateInvoiceRef()
+            billing.save()
+
+            billing.events.set(selectedEventObjects)
+
+            billing.save()
+
+            messages.success(request, "Billing created")
+
+        context = {
+        'eventList': eventList,
+        'equipmentList': equipmentList
+        }
+
+        return render(request, 'createBilling.html', context)
+    
+
+    
+    else:
+        messages.success(request, "Please log in before entering that page! Admin access only.")
+        logout(request)
+        return redirect("loginPage")
+    

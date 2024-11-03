@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Create Billing</title>
+    <script>
+
+        function displaySupervisors() {
+            // displays the checkboxes for supervisors
+            event.preventDefault();
+            let dropdown = document.getElementById('supervisorDropdown');
+            let computedStyle = window.getComputedStyle(dropdown).display;
+            if (computedStyle === 'none') {
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        }
+
+    </script>
+
+    <style>
+
+        #navBar {
+            width: 80%;
+            max-width: 800px;
+            height: 50px;
+            margin: 40px auto 80px auto;
+            display: grid;
+            grid-template-columns: 30% 25% 25% 20%;
+        }
+
+        .supervisorSearch {
+            box-shadow: 2px 2px 5px hsl(265 0% 70%);
+            border-radius: 10px;
+            height: 40px;
+            margin: auto;
+            background-color: hsl(0 0 85%);
+            border: none;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .dates {
+            box-shadow: 2px 2px 5px hsl(265 0% 70%);
+            border-radius: 10px;
+            text-align: center;
+            height: 40px;
+            width: 90%;
+            margin: auto;
+            background-color: hsl(0 0 85%);
+        }
+
+        #filter {
+            box-shadow: 2px 2px 5px hsl(265 0% 70%);
+            border-radius: 10px;
+            height: 40px;
+            margin: auto;
+            background-color: hsl(0 0 85%);
+            border: none;
+            padding: 10px;
+            width: 80%;
+            cursor: pointer;
+        }
+
+        #create {
+            box-shadow: 2px 2px 5px hsl(265 0% 70%);
+            border-radius: 10px;
+            height: 40px;
+            margin: auto;
+            background-color: hsl(0 0 85%);
+            border: none;
+            padding: 10px;
+            max-width: 200px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <form method="GET" action=".">
+        <div id="navBar">
+            <!-- Supervisor selection -->
+            <input class="supervisorSearch" type="search" name="supervisorName" placeholder="-- Supervisor --" />
+            <!-- Date inputs -->
+            <div class="dates">
+                <label for="startDate">Start Date</label>
+                <input type="date" id="startDate" name="dateMin">
+            </div>
+            <div class="dates">
+                <label for="endDate">End Date</label>
+                <input type="date" id="endDate" name="dateMax">
+            </div>
+            <input type="submit" id="filter" value="Filter">
+        </div>
+    </form>
+
+    <form method="POST">
+        {% csrf_token %}
+        {% for event in eventList %}
+
+            <div class="card">
+                <div class="card-header">
+                    Booking ID: {{ event.id }}
+                </div>
+                <div>
+                    Select <input type="checkbox" name="selectEvent" value="{{ event.id }}">
+                </div>
+                
+                <div class="card-body">
+                    <p class="card-text">
+                        <ul>
+                            <li>Booking Name: {{ event.bookingName }}</li>
+                            <li>Supervisor: {{ event.supervisorName }}</li>
+                            <li>Date: {{ event.bookingDate }}</li>
+                            <li>From: {{ event.startTime }} to {{ event.allotedTime }}</li>
+                            <li>Equipment: {{ event.equipment }}</li>
+                        </ul>
+                    </p>
+                </div>
+                
+            </div>
+
+            <br>
+
+        {% endfor %}
+
+        <input type="submit" id="create" value="Create Billing">
+    </form>
+
+</body>
+</html>
