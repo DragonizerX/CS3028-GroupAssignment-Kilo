@@ -1,4 +1,4 @@
-{% load static %}
+
 <!DOCTYPE html>
 <html>
 
@@ -16,7 +16,8 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <link rel="stylesheet" href="{% static 'sidebar.css' %}">
+
+    <link rel="stylesheet" href="{%static 'global.css' %}">
 
     <style> 
         #calendar {
@@ -117,7 +118,7 @@
     </div>
 
     <!-- top bar (includes sidebar button and whatever else)-->
-    <div class="container-fluid bg-dark text-white topbar">
+    <div class="container-fluid text-white topbar">
         <div class="row">
             <div class="col-2 container-fluid text-left">
             <span class="sidebarButton" style="position:relative; top: 11px;" onclick="toggleNav()">&#9776;</span>
@@ -129,20 +130,21 @@
         </div>
     </div>
 
-    <div class="container">
-    <!--EQUIPMENT SELECTION-->
-    <div id="equipmentSelect" class="form-group">
-                
-        <label for="equipment">Select Equipment:</label>
-        <select class="form-control" id="equipment" name="equipment" required>
-            <option value="">-- Select Equipment --</option>
+    <div class="container rounded bg-white mt-5 mb-5 pb-5">
+        <div class="container">
+        <!--EQUIPMENT SELECTION-->
+        <div id="equipmentSelect" class="form-group">
+                    
+            <label for="equipment">Select Equipment:</label>
+            <select class="form-control" id="equipment" name="equipment" required>
+                <option value="">-- Select Equipment --</option>
 
-            {% for x in equipmentList %}
-                <option value="{{ x.equipmentID_auto}}">-- {{ x.equipmentName }} -- {{ x.hourlyRate }} --</option>
-            {% endfor %}
+                {% for x in equipmentList %}
+                    <option value="{{ x.equipmentID_auto}}">-- {{ x.equipmentName }} -- {{ x.hourlyRate }} --</option>
+                {% endfor %}
 
-        </select>
-    </div>
+            </select>
+        </div>
 
         <!--CALENDAR-->
         <div id="calendar"></div>
