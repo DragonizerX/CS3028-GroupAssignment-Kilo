@@ -183,10 +183,6 @@ def editBooking(request, id):
             finishTime = request.POST.get('finishTime')
             if finishTime:
                 booking.finishTime = finishTime
-            
-            allotedTime = request.POST.get('allotedTime')
-            if allotedTime:
-                booking.allotedTime = allotedTime
 
             comments = request.POST.get('comments')
             if comments:
