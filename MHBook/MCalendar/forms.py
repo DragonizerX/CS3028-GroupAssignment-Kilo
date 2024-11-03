@@ -40,8 +40,7 @@ class EventForm(forms.ModelForm):
             'start_time':forms.TimeInput(attrs={'class':'form-control','type':'time'}),
             'finish_time': forms.TimeInput(attrs={'class':'form-control','type':'time'}),
             'comments':forms.Textarea(attrs={'class':'form-contorl','rows':3}),
-            'equipment': forms.Select(attrs={'class': 'form-control'})
-
+            'equipment': forms.Select(attrs={'class': 'form-control'}),
         }
 
 class AddEquipmentForm(forms.ModelForm):

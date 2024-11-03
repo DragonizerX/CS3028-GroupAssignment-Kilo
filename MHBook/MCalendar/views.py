@@ -224,6 +224,7 @@ def create_event(request):
             finish_Time = request.POST.get('finishTime')
             comments_ = request.POST.get('comments')
             equipment_ = request.POST.get('equipment')
+            
         
             event = Event(
                 bookingName=booking_Name,
@@ -232,7 +233,7 @@ def create_event(request):
                 startTime=start_Time,
                 finishTime = finish_Time,
                 comments=comments_,
-                equipment=equipment_
+                equipment=equipment_,
             )
             event.save()
 
@@ -268,7 +269,8 @@ def get_events(request):
                 'start': f"{event.bookingDate}T{event.startTime}",
                 'end': f"{event.bookingDate}T{event.finishTime}",
                 'supervisorName': event.supervisorName,
-                'comments': event.comments
+                'comments': event.comments,
+                'totalTime': event.totalTime
             }
             event_list.append(event_data)
             
@@ -372,3 +374,6 @@ def archivePage(request):
 
 def archiveValidQuery(param):
     return param != '' and param is not None
+
+
+

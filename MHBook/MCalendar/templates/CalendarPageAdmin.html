@@ -224,129 +224,129 @@
         </div>
         </div>
 
-            <!--CALENDAR-->
-            <div id="calendar"></div>
+        <!--CALENDAR-->
+        <div id="calendar"></div>
+        
+        <!--BOOKING FORM-->
+        <div class="text-center mt-4">
+            <button class="btn btn-sty" type="button" data-toggle="collapse" data-target="#bookingForm" aria-expanded="false" aria-controls="bookingForm">
+                Make New Booking 
+            </button>
             
-            <!--BOOKING FORM-->
-            <div class="text-center mt-4">
-                <button class="btn btn-sty" type="button" data-toggle="collapse" data-target="#bookingForm" aria-expanded="false" aria-controls="bookingForm">
-                    Make New Booking 
-                </button>
-                
-                <div class="collapse mt-3" id="bookingForm">
-                    <div class="card card-body">
-                        <form method="post" action="{% url 'create_event' %}">
-                            {% csrf_token %}
-                            <input type="hidden" id="equipmentInput" name="equipment" value="">
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <label for="bookingName" class="control-label">Name for Booking:</label>
-                                </div>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="bookingName" name="bookingName" required>
-                                </div>
+            <div class="collapse mt-3" id="bookingForm">
+                <div class="card card-body">
+                    <form method="post" action="{% url 'create_event' %}">
+                        {% csrf_token %}
+                        <input type="hidden" id="equipmentInput" name="equipment" value="">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <label for="bookingName" class="control-label">Name for Booking:</label>
                             </div>
-                            <div class="row mt-2">
-                                <div class="col-sm-3">
-                                    <label for="supervisorName" class="control-label">Supervisor:</label>
-                                </div>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="supervisorName" name="supervisorName" required>
-                                </div>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="bookingName" name="bookingName" required>
                             </div>
-                            <div class="row mt-2">
-                                <div class="col-sm-3">
-                                    <label for="bookingDate" class="control-label">Date of Booking:</label>
-                                </div>
-                                <div class="col-sm-9">
-                                    <input type="date" class="form-control" id="bookingDate" name="bookingDate" required>
-                                </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="supervisorName" class="control-label">Supervisor:</label>
                             </div>
-                            <div class="row mt-2">
-                                <div class="col-sm-3">
-                                    <label for="startTime" class="control-label">Start Time:</label>
-                                </div>
-                                <div class="col-sm-9">
-                                    <select class="form-control" id="startTime" name="startTime" required>
-                                        <option value="00:00">00:00</option>
-                                        <option value="01:00">01:00</option>
-                                        <option value="02:00">02:00</option>
-                                        <option value="03:00">03:00</option>
-                                        <option value="04:00">04:00</option>
-                                        <option value="05:00">05:00</option>
-                                        <option value="06:00">06:00</option>
-                                        <option value="07:00">07:00</option>
-                                        <option value="08:00">08:00</option>
-                                        <option value="09:00">09:00</option>
-                                        <option value="10:00">10:00</option>
-                                        <option value="11:00">11:00</option>
-                                        <option value="12:00">12:00</option>
-                                        <option value="13:00">13:00</option>
-                                        <option value="14:00">14:00</option>
-                                        <option value="15:00">15:00</option>
-                                        <option value="16:00">16:00</option>
-                                        <option value="17:00">17:00</option>
-                                        <option value="18:00">18:00</option>
-                                        <option value="19:00">19:00</option>
-                                        <option value="20:00">20:00</option>
-                                        <option value="21:00">21:00</option>
-                                        <option value="22:00">22:00</option>
-                                        <option value="23:00">23:00</option>
-                                    </select>
-                                </div>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="supervisorName" name="supervisorName" required>
                             </div>
-                            <div class="row mt-2">
-                                <div class="col-sm-3">
-                                    <label for="finishTime" class="control-label">End Time:</label>
-                                </div>
-                                <div class="col-sm-9">
-                                    <select class="form-control" id="finishTime" name="finishTime" required>
-                                        <option value="00:00">00:00</option>
-                                        <option value="01:00">01:00</option>
-                                        <option value="02:00">02:00</option>
-                                        <option value="03:00">03:00</option>
-                                        <option value="04:00">04:00</option>
-                                        <option value="05:00">05:00</option>
-                                        <option value="06:00">06:00</option>
-                                        <option value="07:00">07:00</option>
-                                        <option value="08:00">08:00</option>
-                                        <option value="09:00">09:00</option>
-                                        <option value="10:00">10:00</option>
-                                        <option value="11:00">11:00</option>
-                                        <option value="12:00">12:00</option>
-                                        <option value="13:00">13:00</option>
-                                        <option value="14:00">14:00</option>
-                                        <option value="15:00">15:00</option>
-                                        <option value="16:00">16:00</option>
-                                        <option value="17:00">17:00</option>
-                                        <option value="18:00">18:00</option>
-                                        <option value="19:00">19:00</option>
-                                        <option value="20:00">20:00</option>
-                                        <option value="21:00">21:00</option>
-                                        <option value="22:00">22:00</option>
-                                        <option value="23:00">23:00</option>
-                                    </select>
-                                </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="bookingDate" class="control-label">Date of Booking:</label>
                             </div>
-                            <div class="row mt-2">
-                                <div class="col-sm-3">
-                                    <label for="comments" class="control-label">Comments:</label>
-                                </div>
-                                <div class="col-sm-9">
-                                    <textarea class="form-control" id="comments" name="comments" rows="3"></textarea>
-                                </div>
+                            <div class="col-sm-9">
+                                <input type="date" class="form-control" id="bookingDate" name="bookingDate" required>
                             </div>
-                            <div class="row mt-3">
-                                <div class="col-sm-12 text-center">
-                                    <button type="submit" class="btn btn-success">Confirm Booking</button>
-                                </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="startTime" class="control-label">Start Time:</label>
                             </div>
-                        </form>
-                    </div>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="startTime" name="startTime" required>
+                                    <option value="00:00">00:00</option>
+                                    <option value="01:00">01:00</option>
+                                    <option value="02:00">02:00</option>
+                                    <option value="03:00">03:00</option>
+                                    <option value="04:00">04:00</option>
+                                    <option value="05:00">05:00</option>
+                                    <option value="06:00">06:00</option>
+                                    <option value="07:00">07:00</option>
+                                    <option value="08:00">08:00</option>
+                                    <option value="09:00">09:00</option>
+                                    <option value="10:00">10:00</option>
+                                    <option value="11:00">11:00</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="13:00">13:00</option>
+                                    <option value="14:00">14:00</option>
+                                    <option value="15:00">15:00</option>
+                                    <option value="16:00">16:00</option>
+                                    <option value="17:00">17:00</option>
+                                    <option value="18:00">18:00</option>
+                                    <option value="19:00">19:00</option>
+                                    <option value="20:00">20:00</option>
+                                    <option value="21:00">21:00</option>
+                                    <option value="22:00">22:00</option>
+                                    <option value="23:00">23:00</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="finishTime" class="control-label">End Time:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="finishTime" name="finishTime" required>
+                                    <option value="00:00">00:00</option>
+                                    <option value="01:00">01:00</option>
+                                    <option value="02:00">02:00</option>
+                                    <option value="03:00">03:00</option>
+                                    <option value="04:00">04:00</option>
+                                    <option value="05:00">05:00</option>
+                                    <option value="06:00">06:00</option>
+                                    <option value="07:00">07:00</option>
+                                    <option value="08:00">08:00</option>
+                                    <option value="09:00">09:00</option>
+                                    <option value="10:00">10:00</option>
+                                    <option value="11:00">11:00</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="13:00">13:00</option>
+                                    <option value="14:00">14:00</option>
+                                    <option value="15:00">15:00</option>
+                                    <option value="16:00">16:00</option>
+                                    <option value="17:00">17:00</option>
+                                    <option value="18:00">18:00</option>
+                                    <option value="19:00">19:00</option>
+                                    <option value="20:00">20:00</option>
+                                    <option value="21:00">21:00</option>
+                                    <option value="22:00">22:00</option>
+                                    <option value="23:00">23:00</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="comments" class="control-label">Comments:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" id="comments" name="comments" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-sm-12 text-center">
+                                <button type="submit" class="btn btn-success">Confirm Booking</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+
     <!--JAVASCRIPT SCRIPTS-->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
