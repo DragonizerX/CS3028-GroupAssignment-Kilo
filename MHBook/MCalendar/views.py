@@ -383,9 +383,8 @@ def archivePage(request):
         return redirect("loginPage")
 
 
-def archiveValidQuery(param):
+def archiveValidQuery(param): # createBilling is using this aswell to sort through filters. Thanks!
     return param != '' and param is not None
-
 
 # createBilling functions
 def generateInvoiceRef():
@@ -426,10 +425,14 @@ def createBilling(request):
                 return render(request, 'createBilling.html', context)
 
             billing = Billing()
-            billing.invoiceRef = generateInvoiceRef()
+            billing.invoiceRef = generateInvoiceRef()          
+            billing.supervisor = supervisors.first()
             billing.save()
 
             billing.events.set(selectedEventObjects)
+
+            equipment_names = selectedEventObjects.values_list('equipment', flat=True).distinct()
+            billing.equipment.set(equipment_names)
 
             billing.save()
 

@@ -132,7 +132,7 @@ class Equipment(models.Model):
     
 class Billing(models.Model): 
     invoiceRef = models.CharField(max_length=10, blank=False, null=False)
-    supervisor = models.ManyToManyField(Supervisor) # includes first and last name, can be changed in billing.html
+    supervisor = models.CharField(max_length=64, blank=False, null=False) # includes first and last name, can be changed in billing.html
     user = models.ManyToManyField(Users) # includes first and last name, can be changed in billing.html
     events = models.ManyToManyField(Event) # includes booking reference no which for now is the booking id, and takes the start and finish time parameters to calculate the differnce in minutes to display time used
     issueDate = models.DateField(default=timezone.now)
