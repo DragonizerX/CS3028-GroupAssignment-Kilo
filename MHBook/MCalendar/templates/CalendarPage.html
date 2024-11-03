@@ -1,4 +1,4 @@
-
+{% load static %}
 <!DOCTYPE html>
 <html>
 
@@ -271,119 +271,174 @@
 
     <!--JAVASCRIPT SCRIPTS-->
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'timeGridWeek',
-            allDaySlot: false,
-            slotMinTime: '00:00:00',
-            slotMaxTime: '24:00:00',
-            slotDuration: '01:00:00',
-            snapDuration: '01:00:00',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'timeGridWeek,timeGridDay'
-            },
-            slotLabelFormat: {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            },
-            selectable: true,
-            select: function(info) {
-                var date = info.start.toISOString().split('T')[0];
-                var time = info.start.toTimeString().split(' ')[0].slice(0, 5);
-                document.getElementById('bookingDate').value = date;
-                document.getElementById('startTime').value = time;
-                var endTime = info.end.toTimeString().split(' ')[0].slice(0, 5);
-                document.getElementById('finishTime').value = endTime;
-                $('#bookingForm').collapse('show');
-            },
-            height: 'auto',
-            expandRows: true,
-            events: function(fetchInfo, successCallback, failureCallback) {
-                const equipment = document.getElementById('equipment').value;
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                allDaySlot: false,
+                slotMinTime: '00:00:00',
+                slotMaxTime: '24:00:00',
+                slotDuration: '01:00:00',
+                snapDuration: '01:00:00',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'timeGridWeek,timeGridDay'
+                },
+                slotLabelFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                },
+                selectable: true,
+                select: function(info) {
+                    var date = info.start.toISOString().split('T')[0];
+                    var startTime = info.start.toTimeString().split(' ')[0].slice(0, 5);
+                    var endTime = info.end.toTimeString().split(' ')[0].slice(0, 5);
+                    
+                    document.getElementById('bookingDate').value = date;
+                    document.getElementById('startTime').value = startTime;
+                    
+                    const startHour = parseInt(startTime.split(':')[0]);
+                    const endHour = parseInt(endTime.split(':')[0]);
+                    
+                    if(endHour <= startHour) {
+                        endTime = `${String(startHour + 1).padStart(2, '0')}:00`;
+                    }
+                    
+                    document.getElementById('finishTime').value = endTime;
+                    updateEndTimeOptions();
+                    $('#bookingForm').collapse('show');
+                },
+                height: 'auto',
+                expandRows: true,
+                events: function(fetchInfo, successCallback, failureCallback) {
+                    const equipment = document.getElementById('equipment').value;
+                    
+                    if (!equipment) {
+                        successCallback([]); // Return empty array if no equipment selected
+                        return;
+                    }
+                    
+                    fetch(`/MCalendar/CalendarPage/get_events/?equipment=${encodeURIComponent(equipment)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            successCallback(data);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            failureCallback(error);
+                        });
+                },
+                eventContent: function(arg) {
+                    return {
+                        html: '<b>' + arg.event.title + '</b>'
+                    };
+                }
+            });
+            
+            calendar.render();
+        
+            // Equipment change handler
+            document.getElementById('equipment').addEventListener('change', function() {
+                const selectedEquipment = this.value;
+                document.getElementById('equipmentInput').value = selectedEquipment;
+                calendar.refetchEvents();
+            });
+        
+            // Time validation functions
+            function updateEndTimeOptions() {
+                const startTime = document.getElementById('startTime').value;
+                const finishTimeSelect = document.getElementById('finishTime');
+                const startHour = parseInt(startTime.split(':')[0]);
                 
-                if (!equipment) {
-                    successCallback([]); // Return empty array if no equipment selected
+                finishTimeSelect.innerHTML = '';
+                
+                for(let i = 0; i < 24; i++) {
+                    if(i > startHour) {
+                        const timeStr = `${String(i).padStart(2, '0')}:00`;
+                        const option = new Option(timeStr, timeStr);
+                        finishTimeSelect.appendChild(option);
+                    }
+                }
+                
+                if(finishTimeSelect.value === '') {
+                    finishTimeSelect.value = `${String(startHour + 1).padStart(2, '0')}:00`;
+                }
+            }
+        
+            function validateTimes() {
+                const startTime = document.getElementById('startTime').value;
+                const finishTime = document.getElementById('finishTime').value;
+                const startHour = parseInt(startTime.split(':')[0]);
+                const finishHour = parseInt(finishTime.split(':')[0]);
+                
+                if(finishHour <= startHour) {
+                    alert('End time must be after start time');
+                    document.getElementById('finishTime').value = 
+                        `${String(startHour + 1).padStart(2, '0')}:00`;
+                }
+            }
+
+            // Form submission handler
+            document.getElementById('startTime').addEventListener('change', updateEndTimeOptions);
+            document.getElementById('finishTime').addEventListener('change', validateTimes);
+        
+            document.querySelector('#bookingForm form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const startTime = document.getElementById('startTime').value;
+                const finishTime = document.getElementById('finishTime').value;
+                const startHour = parseInt(startTime.split(':')[0]);
+                const finishHour = parseInt(finishTime.split(':')[0]);
+                
+                if(finishHour <= startHour) {
+                    alert('End time must be after start time');
                     return;
                 }
+        
+                var formData = new FormData(this);
+                var selectedEquipment = document.getElementById('equipment').value;
+                formData.append('equipment', selectedEquipment);
                 
-                fetch(`/MCalendar/CalendarPage/get_events/?equipment=${encodeURIComponent(equipment)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        successCallback(data);
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        failureCallback(error);
-                    });
-            },
-            eventContent: function(arg) {
-                return {
-                    html: '<b>' + arg.event.title + '</b>'
-                };
-            }
+                if (!selectedEquipment) {
+                    alert('Please select equipment before submitting the booking.');
+                    return;
+                }
+        
+                fetch("{% url 'create_event' %}", {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        calendar.refetchEvents(); // Refresh calendar to show new booking
+                        $('#bookingForm').collapse('hide');
+                        this.reset();
+                        document.getElementById('equipment').value = selectedEquipment;
+                        document.getElementById('equipmentInput').value = selectedEquipment;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
         });
         
-        calendar.render();
-
-        // Equipment change handler
-        document.getElementById('equipment').addEventListener('change', function() {
-            const selectedEquipment = this.value;
-            document.getElementById('equipmentInput').value = selectedEquipment;
-            calendar.refetchEvents(); // This will reload events for the selected equipment
-        });
-
-        // Form submission handler
-        document.querySelector('#bookingForm form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            var formData = new FormData(this);
-            
-            var selectedEquipment = document.getElementById('equipment').value;
-            formData.append('equipment', selectedEquipment);
-            if (!selectedEquipment) {
-                alert('Please select equipment before submitting the booking.');
-                return;
-            }
-
-            fetch("{% url 'create_event' %}", {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    calendar.refetchEvents();  // Refresh calendar to show new booking
-                    $('#bookingForm').collapse('hide');
-                    this.reset();
-                    // Keep the selected equipment value
-                    document.getElementById('equipment').value = selectedEquipment;
-                    document.getElementById('equipmentInput').value = selectedEquipment;
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        });
-    });
-
         function toggleNav() {
-    
             var element = document.getElementById("sidebar");
             element.classList.toggle("toggle");
         }
-
+        
         function LogoutButton() {
             if (confirm("You are about to logout,\nAre you sure you want to continue?")) {
-              window.location.href="{% url 'logout' %}";
+                window.location.href="{% url 'logout' %}";
             } else {
-              none;
+                none;
             }
-          }
-
-    </script>
+        }
+        </script>
 </body>
 </html>
