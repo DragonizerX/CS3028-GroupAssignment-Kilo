@@ -72,6 +72,7 @@ class Supervisor(models.Model):
 class Event(models.Model):
     bookingName = models.CharField(max_length=80)
     supervisorName = models.CharField(max_length=80)
+    email = models.EmailField()
     bookingDate = models.DateField()
     startTime = models.TimeField()
     finishTime = models.TimeField()
