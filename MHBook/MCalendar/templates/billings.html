@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 
-    <title>Create Billings</title>
+    <title>View Billings</title>
     <script>
 
     </script>
@@ -51,7 +51,8 @@
             cursor: pointer;
         }
 
-        #create {
+        #createBilling {
+            display: block;
             box-shadow: 2px 2px 5px hsl(265 0% 70%);
             border-radius: 10px;
             height: 40px;
@@ -68,18 +69,12 @@
 
 <body>
 
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    <button id="createBilling" onclick="location.href = '/MCalendar/createBilling'"> Create Billing </button>
 
     <form method="GET" action=".">
         <div id="navBar">
             <!-- Supervisor selection -->
-            <input class="supervisorSearch" type="search" name="supervisorName" placeholder="-- Supervisor --" />
+            <input class="supervisorSearch" type="search" name="supervisorName" placeholder="-- Supervisor --"/>
             <!-- Date inputs -->
             <div class="dates">
                 <label for="startDate">Start Date</label>
@@ -93,38 +88,11 @@
         </div>
     </form>
 
-    <form method="POST">
-        {% csrf_token %}
-        {% for event in eventList %}
-
-            <div class="card">
-                <div class="card-header">
-                    Booking ID: {{ event.id }}
-                </div>
-                <div>
-                    Select <input type="checkbox" name="selectEvent" value="{{ event.id }}">
-                </div>
-                
-                <div class="card-body">
-                    <p class="card-text">
-                        <ul>
-                            <li>Booking Name: {{ event.bookingName }}</li>
-                            <li>Supervisor: {{ event.supervisorName }}</li>
-                            <li>Date: {{ event.bookingDate }}</li>
-                            <li>From: {{ event.startTime|time:'H:i' }} to {{ event.finishTime|time:'H:i' }}</li>
-                            <li>Equipment: {{ event.equipment }}</li>
-                        </ul>
-                    </p>
-                </div>
-                
-            </div>
-
-            <br>
-
-        {% endfor %}
-
-        <input type="submit" id="create" value="Create Billing">
-    </form>
+    <!-- Billings -->
+    {% for b in billingsList %}
+        <div>{{ b.supervisor }}</div>
+        <div>{{ b.issueDate }}</div>
+    {% endfor %}
 
 </body>
 </html>
