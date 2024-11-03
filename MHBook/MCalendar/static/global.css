@@ -1,6 +1,7 @@
 body {
     background: #f8f2ef;
     margin-top:100px;
+    
 }
 
 .form-control:focus {
@@ -24,3 +25,81 @@ body {
 .labels {
     font-size: 11px;
 }
+
+
+  
+/* sidebar */
+.sidenav {
+height: 100%;
+width: 0;
+position: fixed;
+z-index: 99;
+top: 0;
+left: 0;
+background-color: #0f2e2e;
+overflow-x: hidden;
+transition: 0.5s;
+padding-top: 110px;
+}
+
+.sideCont {
+display: flex;
+}
+
+/* sidebar width */
+.toggle {
+    width: 170px;
+}
+
+/* sidebar buttons */
+.sidenav a {
+padding: 8px 32px 8px 32px;
+text-decoration: none;
+font-size: 25px;
+color: #ffffff !important;
+display:block;
+transition: 0.3s;
+cursor:pointer;
+}
+
+.sidenav a:hover {
+color: #757575 !important;
+}
+
+#sidebarLogout {
+position: absolute;
+bottom: 30px;
+left: auto;
+width: 0px;
+align-self: flex-end;
+}
+
+/* top bar height and alignment */
+/* (the height here needs to be the same as the top for the sidebar) */
+.topbar {
+height: 80px;
+max-height: 80px;
+align-content:center;
+position: fixed;
+top:0;
+z-index: 100;
+background-color: #008080;
+cursor:default;
+}
+
+/* sidebar stuff */
+@media screen and (max-height: 450px) {
+.sidenav {padding-top: 15px;}
+.sidenav a {font-size: 18px;}
+}
+
+/* style for the button to toggle the sidebar */
+.sidebarButton {
+font-size:30px;
+cursor:pointer;
+}
+
+::-webkit-scrollbar { /* hides the scroll bar but it still functions as intended */
+display: none;
+}
+  
