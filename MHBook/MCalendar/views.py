@@ -220,7 +220,14 @@ def create_event(request):
             finish_Time = request.POST.get('finishTime')
             comments_ = request.POST.get('comments')
             equipment_ = request.POST.get('equipment')
-            
+            custom_price = None
+            if request.user.is_superuser:
+                price = request.POST.get('customPrice')
+                if price:
+                    try:
+                        custom_price = float(price)
+                    except ValueError:
+                        custom_price = None
         
             event = Event(
                 bookingName=booking_Name,
@@ -230,6 +237,7 @@ def create_event(request):
                 finishTime = finish_Time,
                 comments=comments_,
                 equipment=equipment_,
+                customPrice=custom_price
             )
             event.save()
 

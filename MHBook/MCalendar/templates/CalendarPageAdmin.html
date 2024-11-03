@@ -328,6 +328,16 @@
                                 </select>
                             </div>
                         </div>
+                        {% if user.is_superuser %}
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="customPrice" class="control-label">Booking Price:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="number" step="0.01" class="form-control" id="customPrice" name="customPrice">
+                            </div>
+                        </div>
+                        {% endif %}
                         <div class="row mt-2">
                             <div class="col-sm-3">
                                 <label for="comments" class="control-label">Comments:</label>
