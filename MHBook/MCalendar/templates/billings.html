@@ -129,10 +129,8 @@
             <div> Total Cost: £{{ b.totalCost }}</div>
         </div>
         <!-- Events Dropdowns -->
-
-        <!-- NEED TO CHANGE, currently filters by supervisor, not by events in billing, should share an id field where e.billingID = b.id-->
         {% for e in events %}
-            {% if e.supervisorName in b.supervisor %}
+            {% if e.invoiceRef == b.invoiceRef %}
                 <div class="event">
                     <div class="eventItem"> Booking: {{ e.bookingName }}</div>
                     <div class="eventItem"> Supervisor: {{ e.supervisorName }}</div>
