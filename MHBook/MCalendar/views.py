@@ -11,7 +11,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.admin.views.decorators import staff_member_required
 
 import uuid
-from .models import Users, Event, Equipment, Billing
+from .models import Users, Event, Equipment, Billing, Event
 from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm, AddEquipmentForm
 
 from django.core.mail import send_mail
@@ -450,6 +450,7 @@ def billings(request):
     if request.user.is_superuser:
         billingsList = Billing.objects.all()
         equipmentList = Equipment.objects.all()
+        events = Event.objects.all()
 
         supervisorName = request.GET.get('supervisorName')
         dateMin = request.GET.get('dateMin')
@@ -466,7 +467,8 @@ def billings(request):
 
         context = {
         'billingsList': billingsList,
-        'equipmentList': equipmentList
+        'equipmentList': equipmentList,
+        'events': events
         }
 
         return render(request, 'billings.html', context)
