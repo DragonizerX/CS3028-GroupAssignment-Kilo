@@ -24,3 +24,6 @@ Group Kilo - Software Engineering Assignment: Microscopy and Histology Managemen
 # This is what I would look for: supervisor = models.ManyToManyField(Supervisor) -- So the command would be:
 # -- Billing(ID).supervisor.add(Supervisor(ID)) -- where ID is whatever as long as it exists.
 # If you want to figure out how to edit and delete look it up.
+
+# TO DELET ALL OBJECTS
+# Billing.Objects.all().delete()
