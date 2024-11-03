@@ -176,9 +176,9 @@ def editBooking(request, id):
         equipmentList = Equipment.objects.all()
         
         if request.method == 'POST':
-            bookingName = request.POST.get('bookingName')
+            """bookingName = request.POST.get('bookingName')
             if bookingName:
-                booking.bookingName = bookingName
+                booking.bookingName = bookingName"""
 
             supervisorName = request.POST.get('supervisorName')
             if supervisorName:
@@ -226,7 +226,7 @@ def create_event(request):
     if request.method == 'POST':
         try:
             
-            booking_Name = request.POST.get('bookingName')
+            booking_Name = f"{request.user.first_name} {request.user.last_name}"
             supervisor_Name = request.POST.get('supervisorName')
             email_ = request.user.email
             booking_Date = request.POST.get('bookingDate')
