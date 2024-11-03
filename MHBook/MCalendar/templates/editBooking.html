@@ -13,22 +13,6 @@
 
     <link rel="stylesheet" href="{% static 'global.css' %}">
 
-    <style>
-
-        .details {
-            background-color: lightgrey;
-            display: grid;
-            grid-template-columns: 40% 60%;
-            gap: 2px 0;
-            padding: 5px;
-        }
-
-        #cancelButton {
-            padding: 5px;
-            margin: 20px;
-        }
-
-    </style>
     <script>
         function confirmCancel(id) {
             const dialog = window.confirm('Are you sure you want to cancel this booking?');
@@ -92,42 +76,50 @@
         </div>
     </div>
 
-    <div class="container rounded bg-white mt-5 mb-5 pb-5">
+    <div class="container rounded bg-white mt-5 mb-5 pb-5 pt-3">
     
-    <form class="details" method="POST">
+    <form method="POST">
         {% csrf_token %}
         {% for x in editBooking %}
-        
-        <label for="name">Full Name: </label>
-        <input type="text" id="name" name="bookingName" placeholder="{{ x.bookingName }}">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-text">
+                        <div class="details">
+                            
+                            <label for="name">Full Name: </label>
+                            <input type="text" id="name" name="bookingName" placeholder="{{ x.bookingName }}">
 
-        <label for="supervisor">Supervisor: </label>
-        <input type="text" id="supervisor" name="supervisorName" placeholder="{{ x.supervisorName }}">
+                            <label for="supervisor">Supervisor: </label>
+                            <input type="text" id="supervisor" name="supervisorName" placeholder="{{ x.supervisorName }}">
 
-        <label for="date">Date: </label>
-        <input type="date" id="date" name="bookingDate" value="{{ x.bookingDate|date:'Y-m-d' }}">
+                            <label for="date">Date: </label>
+                            <input type="date" id="date" name="bookingDate" value="{{ x.bookingDate|date:'Y-m-d' }}">
 
-        <label for="start">Start time: </label>
-        <input type="time" id="start" name="startTime" value="{{ x.startTime|time:'H:i' }}">
+                            <label for="start">Start time: </label>
+                            <input type="time" id="start" name="startTime" value="{{ x.startTime|time:'H:i' }}">
 
-        <label for="finish">Finish time: </label>
-        <input type="time" id="finish" name="finishTime" value="{{ x.finishTime|time:'H:i' }}">
+                            <label for="finish">Finish time: </label>
+                            <input type="time" id="finish" name="finishTime" value="{{ x.finishTime|time:'H:i' }}">
 
-        <label for="comments">Comments: </label>
-        <input type="text" id="comments" name="comments" placeholder="{{ x.comments }}">
+                            <label for="comments">Comments: </label>
+                            <input type="text" id="comments" name="comments" placeholder="{{ x.comments }}">
+                        
 
-        <label for="equipment">Equipment: </label>
-        <input type="text" id="equipment" name="equipment" placeholder="{{ x.equipment }}">
+                            <label for="equipment">Equipment: </label>
+                            <input type="text" id="equipment" name="equipment" placeholder="{{ x.equipment }}">
 
-            <input type="submit" value="Submit" style="width: 80%; margin: auto;">
+                        </div>
+                        <br>
+                        <input class="btn btn-success btn-block" type="submit" value="Submit" style="width: 80%; margin: auto;">
+                    </p>
+                </div>
+            </div>
 
-            
-        </form>
-
-        <button id="cancelButton" onclick="confirmCancel({{ x.id }})">Cancel Booking</button>
-
+            <br>
+            <button class="btn btn-danger btn-block" style="width: 80%; margin: auto;" onclick="confirmCancel({{ x.id }})">Cancel Booking</button>
         {% endfor %}
 
+    </form>
     </div>
 
 </body>
