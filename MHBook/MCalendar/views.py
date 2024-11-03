@@ -411,7 +411,7 @@ def createBilling(request):
 
         context = {
         'eventList': eventList,
-        'equipmentList': equipmentList
+        'equipmentList': equipmentList,
         }
 
         if request.method == "POST":
