@@ -117,12 +117,15 @@
         <input type="text" id="comments" name="comments" placeholder="{{ x.comments }}">
 
         <label for="equipment">Equipment: </label>
+        <input type="text" id="equipment" name="equipment" placeholder="{{ x.equipment }}">
+
+        <!--
         <select id="equipment" name="equipment"> <option selected>{{ x.equipment }}</option>
 
             {% for equipment in equipmentList %}
-                <option value="{{ equipment }}">{{ equipment }}</option>
+                <option value="{{ equipment }}">{{ equipment.equipmentID_auto }}</option>
             {% endfor %}
-        </select>
+        </select> -->
 
             <input type="submit" value="Submit" style="width: 80%; margin: auto;">
 
