@@ -442,3 +442,34 @@ def createBilling(request):
         logout(request)
         return redirect("loginPage")
     
+def billings(request):
+
+    if request.user.is_superuser:
+        eventList = Event.objects.all()
+        equipmentList = Equipment.objects.all()
+
+        supervisorName = request.GET.get('supervisorName')
+        dateMin = request.GET.get('dateMin')
+        dateMax = request.GET.get('dateMax')
+
+        if archiveValidQuery(supervisorName):
+            eventList = eventList.filter(supervisorName__icontains=supervisorName)
+
+        if archiveValidQuery(dateMin):
+            eventList = eventList.filter(bookingDate__gte=dateMin)
+
+        if archiveValidQuery(dateMax):
+            eventList = eventList.filter(bookingDate__lte=dateMax)
+
+        context = {
+        'eventList': eventList,
+        'equipmentList': equipmentList
+        }
+
+        return render(request, 'billings.html', context)
+    
+    else:
+        messages.success(request, "Please log in before entering that page! Admin access only.")
+        logout(request)
+        return redirect("loginPage")
+    

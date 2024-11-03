@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 
-    <title>Create Billings</title>
+    <title>View Billings</title>
     <script>
 
     </script>
@@ -51,7 +51,8 @@
             cursor: pointer;
         }
 
-        #create {
+        #createBilling {
+            display: block;
             box-shadow: 2px 2px 5px hsl(265 0% 70%);
             border-radius: 10px;
             height: 40px;
@@ -76,6 +77,8 @@
         </ul>
     {% endif %}
 
+    <button id="createBilling" onclick="location.href = '/MCalendar/createBilling'"> Create Billing </button>
+
     <form method="GET" action=".">
         <div id="navBar">
             <!-- Supervisor selection -->
@@ -91,39 +94,6 @@
             </div>
             <input type="submit" id="filter" value="Filter">
         </div>
-    </form>
-
-    <form method="POST">
-        {% csrf_token %}
-        {% for event in eventList %}
-
-            <div class="card">
-                <div class="card-header">
-                    Booking ID: {{ event.id }}
-                </div>
-                <div>
-                    Select <input type="checkbox" name="selectEvent" value="{{ event.id }}">
-                </div>
-                
-                <div class="card-body">
-                    <p class="card-text">
-                        <ul>
-                            <li>Booking Name: {{ event.bookingName }}</li>
-                            <li>Supervisor: {{ event.supervisorName }}</li>
-                            <li>Date: {{ event.bookingDate }}</li>
-                            <li>From: {{ event.startTime }} to {{ event.allotedTime }}</li>
-                            <li>Equipment: {{ event.equipment }}</li>
-                        </ul>
-                    </p>
-                </div>
-                
-            </div>
-
-            <br>
-
-        {% endfor %}
-
-        <input type="submit" id="create" value="Create Billing">
     </form>
 
 </body>
