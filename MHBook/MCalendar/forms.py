@@ -53,6 +53,3 @@ class AddEquipmentForm(forms.ModelForm):
             'hourlyRate':forms.TextInput(attrs={'class': 'form-control'}),
 
         }
-
-
-
