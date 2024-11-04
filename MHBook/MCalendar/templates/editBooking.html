@@ -13,6 +13,32 @@
 
     <link rel="stylesheet" href="{% static 'global.css' %}">
 
+    <style>
+    .dropdown-container {
+        position: relative; 
+    }
+
+    .dropdown-content {
+        position: absolute; 
+        z-index: 1000; 
+        background-color: white; 
+        border: 1px solid #ccc; 
+        max-height: 200px; 
+        overflow-y: auto;
+        display: none; 
+    }
+
+    .dropdown-item {
+        padding: 8px 12px;
+        cursor: pointer;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f0f0f0;
+    }
+
+    </style>
+
     <script>
         function confirmCancel(id) {
             const dialog = window.confirm('Are you sure you want to cancel this booking?');
@@ -98,6 +124,47 @@
                 });
             }
         });
+        
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById("supervisorSearch");
+    const dropdown = document.getElementById("supervisorDropdown");
+
+    // Show dropdown when the input is focused
+    searchInput.addEventListener("focus", function() {
+        dropdown.style.display = "block";
+    });
+
+    // Filter dropdown items as user types
+    searchInput.addEventListener("keyup", function() {
+        const searchText = searchInput.value.toLowerCase();
+        const items = dropdown.getElementsByClassName("dropdown-item");
+
+        for (let item of items) {
+            const itemText = item.innerText.toLowerCase();
+            item.style.display = itemText.includes(searchText) ? "" : "none";
+        }
+    });
+
+    // Close dropdown if clicking outside of the input or dropdown
+    document.addEventListener("mousedown", function(event) {
+        if (!dropdown.contains(event.target) && event.target !== searchInput) {
+            dropdown.style.display = "none";
+        }
+    });
+
+    // Select a supervisor from the dropdown
+    window.selectSupervisor = function(id, name) {
+        searchInput.value = name; // Display selected name in input field
+        document.getElementById("selectedSupervisorId").value = id; // Store selected supervisor ID
+        dropdown.style.display = "none"; // Hide dropdown after selection
+    };
+});
+
+
+
 
     </script>
 </head>
@@ -152,9 +219,32 @@
                             
                             <label for="name">Full Name: </label>
                             <input type="text" id="name" name="bookingName" placeholder="{{ x.bookingName }}">
+                            
+                            <label for="supervisor">Supervisor:</label>
 
-                            <label for="supervisor">Supervisor: </label>
-                            <input type="text" id="supervisor" name="supervisorName" placeholder="{{ x.supervisorName }}">
+                            <!-- Dropdown Container -->
+                            <div class="dropdown-container">
+                                <!-- Search Input Field -->
+                                <input type="text" id="supervisorSearch" class="form-control" placeholder="Search for a supervisor">
+
+                                <!-- Custom Dropdown -->
+                                <div id="supervisorDropdown" class="dropdown-content">
+                                    {% for supervisor in supervisors %}
+                                        <div class="dropdown-item" onclick="selectSupervisor('{{ supervisor.id }}', '{{ supervisor.first_name }} {{ supervisor.last_name }}')">
+                                            {{ supervisor.first_name }} {{ supervisor.last_name }}
+                                        </div>
+                                    {% empty %}
+                                        <div class="dropdown-item">No supervisors available</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Hidden Input to Store Selected Supervisor ID -->
+                            <input type="hidden" name="supervisorName" id="selectedSupervisorId" required>
+
+
+                    
+                            
 
                             <label for="date">Date: </label>
                             <input type="date" id="date" name="bookingDate" value="{{ x.bookingDate|date:'Y-m-d' }}">

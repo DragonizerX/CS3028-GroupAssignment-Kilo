@@ -174,6 +174,7 @@ def editBooking(request, id):
     if request.user.is_authenticated:
         booking = get_object_or_404(Event, id=id)
         equipmentList = Equipment.objects.all()
+        supervisors = Supervisor.objects.all().order_by('first_name')
         
         if request.method == 'POST':
             bookingName = request.POST.get('bookingName')
@@ -182,7 +183,9 @@ def editBooking(request, id):
 
             supervisorName = request.POST.get('supervisorName')
             if supervisorName:
-                booking.supervisorName = supervisorName
+                supervisor = Supervisor.objects.get(id=supervisorName)
+                supervisor_full_name = f"{supervisor.first_name} {supervisor.last_name}"
+                booking.supervisorName = supervisor_full_name
 
             bookingDate = request.POST.get('bookingDate')
             if bookingDate:
@@ -210,7 +213,8 @@ def editBooking(request, id):
         template = loader.get_template('editBooking.html')
         context = {
             'editBooking': [booking],
-            'equipmentList': equipmentList
+            'equipmentList': equipmentList,
+            'supervisors': supervisors
         }
         return HttpResponse(template.render(context, request))
     else:
