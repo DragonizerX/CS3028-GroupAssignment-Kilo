@@ -255,7 +255,17 @@
                     <form method="post" action="{% url 'create_event' %}">
                         {% csrf_token %}
                         <input type="hidden" id="equipmentInput" name="equipment" value="">
-                        <div class="row">
+                        {% if user.is_superuser %}
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="user_email" class="control-label">User Email:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="email" class="form-control" id="user_email" name="user_email" required>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="row mt-2">
                             <div class="col-sm-3">
                                 <label for="bookingName" class="control-label">Name for Booking:</label>
                             </div>
@@ -588,6 +598,11 @@
                 const selectedOption = document.getElementById('equipment').options[document.getElementById('equipment').selectedIndex];
                 const hourlyRate = selectedOption.text.split('--')[2].trim(); 
                 formData.append('hourlyRate', hourlyRate);
+
+                const userEmailField = document.getElementById('user_email');
+                if (userEmailField) {
+                    formData.append('user_email', userEmailField.value);
+                }
         
                 fetch("{% url 'create_event' %}", {
                     method: 'POST',
