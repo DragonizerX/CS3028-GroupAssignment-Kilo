@@ -244,12 +244,7 @@ def create_event(request):
             supervisor = Supervisor.objects.get(id=supervisor_Name)
             supervisor_full_name = f"{supervisor.first_name} {supervisor.last_name}"
 
-            if request.user.is_superuser:
-                email_ = request.POST.get('user_email')  # New field in the form
-                if not email_:
-                    return JsonResponse({'status': 'error', 'message': 'User email is required for admin bookings.'}, status=400)
-            else:
-                email_ = request.user.email 
+            email_ = request.POST.get('user_email') or request.user.email if request.user.is_superuser else request.user.email
 
             overlapping_bookings = Event.objects.filter(
                 equipment=equipment.equipmentName,
