@@ -139,63 +139,87 @@
         </div>
     </div>
 
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    <div class="container rounded bg-white mt-5 mb-5">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="p-3 py-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="text-right">Billing</h2>
+                    </div>
 
-    <form method="GET" action=".">
-        <div id="navBar">
-            <!-- Supervisor selection -->
-            <input class="supervisorSearch" type="search" name="supervisorName" placeholder="-- Supervisor --" />
-            <!-- Date inputs -->
-            <div class="dates">
-                <label for="startDate">Start Date</label>
-                <input type="date" id="startDate" name="dateMin">
-            </div>
-            <div class="dates">
-                <label for="endDate">End Date</label>
-                <input type="date" id="endDate" name="dateMax">
-            </div>
-            <input type="submit" id="filter" value="Filter">
-        </div>
-    </form>
-
-    <form method="POST">
-        {% csrf_token %}
-        {% for event in eventList %}
-
-            <div class="card">
-                <div class="card-header">
-                    Booking ID: {{ event.id }}
-                </div>
-                <div>
-                    Select <input type="checkbox" name="selectEvent" value="{{ event.id }}">
-                </div>
-                
-                <div class="card-body">
-                    <p class="card-text">
-                        <ul>
-                            <li>Booking Name: {{ event.bookingName }}</li>
-                            <li>Supervisor: {{ event.supervisorName }}</li>
-                            <li>Date: {{ event.bookingDate }}</li>
-                            <li>From: {{ event.startTime }} to {{ event.allotedTime }}</li>
-                            <li>Equipment: {{ event.equipment }}</li>
+                    {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
                         </ul>
-                    </p>
+                    {% endif %}
+
+                    <form method="GET" action=".">
+                        <div class="form-row">
+                            <div class="form-group col-12">
+                                <div class="input-group">
+                                    <input class="form-control py-2" type="search" name="supervisorName" placeholder="Supervisor Name..." />
+                                </div>
+                            </div>        
+                        </div>
+    
+                        <div class="form-row">
+                          
+                            <div class="form-group col-md-6 col-lg-6">
+                                <label for="startDate">Start Date</label>
+                                <input type="date" class="form-control" id="startDate" name="dateMin">
+                            </div>
+                            <div class="form-group col-md-6 col-lg-6">
+                                <label for="endDate">End Date</label>
+                                <input type="date" class="form-control" id="endDate" name="dateMax">
+                            </div>
+                        
+                        </div>
+    
+                        <button type="submit" class="btn btn-block btn-sty mb-3">Search</button>
+
+                    </form>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        {% for event in eventList %}
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h4>Booking ID: {{ event.id }}</h4>
+                                    
+                                        <div class="text-center">
+                                            <span style="cursor:default">Select<span>
+                                            <input class="btn btn-block" type="checkbox" name="selectEvent" value="{{ event.id }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card-body">
+                                    <p class="card-text">
+                                        <div class="details">
+                                            <div class="detailsListItem">Booking Name: {{ event.bookingName }}</div>
+                                            <div class="detailsListItem">Supervisor: {{ event.supervisorName }}</div>
+                                            <div class="detailsListItem">Date: {{ event.bookingDate }}</div>
+                                            <div class="detailsListItem">From: {{ event.startTime }} to {{ event.finishTime }}</div>
+                                            <div class="detailsListItem">Equipment: {{ event.equipment }}</div>
+                                        </div>
+                                    </p>
+                                </div>  
+                            </div>
+
+                            <br>
+
+                        {% endfor %}
+
+                        <input type="submit" id="create" value="Create Billing">
+                    </form>
                 </div>
-                
             </div>
-
-            <br>
-
-        {% endfor %}
-
-        <input type="submit" id="create" value="Create Billing">
-    </form>
+        </div>
+    </div>
 
 </body>
 </html>

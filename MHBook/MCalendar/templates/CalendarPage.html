@@ -168,7 +168,7 @@
         
         <!--BOOKING FORM-->
         <div class="text-center mt-4">
-            <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#bookingForm" aria-expanded="false" aria-controls="bookingForm">
+            <button class="btn btn-sty" type="button" data-toggle="collapse" data-target="#bookingForm" aria-expanded="false" aria-controls="bookingForm">
                 Make New Booking 
             </button>
             
@@ -208,7 +208,7 @@
                                 <input type="hidden" name="supervisorName" id="selectedSupervisorId" required>
                             </div>
                             <div class="col-sm-2">
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addSupervisorModal">
+                                <button type="button" class="btn btn-sty btn-block" data-toggle="modal" data-target="#addSupervisorModal">
                                     Add New
                                 </button>
                             </div>
@@ -333,10 +333,13 @@
                                         </div>
                                     </form>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" id="submitSupervisor">Add Supervisor</button>
+                                <div class="container px-5">
+                                    <div class="text-center">
+                                    <button type="button" class="detailsListItem btn btn-block btn-success" id="submitSupervisor">Add Supervisor</button>
+                                    <button type="button" class="detailsListItem btn btn-block btn-danger " data-dismiss="modal">Close</button>
+                                    </div>
                                 </div>
+                                <br>
                             </div>
                         </div>
                     </div>
