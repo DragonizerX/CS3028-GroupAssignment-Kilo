@@ -12,6 +12,10 @@
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.css' rel='stylesheet' />
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.js'></script>
 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -172,10 +176,24 @@
                             <div class="col-sm-3">
                                 <label for="supervisorName" class="control-label">Supervisor:</label>
                             </div>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" id="supervisorName" name="supervisorName" required>
+                            <div class="col-sm-7">
+                                <input type="text" id="supervisorSearch" class="form-control" placeholder="Add search filter" onkeyup="filterSupervisors()">
+                                <select name="supervisorName" id="supervisorName" class="form-control" required>
+                                    <option value="">Select supervisor</option>
+                                    {% for supervisor in supervisors %}
+                                        <option value="{{ supervisor.id }}">{{ supervisor.first_name }} {{ supervisor.last_name }}</option> <!-- Show supervisor for all fields as dropdown -->
+                                    {% empty %}
+                                        <option value="">No supervisors available</option><!-- If no supervisors found in object made more table -->
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addSupervisorModal">
+                                    Add New
+                                </button>
                             </div>
                         </div>
+
                         <div class="row mt-2">
                             <div class="col-sm-3">
                                 <label for="bookingDate" class="control-label">Date of Booking:</label>
@@ -264,10 +282,48 @@
                             </div>
                         </div>
                     </form>
+
+                    <div class="modal fade" id="addSupervisorModal" tabindex="-1" role="dialog" aria-labelledby="addSupervisorModalLabel" aria-hidden="true"> <!-- Modal for adding new supervisor to table -->
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addSupervisorModalLabel">Add New Supervisor</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="addSupervisorForm">
+                                        <div class="form-group">
+                                            <label for="firstName">First Name:</label> <!-- Input for new supervisor field -->
+                                            <input type="text" class="form-control" id="firstName" name="first_name" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="lastName">Last Name:</label>
+                                            <input type="text" class="form-control" id="lastName" name="last_name" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">Email:</label>
+                                            <input type="email" class="form-control" id="email" name="email" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="telephone">Telephone:</label>
+                                            <input type="tel" class="form-control" id="telephone" name="telephone" required>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" id="submitSupervisor">Add Supervisor</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
 
     <!--JAVASCRIPT SCRIPTS-->
     <script>
@@ -448,6 +504,49 @@
                 none;
             }
         }
+        document.getElementById('submitSupervisor').addEventListener('click', function() {
+            var form = document.getElementById('addSupervisorForm');
+            var formData = new FormData(form)
+            fetch("{% url 'add_supervisor' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Provide feedback and refresh the page
+                    alert(data.message);
+                    $('#addSupervisorModal').modal('hide');
+                    form.reset(); // Clear form fields after submission
+                    location.reload(); // Refresh the page to reflect changes
+                } else {
+                    alert(data.message); // Display error message
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+        
+        function filterSupervisors() {
+    // Get the search input and filter text
+    const searchInput = document.getElementById("supervisorSearch").value.toLowerCase();
+    const dropdown = document.getElementById("supervisorName");
+    
+    // Loop through each option in the dropdown
+    for (let i = 1; i < dropdown.options.length; i++) { // start from 1 to skip the "Select supervisor" placeholder
+        const option = dropdown.options[i];
+        const optionText = option.text.toLowerCase();
+
+        // Check if option matches the search text
+        if (optionText.includes(searchInput)) {
+            option.style.display = ""; // Show matching options
+        } else {
+            option.style.display = "none"; // Hide non-matching options
+            }
+        }
+    }  
         </script>
 </body>
 </html>
