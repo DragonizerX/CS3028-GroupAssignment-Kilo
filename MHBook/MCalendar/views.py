@@ -1,16 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, FileResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.template import loader
 from django.views.decorators.csrf import ensure_csrf_cookie
 
-
+from reportlab.pdfgen import canvas # type: ignore
 from django.contrib.admin.views.decorators import staff_member_required
 
-import uuid
+import uuid, io
 from .models import Users, Event, Equipment, Billing, Event
 from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm, AddEquipmentForm
 
@@ -418,7 +418,7 @@ def createBilling(request):
             selectedEvents = request.POST.getlist('selectEvent')
             selectedEventObjects = Event.objects.filter(id__in=selectedEvents)
 
-            supervisors = selectedEventObjects.values_list('supervisorName').distinct()
+            supervisors = selectedEventObjects.values_list('supervisorName', flat=True).distinct()
 
             if supervisors.count() > 1:
                 messages.error(request, "Can only create billings for one Supervisor at most.")
@@ -500,3 +500,67 @@ def editBilling(request, id):
     else:
         messages.success(request, "Please log in before entering that page!")
         return redirect("loginPage")
+    
+def generatePDF(request, id):
+
+    if request.user.is_superuser:
+        # Retrieve the billing instance or return a 404 if not found
+        billing = get_object_or_404(Billing, id=id)
+        
+        # Set up a BytesIO buffer to store the PDF
+        buffer = io.BytesIO()
+        p = canvas.Canvas(buffer)
+        
+        # Set PDF title and metadata
+        p.setTitle(f"Invoice_{billing.invoiceRef}")
+
+        # Define content formatting (customize based on your needs)
+        p.setFont("Helvetica-Bold", 16)
+        p.drawString(100, 800, "Microscopy and Histology Invoice")
+        p.setFont("Helvetica", 12)
+
+        # Display billing information (update fields according to your model)
+        y_position = 750
+        p.drawString(100, y_position, f"Invoice Reference code: {billing.invoiceRef}")
+        y_position -= 20
+        p.drawString(100, y_position, f"Total Cost: {billing.totalCost}")
+        y_position -= 20
+        p.drawString(100, y_position, f"Supervisor: {billing.supervisor}")
+        y_position -= 20
+        p.drawString(100, y_position, f"Issue Date: {billing.issueDate}")
+
+        # List the events and equipment in the billing, if applicable
+        y_position -= 40
+        p.setFont("Helvetica-Bold", 14)
+        p.drawString(100, y_position, "Events:")
+        y_position -= 20
+        p.setFont("Helvetica", 12)
+
+        # Loop through events in the billing
+        for event in billing.events.all():
+            p.drawString(120, y_position, f"{event.bookingName} on {event.bookingDate}")
+            y_position -= 20
+
+        # Reset y_position and list equipment
+        y_position -= 20
+        p.setFont("Helvetica-Bold", 14)
+        p.drawString(100, y_position, "Equipment:")
+        y_position -= 20
+        p.setFont("Helvetica", 12)
+        
+        for equipment in billing.equipment.all():
+            p.drawString(120, y_position, f"- {equipment}")
+            y_position -= 20
+        
+        # Save the PDF
+        p.showPage()
+        p.save()
+        
+        # Prepare PDF for download
+        buffer.seek(0)
+        return FileResponse(buffer, as_attachment=True, filename=f"Invoice_{billing.invoiceRef}.pdf")
+    else:
+        messages.success(request, "Please log in before entering that page! Admin access only.")
+        logout(request)
+        return redirect("loginPage")
+

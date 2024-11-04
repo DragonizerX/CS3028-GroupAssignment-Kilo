@@ -141,6 +141,11 @@
             <div> Issued: {{ b.issueDate }}</div>
             <div> Billing ID: {{ b.id }}</div>
             <div> Total Cost: £{{ b.totalCost }}</div>
+            <div>
+            <a href="{% url 'generatePDF' b.id %}">
+                <button>pdf</button>
+            </a>
+            </div>
         </div>
         <!-- Events Dropdowns -->
         <div id="{{ b.id }}" class="eventsDiv">
