@@ -332,7 +332,8 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="telephone">Telephone:</label>
-                                            <input type="tel" class="form-control" id="telephone" name="telephone" required>
+                                            <input type="tel" class="form-control" id="telephone" name="telephone" required
+                                                pattern="^\+?\d{10,15}$" title="Enter a valid phone number (e.g., +1234567890 or 1234567890)">
                                         </div>
                                     </form>
                                 </div>
@@ -529,32 +530,58 @@
             }
         }
         document.getElementById('submitSupervisor').addEventListener('click', function() {
-            var form = document.getElementById('addSupervisorForm');
-            var formData = new FormData(form)
-            fetch("{% url 'add_supervisor' %}", {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    // Provide feedback and refresh the page
-                    alert(data.message);
-                    $('#addSupervisorModal').modal('hide');
-                    form.reset(); // Clear form fields after submission
-                    location.reload(); // Refresh the page to reflect changes
-                } else {
-                    alert(data.message); // Display error message
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        });
+    var form = document.getElementById('addSupervisorForm');
+    var firstName = document.getElementById('firstName');
+    var lastName = document.getElementById('lastName');
+    var email = document.getElementById('email');
+    var telephone = document.getElementById('telephone');
+
+    // Validate each field and store error messages
+    var errors = [];
+
+    if (!firstName.value.trim()) errors.push("First Name is required.");
+    if (!lastName.value.trim()) errors.push("Last Name is required.");
+    if (!email.value.trim()) errors.push("Email is required.");
+    
+    // Telephone validation
+    var phonePattern = /^\+?\d{10,15}$/;
+    if (!telephone.value.trim()) {
+        errors.push("Telephone is required.");
+    } else if (!phonePattern.test(telephone.value)) {
+        errors.push("Please enter a valid phone number (e.g., +1234567890 or 1234567890).");
+    }
+
+    // If there are errors, display them and prevent form submission
+    if (errors.length > 0) {
+        alert(errors.join("\n"));
+        return; // Stop submission if there are errors
+    }
+
+    // If no errors, proceed with form submission
+    var formData = new FormData(form);
+    fetch("{% url 'add_supervisor' %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert(data.message);
+            $('#addSupervisorModal').modal('hide');
+            form.reset();
+            location.reload();
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
         
         document.getElementById("supervisorSearch").addEventListener("focus", function() {
-    document.getElementById("supervisorDropdown").style.display = "block";
+        document.getElementById("supervisorDropdown").style.display = "block";
 });
 
 function filterSupervisors() {
