@@ -77,7 +77,8 @@
 
         .billingsLabel {
             display: grid;
-            grid-template-columns: 50% 50%;
+            align-items: center;
+            grid-template-columns: auto auto 15% 15%;
             box-shadow: 2px 2px 5px hsl(265 0% 70%);
             border-radius: 10px;
             height: 40px;
@@ -86,7 +87,6 @@
             border: none;
             padding: 10px;
             max-width: 600px;
-            cursor: pointer;
         }
 
         .event {
@@ -107,6 +107,18 @@
 
         .eventsDiv {
             display: none;
+        }
+
+        .displayDropdown {
+            margin: auto;
+            grid-row: 1 / 2 span;
+            grid-column: 3;
+        }
+
+        .editBilling {
+            margin: auto;
+            grid-row: 1 / 2 span;
+            grid-column: 4;
         }
 
     </style>
@@ -136,9 +148,13 @@
     <!-- Billings -->
     {% for b in billingsList %}
         <!-- Billings Label -->
-        <div class="billingsLabel" onclick="displayEvents({{ b.id }})">
-            <div> Supervisor {{ b.supervisor }}</div>
+        <div class="billingsLabel">
+            <div> Supervisor: {{ b.supervisor }}</div>
             <div> Issued: {{ b.issueDate }}</div>
+            <button onclick="displayEvents({{ b.id }})" class="displayDropdown">show</button>
+            <a href="http://127.0.0.1:8000/MCalendar/editBilling/{{ b.id }}" class="editBilling">
+                <button onclick="" class="editBilling">edit</button>
+            </a>
             <div> Billing ID: {{ b.id }}</div>
             <div> Total Cost: £{{ b.totalCost }}</div>
         </div>

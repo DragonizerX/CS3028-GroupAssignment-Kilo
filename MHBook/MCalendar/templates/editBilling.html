@@ -5,21 +5,99 @@
 
     <title>Edit Billings</title>
     <script>
-
-
         
     </script>
 
     <style>
 
+        .form {
+            display: grid;
+            grid-template-columns: 50% 50%;
+            box-shadow: 2px 2px 5px hsl(265 0% 70%);
+            border-radius: 10px;
+            margin: 30px auto 0 auto;
+            background-color: hsl(0 0 85%);
+            border: none;
+            padding: 10px;
+            max-width: 600px;
+        }
 
+        .event {
+            display: grid;
+            grid-template-columns: 60% 40%;
+            box-shadow: 2px 2px 5px hsl(265 0% 70%);
+            border-radius: 10px;
+            margin: 30px auto 0 auto;
+            background-color: hsl(0 0 85%);
+            border: none;
+            padding: 10px;
+            max-width: 500px;
+        }
 
     </style>
 </head>
 
 <body>
 
+    <form method="POST">
+        {% csrf_token %}
+        {% if user.is_superuser %}
 
+        <div class="form">
+            <div> Supervisor: {{ billing.supervisor }}</div>
+            <div> Issued: {{ billing.issueDate }}</div>
+            <div> Billing ID: {{ billing.id }}</div>
+            <div> Total Cost: £{{ billing.totalCost }}</div>
+        </div>
+
+        {% for event in events %}
+                {% if event.invoiceRef == billing.invoiceRef %}
+                <div class="event">
+                    <!-- Event inputs -->
+
+                    <!-- Is event assigned to billing? -->
+                    <label style="margin: 2px 0;" for="{{ event.id }}AssignedBooking"> Assigned Booking:  </label>
+                    <input checked type="checkbox" style="margin: 2px 0;" id="{{ event.id }}AssignedBooking" name="{{ event.id }}AssignedBooking" placeholder="{{ event.AssignedBooking }}">
+
+                    <!-- Booking Name -->
+                    <label style="margin: 2px 0;" for="{{ event.id }}BookingName"> Booking Name: </label>
+                    <input style="margin: 2px 0;" id="{{ event.id }}BookingName" name="BookingName" value="{{ event.bookingName }}">
+
+                    <!-- Supervisor Name -->
+                    <div style="margin: 2px 0;"> Supervisor:  {{ event.supervisorName }}</div>
+                    <div style="margin: 2px 0;"></div>
+
+                    <!-- Event ID -->
+                    <div style="margin: 2px 0;"> Event ID:  {{ event.id }}</div>
+                    <div style="margin: 2px 0;"></div>
+
+                    <!-- Date -->
+                    <label style="margin: 2px 0;" for="{{ event.id }}Date"> Date: {{ event.bookingDate }}</label>
+                    <input type="date" style="margin: 2px 0;" id="{{ event.id }}Date" name="Date" value="{{ event.bookingDate|date:'Y-m-d' }}">
+
+                    <!-- Start Time -->
+                    <label style="margin: 2px 0;" for="{{ event.id }}Start"> Start: {{ event.startTime|time:'H:i' }}</label>
+                    <input type="time" style="margin: 2px 0;" id="{{ event.id }}Start" name="Start" value="{{ event.startTime|time:'H:i' }}">
+
+                    <!-- End Time -->
+                    <label style="margin: 2px 0;" for="{{ event.id }}End"> End: {{ event.finishTime|time:'H:i' }}</label>
+                    <input type="time" style="margin: 2px 0;" id="{{ event.id }}End" name="End" value="{{ event.finishTime|time:'H:i' }}">
+
+                    <!-- Equipment ID -->
+                    <label style="margin: 2px 0;" for="{{ event.id }}Equipment"> Equipment ID: {{ event.equipment }}</label>
+                    <input style="margin: 2px 0;" id="{{ event.id }}Equipment" name="Equipment" value="{{ event.equipment }}">
+
+                    <div style="margin: 2px 0;"> Total Time: {{ event.totalTime }}</div>
+                    <div style="margin: 2px 0;"></div>
+
+                </div>
+                {% endif %}
+        {% endfor %}
+
+        <input type="submit" value="Submit" style="max-width: 300px;">
+
+        {% endif %}
+    </form>
 
 </body>
 </html>

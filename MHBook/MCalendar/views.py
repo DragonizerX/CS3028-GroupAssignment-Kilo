@@ -485,16 +485,25 @@ def billings(request):
 def editBilling(request, id):
     if request.user.is_superuser:
         billing = get_object_or_404(Billing, id=id)
+        events = Event.objects.all()
         
         if request.method == 'POST':
-
+            
+            for event in events:
+                assigned = f"{event.id}AssignedBooking"
+                if assigned in request.POST:
+                    continue
+                else:
+                    event.invoiceRef = 'none'
+                    event.save()
 
             billing.save()
             return redirect('billings')
 
         template = loader.get_template('editBilling.html')
         context = {
-
+            'billing': billing,
+            'events': events,
         }
         return HttpResponse(template.render(context, request))
     else:
