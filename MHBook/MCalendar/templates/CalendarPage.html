@@ -89,6 +89,23 @@
             margin:20px auto;
             text-align:center;
         }
+        .dropdown-content {
+        display: none; /* Hidden by default */
+        position: absolute;
+        background-color: #f9f9f9;
+        border: 1px solid #ccc;
+        max-height: 200px;
+        overflow-y: auto;
+        width: 100%;
+        z-index: 1;
+        }
+        .dropdown-item {
+            padding: 8px;
+            cursor: pointer;
+        }
+        .dropdown-item:hover {
+            background-color: #ddd;
+        }
     </style>
 </head>
 
@@ -172,10 +189,31 @@
                             <div class="col-sm-3">
                                 <label for="supervisorName" class="control-label">Supervisor:</label>
                             </div>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" id="supervisorName" name="supervisorName" required>
+                            <div class="col-sm-7">
+                                <!-- Search Input Field -->
+                                <input type="text" id="supervisorSearch" class="form-control" placeholder="Search for a supervisor" onkeyup="filterSupervisors()">
+                                
+                                <!-- Custom Dropdown -->
+                                <div id="supervisorDropdown" class="dropdown-content">
+                                    {% for supervisor in supervisors %}
+                                        <div class="dropdown-item" onclick="selectSupervisor('{{ supervisor.id }}', '{{ supervisor.first_name }} {{ supervisor.last_name }}')">
+                                            {{ supervisor.first_name }} {{ supervisor.last_name }}
+                                        </div>
+                                    {% empty %}
+                                        <div class="dropdown-item">No supervisors available</div>
+                                    {% endfor %}
+                                </div>
+                        
+                                <!-- Hidden Input to Store Selected Supervisor ID -->
+                                <input type="hidden" name="supervisorName" id="selectedSupervisorId" required>
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addSupervisorModal">
+                                    Add New
+                                </button>
                             </div>
                         </div>
+
                         <div class="row mt-2">
                             <div class="col-sm-3">
                                 <label for="bookingDate" class="control-label">Date of Booking:</label>
@@ -264,10 +302,49 @@
                             </div>
                         </div>
                     </form>
+
+                    <div class="modal fade" id="addSupervisorModal" tabindex="-1" role="dialog" aria-labelledby="addSupervisorModalLabel" aria-hidden="true"> <!-- Modal for adding new supervisor to table -->
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addSupervisorModalLabel">Add New Supervisor</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="addSupervisorForm">
+                                        <div class="form-group">
+                                            <label for="firstName">First Name:</label> <!-- Input for new supervisor field -->
+                                            <input type="text" class="form-control" id="firstName" name="first_name" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="lastName">Last Name:</label>
+                                            <input type="text" class="form-control" id="lastName" name="last_name" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">Email:</label>
+                                            <input type="email" class="form-control" id="email" name="email" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="telephone">Telephone:</label>
+                                            <input type="tel" class="form-control" id="telephone" name="telephone" required
+                                                pattern="^\+?\d{10,15}$" title="Enter a valid phone number (e.g., +1234567890 or 1234567890)">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" id="submitSupervisor">Add Supervisor</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
 
     <!--JAVASCRIPT SCRIPTS-->
     <script>
@@ -448,6 +525,85 @@
                 none;
             }
         }
+        document.getElementById('submitSupervisor').addEventListener('click', function() {
+    var form = document.getElementById('addSupervisorForm');
+    var firstName = document.getElementById('firstName');
+    var lastName = document.getElementById('lastName');
+    var email = document.getElementById('email');
+    var telephone = document.getElementById('telephone');
+
+    // Validate each field and store error messages
+    var errors = [];
+
+    if (!firstName.value.trim()) errors.push("First Name is required.");
+    if (!lastName.value.trim()) errors.push("Last Name is required.");
+    if (!email.value.trim()) errors.push("Email is required.");
+    
+    // Telephone validation
+    var phonePattern = /^\+?\d{10,15}$/;
+    if (!telephone.value.trim()) {
+        errors.push("Telephone is required.");
+    } else if (!phonePattern.test(telephone.value)) {
+        errors.push("Please enter a valid phone number (e.g., +1234567890 or 1234567890).");
+    }
+
+    // If there are errors, display them and prevent form submission
+    if (errors.length > 0) {
+        alert(errors.join("\n"));
+        return; // Stop submission if there are errors
+    }
+
+    // If no errors, proceed with form submission
+    var formData = new FormData(form);
+    fetch("{% url 'add_supervisor' %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert(data.message);
+            $('#addSupervisorModal').modal('hide');
+            form.reset();
+            location.reload();
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+        
+        document.getElementById("supervisorSearch").addEventListener("focus", function() {
+        document.getElementById("supervisorDropdown").style.display = "block";
+});
+
+function filterSupervisors() {
+    const searchInput = document.getElementById("supervisorSearch").value.toLowerCase();
+    const dropdown = document.getElementById("supervisorDropdown");
+    const items = dropdown.getElementsByClassName("dropdown-item");
+
+    for (let i = 0; i < items.length; i++) {
+        const itemText = items[i].innerText.toLowerCase();
+        items[i].style.display = itemText.includes(searchInput) ? "" : "none";
+    }
+}
+
+function selectSupervisor(id, name) {
+    document.getElementById("supervisorSearch").value = name; // Show selected supervisor in search field
+    document.getElementById("selectedSupervisorId").value = id; // Set selected supervisor ID
+    document.getElementById("supervisorDropdown").style.display = "none"; // Hide the dropdown
+}
+
+// Close dropdown if clicked outside
+document.addEventListener("click", function(event) {
+    const dropdown = document.getElementById("supervisorDropdown");
+    if (!dropdown.contains(event.target) && event.target.id !== "supervisorSearch") {
+        dropdown.style.display = "none";
+    }
+});
         </script>
 </body>
 </html>

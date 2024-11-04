@@ -11,7 +11,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.admin.views.decorators import staff_member_required
 
 import uuid
-from .models import Users, Event, Equipment, Billing
+from .models import Users, Event, Equipment, Billing, Supervisor
 from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm, AddEquipmentForm
 
 from django.core.mail import send_mail
@@ -174,6 +174,7 @@ def editBooking(request, id):
     if request.user.is_authenticated:
         booking = get_object_or_404(Event, id=id)
         equipmentList = Equipment.objects.all()
+        supervisors = Supervisor.objects.all().order_by('first_name')
         
         if request.method == 'POST':
             bookingName = request.POST.get('bookingName')
@@ -182,7 +183,9 @@ def editBooking(request, id):
 
             supervisorName = request.POST.get('supervisorName')
             if supervisorName:
-                booking.supervisorName = supervisorName
+                supervisor = Supervisor.objects.get(id=supervisorName)
+                supervisor_full_name = f"{supervisor.first_name} {supervisor.last_name}"
+                booking.supervisorName = supervisor_full_name
 
             bookingDate = request.POST.get('bookingDate')
             if bookingDate:
@@ -210,7 +213,8 @@ def editBooking(request, id):
         template = loader.get_template('editBooking.html')
         context = {
             'editBooking': [booking],
-            'equipmentList': equipmentList
+            'equipmentList': equipmentList,
+            'supervisors': supervisors
         }
         return HttpResponse(template.render(context, request))
     else:
@@ -237,6 +241,11 @@ def create_event(request):
             equipment = Equipment.objects.get(equipmentID_auto=equipment_id)
             hourly_rate = equipment.hourlyRate
 
+            supervisor = Supervisor.objects.get(id=supervisor_Name)
+            supervisor_full_name = f"{supervisor.first_name} {supervisor.last_name}"
+
+            
+
             custom_price = request.POST.get('customPrice')
             if request.user.is_superuser and custom_price:
                 try:
@@ -247,7 +256,7 @@ def create_event(request):
         
             event = Event(
                 bookingName=booking_Name,
-                supervisorName=supervisor_Name,
+                supervisorName=supervisor_full_name,
                 email=email_,
                 bookingDate=booking_Date,
                 startTime=start_Time,
@@ -338,7 +347,11 @@ def delete_equipment(request):
 def CalendarPage(request):
     if request.user.is_authenticated:
         equipment_list = Equipment.objects.all()
-        return render(request, 'CalendarPage.html', {'equipmentList': equipment_list})
+        supervisors = Supervisor.objects.all().order_by('first_name')
+        context = {'equipmentList': equipment_list, #Combine both Equipment and Supervisor Dictionaries into context
+                    'supervisors': supervisors
+                    }
+        return render(request, 'CalendarPage.html', context)
     else:
         messages.success(request, "Please log in before entering that page!")
         return redirect("loginPage")
@@ -347,7 +360,11 @@ def CalendarPage(request):
 def AdminCalendarView(request):
     if request.user.is_superuser:
         equipment_list = Equipment.objects.all()
-        return render(request, 'CalendarPageAdmin.html', {'equipmentList': equipment_list})
+        supervisors = Supervisor.objects.all().order_by('first_name')
+        context = {'equipmentList': equipment_list, #Combine both Equipment and Supervisor Dictionaries into context
+                    'supervisors': supervisors
+                    }
+        return render(request, 'CalendarPageAdmin.html', context)
     else:
         messages.success(request, "Please log in before entering that page! Admin access only.")
         logout(request)
@@ -454,3 +471,26 @@ def createBilling(request):
         logout(request)
         return redirect("loginPage")
     
+def add_supervisor(request): #function for adding new supervisors
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        telephone = request.POST.get('telephone')
+
+        #Input validation for all fields
+        if not first_name or not last_name or not email or not telephone:
+            return JsonResponse({'status': 'error', 'message': 'All fields are required.'})
+
+        #Ensures unique email
+        if Supervisor.objects.filter(email=email).exists():
+            return JsonResponse({'status': 'error', 'message': 'Supervisor with this email already exists.'})
+        
+        #Add new supervisor to table
+        supervisor = Supervisor(first_name=first_name, last_name=last_name, email=email, telephone=telephone)
+        supervisor.save()
+
+        #Response to let users no it was a success
+        return JsonResponse({'status': 'success', 'message': 'Supervisor added successfully.'})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
