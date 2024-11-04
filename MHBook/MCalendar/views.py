@@ -481,3 +481,22 @@ def billings(request):
         logout(request)
         return redirect("loginPage")
     
+
+def editBilling(request, id):
+    if request.user.is_superuser:
+        billing = get_object_or_404(Billing, id=id)
+        
+        if request.method == 'POST':
+
+
+            billing.save()
+            return redirect('billings')
+
+        template = loader.get_template('editBilling.html')
+        context = {
+
+        }
+        return HttpResponse(template.render(context, request))
+    else:
+        messages.success(request, "Please log in before entering that page!")
+        return redirect("loginPage")

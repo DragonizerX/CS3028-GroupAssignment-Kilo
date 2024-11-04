@@ -6,6 +6,16 @@
     <title>View Billings</title>
     <script>
 
+        function displayEvents(id) {
+            let eventsDiv = document.getElementById(id);
+            let style = window.getComputedStyle(eventsDiv).display;
+            if (style == 'none') {
+                eventsDiv.style.display = 'block';
+            } else {
+                eventsDiv.style.display = 'none';
+            }
+        }
+
     </script>
 
     <style>
@@ -95,6 +105,10 @@
             margin: 5px 3px;
         }
 
+        .eventsDiv {
+            display: none;
+        }
+
     </style>
 </head>
 
@@ -129,22 +143,24 @@
             <div> Total Cost: £{{ b.totalCost }}</div>
         </div>
         <!-- Events Dropdowns -->
-        {% for e in events %}
-            {% if e.invoiceRef == b.invoiceRef %}
-                <div class="event">
-                    <div class="eventItem"> Booking: {{ e.bookingName }}</div>
-                    <div class="eventItem"> Supervisor: {{ e.supervisorName }}</div>
-                    <div class="eventItem"> Event ID: {{ e.id }}</div>
-                    <div></div>
-                    <div class="eventItem"> Date: {{ e.bookingDate }}</div>
-                    <div></div>
-                    <div class="eventItem"> Start: {{ e.startTime|time:'H:i' }}</div>
-                    <div class="eventItem"> End: {{ e.finishTime|time:'H:i' }}</div>
-                    <div class="eventItem"> Equipment: {{ e.equipment }}</div>
-                    <div class="eventItem"> Total Time: {{ e.totalTime }}</div>
-                </div>
-            {% endif %}
-        {% endfor %}
+        <div id="{{ b.id }}" class="eventsDiv">
+            {% for e in events %}
+                {% if e.invoiceRef == b.invoiceRef %}
+                    <div class="event">
+                        <div class="eventItem"> Booking: {{ e.bookingName }}</div>
+                        <div class="eventItem"> Supervisor: {{ e.supervisorName }}</div>
+                        <div class="eventItem"> Event ID: {{ e.id }}</div>
+                        <div></div>
+                        <div class="eventItem"> Date: {{ e.bookingDate }}</div>
+                        <div></div>
+                        <div class="eventItem"> Start: {{ e.startTime|time:'H:i' }}</div>
+                        <div class="eventItem"> End: {{ e.finishTime|time:'H:i' }}</div>
+                        <div class="eventItem"> Equipment: {{ e.equipment }}</div>
+                        <div class="eventItem"> Total Time: {{ e.totalTime }}</div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
     {% endfor %}
 
 </body>

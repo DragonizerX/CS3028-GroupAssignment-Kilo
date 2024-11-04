@@ -34,4 +34,5 @@ urlpatterns = [
 
     path("createBilling/", views.createBilling, name="createBilling"),
     path("billings/", views.billings, name="billings"),
+    path("editBilling/<int:id>", views.editBilling, name="editBilling"),
 ]
