@@ -109,6 +109,17 @@
             background-color: #ddd;
         }
 
+        .admin-information {
+            font-size: 12px;       /* Larger font size */
+            max-width: 220px;      /* Wider tooltip */
+            padding: 10px;         /* Add padding for readability */
+            background-color: white;  /* Light background */
+            color: grey;           /* Text color */
+            border: 1px solid grey; /* Border for the tooltip */
+            border-radius: 2px;    /* Rounded corners */
+            z-index: 1000;         /* Ensure it appears above other elements */
+        }
+ 
         
     </style>
 </head>
@@ -520,7 +531,8 @@
                     $(info.el).tooltip({
                         title: info.event.title,
                         placement: 'top',
-                        html: true
+                        html: true,
+                        template: '<div class="tooltip admin-information" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
                     });
                 }
             });
