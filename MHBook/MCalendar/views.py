@@ -10,7 +10,8 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 from django.contrib.admin.views.decorators import staff_member_required
 
-from .models import Users, Event, Equipment
+import uuid
+from .models import Users, Event, Equipment, Billing
 from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm, AddEquipmentForm
 
 from django.core.mail import send_mail
@@ -112,8 +113,16 @@ def changePasswordPage(request):
     
 
 def myBookings(request):
-    if request.user.is_authenticated:
+    if request.user.is_superuser:
         myBookings = Event.objects.all().values()
+        template = loader.get_template('myBookings.html')
+        context = {
+            'myBookings': myBookings,
+        }
+        return HttpResponse(template.render(context, request))
+    if request.user.is_authenticated: ####
+        current_user = request.user.email
+        myBookings = Event.objects.filter(email=current_user)
         template = loader.get_template('myBookings.html')
         context = {
             'myBookings': myBookings,
@@ -127,8 +136,10 @@ def requests(request):
     if request.user.is_superuser:
         requests = Users.objects.all().values()
         template = loader.get_template('requests.html')
+        hasRequest = requests.filter(verified=False).exists()
         context = {
             'requests': requests,
+            'hasRequest': hasRequest
         }
         return HttpResponse(template.render(context, request))
     else:
@@ -162,6 +173,7 @@ def confirmReject(request, id):
 def editBooking(request, id):
     if request.user.is_authenticated:
         booking = get_object_or_404(Event, id=id)
+        equipmentList = Equipment.objects.all()
         
         if request.method == 'POST':
             bookingName = request.POST.get('bookingName')
@@ -198,6 +210,7 @@ def editBooking(request, id):
         template = loader.get_template('editBooking.html')
         context = {
             'editBooking': [booking],
+            'equipmentList': equipmentList
         }
         return HttpResponse(template.render(context, request))
     else:
@@ -215,6 +228,7 @@ def create_event(request):
             
             booking_Name = request.POST.get('bookingName')
             supervisor_Name = request.POST.get('supervisorName')
+            email_ = request.user.email
             booking_Date = request.POST.get('bookingDate')
             start_Time = request.POST.get('startTime')
             finish_Time = request.POST.get('finishTime')
@@ -234,6 +248,7 @@ def create_event(request):
             event = Event(
                 bookingName=booking_Name,
                 supervisorName=supervisor_Name,
+                email=email_,
                 bookingDate=booking_Date,
                 startTime=start_Time,
                 finishTime = finish_Time,
@@ -384,4 +399,58 @@ def archiveValidQuery(param):
     return param != '' and param is not None
 
 
+# createBilling functions
+def generateInvoiceRef():
+    return str(uuid.uuid4())[:10]
 
+def createBilling(request):
+
+    if request.user.is_superuser:
+        eventList = Event.objects.all()
+        equipmentList = Equipment.objects.all()
+
+        supervisorName = request.GET.get('supervisorName')
+        dateMin = request.GET.get('dateMin')
+        dateMax = request.GET.get('dateMax')
+
+        if archiveValidQuery(supervisorName):
+            eventList = eventList.filter(supervisorName__icontains=supervisorName)
+
+        if archiveValidQuery(dateMin):
+            eventList = eventList.filter(bookingDate__gte=dateMin)
+
+        if archiveValidQuery(dateMax):
+            eventList = eventList.filter(bookingDate__lte=dateMax)
+
+        context = {
+        'eventList': eventList,
+        'equipmentList': equipmentList
+        }
+
+        if request.method == "POST":
+            selectedEvents = request.POST.getlist('selectEvent')
+            selectedEventObjects = Event.objects.filter(id__in=selectedEvents)
+
+            supervisors = selectedEventObjects.values_list('supervisorName').distinct()
+
+            if supervisors.count() > 1:
+                messages.error(request, "Can only create billings for one Supervisor at most.")
+                return render(request, 'createBilling.html', context)
+
+            billing = Billing()
+            billing.invoiceRef = generateInvoiceRef()
+            billing.save()
+
+            billing.events.set(selectedEventObjects)
+
+            billing.save()
+
+            messages.success(request, "Billing created")
+
+        return render(request, 'createBilling.html', context)
+    
+    else:
+        messages.success(request, "Please log in before entering that page! Admin access only.")
+        logout(request)
+        return redirect("loginPage")
+    

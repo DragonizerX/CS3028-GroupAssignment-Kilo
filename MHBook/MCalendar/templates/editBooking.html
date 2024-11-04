@@ -219,21 +219,28 @@
                             <input type="text" id="comments" name="comments" placeholder="{{ x.comments }}">
                         
 
+
                             <label for="equipment">Equipment: </label>
-                            <input type="text" id="equipment" name="equipment" placeholder="{{ x.equipment }}">
+                            <select id="equipment" name="equipment"> <option selected>{{ x.equipment }}</option>
+
+                                {% for equipment in equipmentList %}
+                                    <option value="{{ equipment }}">{{ equipment }}</option>
+                                {% endfor %}
+                            </select>
 
                         </div>
+    
                         <br>
                         <input class="btn btn-success btn-block" type="submit" value="Submit" style="width: 80%; margin: auto;">
                     </p>
                 </div>
             </div>
-
             <br>
             <button class="btn btn-danger btn-block" style="width: 80%; margin: auto;" onclick="confirmCancel({{ x.id }})">Cancel Booking</button>
+            
         {% endfor %}
+        </form>
 
-    </form>
     </div>
 
 </body>

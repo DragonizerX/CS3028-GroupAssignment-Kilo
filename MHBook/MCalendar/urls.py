@@ -31,4 +31,6 @@ urlpatterns = [
     path('CalendarPage/get_events/', views.get_events, name='get_events'),
     path('CalendarPageAdmin/get_events/', views.get_events, name='get_events'),
     path("CalendarPageAdmin/", views.AdminCalendarView, name='CalendarPageAdmin'),
+
+    path("createBilling/", views.createBilling, name="createBilling"),
 ]

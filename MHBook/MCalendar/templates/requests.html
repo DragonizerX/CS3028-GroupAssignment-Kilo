@@ -126,9 +126,11 @@
                                 </div>
 
                                 <br>
-
                             {% endif %}
                         {% endfor %}
+                        {% if hasRequest == False%}
+                            <p>You have no current account requests.</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>
