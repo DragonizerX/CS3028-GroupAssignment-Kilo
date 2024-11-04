@@ -237,6 +237,11 @@ def create_event(request):
             equipment = Equipment.objects.get(equipmentID_auto=equipment_id)
             hourly_rate = equipment.hourlyRate
 
+            supervisor = Supervisor.objects.get(id=supervisor_Name)
+            supervisor_full_name = f"{supervisor.first_name} {supervisor.last_name}"
+
+            
+
             custom_price = request.POST.get('customPrice')
             if request.user.is_superuser and custom_price:
                 try:
@@ -247,7 +252,7 @@ def create_event(request):
         
             event = Event(
                 bookingName=booking_Name,
-                supervisorName=supervisor_Name,
+                supervisorName=supervisor_full_name,
                 email=email_,
                 bookingDate=booking_Date,
                 startTime=start_Time,
