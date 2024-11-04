@@ -360,7 +360,11 @@ def CalendarPage(request):
 def AdminCalendarView(request):
     if request.user.is_superuser:
         equipment_list = Equipment.objects.all()
-        return render(request, 'CalendarPageAdmin.html', {'equipmentList': equipment_list})
+        supervisors = Supervisor.objects.all().order_by('first_name')
+        context = {'equipmentList': equipment_list, #Combine both Equipment and Supervisor Dictionaries into context
+                    'supervisors': supervisors
+                    }
+        return render(request, 'CalendarPageAdmin.html', context)
     else:
         messages.success(request, "Please log in before entering that page! Admin access only.")
         logout(request)
