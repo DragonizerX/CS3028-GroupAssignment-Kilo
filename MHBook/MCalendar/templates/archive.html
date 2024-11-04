@@ -31,7 +31,7 @@
 
     {% if user.is_superuser %}
         <a href="{% url 'requests' %}">Requests</a>
-        <a href="{% url 'requests' %}">Billing</a> <!-- UPDATE WHEN THE BILLING PAGE IS MADE -->
+        <a href="{% url 'createBilling' %}">Billing</a> <!-- UPDATE WHEN THE BILLING PAGE IS MADE -->
         <a href="{% url 'archivePage' %}">Archive</a>
     {% endif %}
 
@@ -127,7 +127,7 @@
                                 <li>Booking Name: {{ event.bookingName }}</li>
                                 <li>Supervisor: {{ event.supervisorName }}</li>
                                 <li>Date: {{ event.bookingDate }}</li>
-                                <li>From: {{ event.startTime }} to {{ event.allotedTime }}</li>
+                                <li>From: {{ event.startTime }} to {{ event.finishTime }}</li>
                                 <li>Equipment: {{ event.equipment }}</li>
                             </ul>
                         </p>

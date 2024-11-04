@@ -108,7 +108,7 @@
 
         {% if user.is_superuser %}
             <a href="{% url 'requests' %}">Requests</a>
-            <a href="{% url 'requests' %}">Billing</a>
+            <a href="{% url 'createBilling' %}">Billing</a>
             <a href="{% url 'archivePage' %}">Archive</a>
         {% endif %}
 
