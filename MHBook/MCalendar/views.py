@@ -244,7 +244,21 @@ def create_event(request):
             supervisor = Supervisor.objects.get(id=supervisor_Name)
             supervisor_full_name = f"{supervisor.first_name} {supervisor.last_name}"
 
+            email_ = request.POST.get('user_email') or request.user.email if request.user.is_superuser else request.user.email
+
+            overlapping_bookings = Event.objects.filter(
+                equipment=equipment.equipmentName,
+                bookingDate=booking_Date,
+                # Check if any existing booking overlaps with the new booking time range
+                startTime__lt=finish_Time,   # Existing booking starts before the new booking ends
+                finishTime__gt=start_Time    # Existing booking ends after the new booking starts
+            ).exclude(email=email_)  # Exclude the same user's bookings if they are editing
             
+            if overlapping_bookings.exists():
+                return JsonResponse({
+                    'status': 'error',
+                    'message': f"This equipment is already booked by another user during the selected time slot."
+                }, status=400)
 
             custom_price = request.POST.get('customPrice')
             if request.user.is_superuser and custom_price:
