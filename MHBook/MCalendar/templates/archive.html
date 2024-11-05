@@ -60,6 +60,7 @@
             <div class="p-3 py-5">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 class="text-right">Archive</h2>
+                    <h5 class="text-right">Total Accumulated Hours: {{ totalHours }} </h5>
                 </div>
                 
                 <form method="GET" action=".">
@@ -96,7 +97,7 @@
                                 <option selected>Select...</option>
                                 
                                 {% for equipment in equipmentList %}
-                                <option value="{{ equipment }}">{{ equipment }}</option>
+                                    <option value="{{ equipment }}">{{ equipment }}</option>
                                 {% endfor %}
                             </select>
 
@@ -104,9 +105,20 @@
                     
                     </div>
 
-                    <button type="submit" class="btn btn-block btn-sty">Search</button>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-11 col-lg-11">
+                            <button type="submit" class="btn btn-block btn-sty">Search</button>
+                        </div>
+                        <div class="form-group col-md-1 col-lg-1">
+                            <button type="submit" class="btn btn-block btn-sty" style="background: #c42323;">X</button>
+                        </div>
+                    </div>
                 
                 </form>
+
+
+                
 
                 {% for event in eventList %}
 
@@ -125,6 +137,7 @@
                                 <div class="detailsListItem">Date: {{ event.bookingDate }}</div>
                                 <div class="detailsListItem">From: {{ event.startTime }} to {{ event.finishTime }}</div>
                                 <div class="detailsListItem">Equipment: {{ event.equipment }}</div>
+                                <div class="detailsListItem">Hours Booked: {{ event.totalTime }}</div>
                             </div>
                         </p>
                     </div>
@@ -135,7 +148,8 @@
 
                 {% endfor %}
 
-
+                
+                
             </div>
         </div>
 
