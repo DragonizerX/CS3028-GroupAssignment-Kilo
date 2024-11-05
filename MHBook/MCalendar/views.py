@@ -503,7 +503,7 @@ def createBilling(request):
             cost = 0
             for event in selectedEventObjects:
                 for eq in equipment:
-                    if event.equipment == str(eq.equipmentID_auto):
+                    if event.equipment == eq.equipmentName:
                         print("Here")
                         cost += event.totalTime * eq.hourlyRate
             billing.totalCost = cost
