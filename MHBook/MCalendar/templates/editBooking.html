@@ -326,7 +326,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
             <br>
-            <button class="btn btn-danger btn-block" style="width: 80%; margin: auto;" onclick="confirmCancel({{ x.id }})">Cancel Booking</button>
+            <button class="btn btn-danger btn-block" style="width: 80%; margin: auto;" type="button" onclick="confirmCancel({{ x.id }})">Cancel Booking</button>
             
         {% endfor %}
         </form>
