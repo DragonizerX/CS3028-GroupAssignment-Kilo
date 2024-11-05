@@ -16,6 +16,11 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     
     <link rel="stylesheet" href="{% static 'global.css' %}">
 
@@ -108,10 +113,53 @@
         .dropdown-item:hover {
             background-color: #ddd;
         }
+
+        .notification-box {
+            background-color: #f9efea;
+            color: #c42323;
+            padding: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 35px; /* Adjust the width as needed */
+            position: absolute; /* Change to absolute positioning */
+            left: 50px; /* Adjust as needed to move it left */
+            top: 20px; /* Adjust as needed for vertical positioning */
+            text-align: center;
+            font-size: 12px;
+            z-index: 1000; /* Ensure it appears above other elements */
+        }
+
+        .popup {
+            position: fixed; /* Fixed positioning to stay in view */
+            left: 10%;
+            top: 18%;
+            transform: translate(-50%, -50%);
+            background-color: white; /* Popup background color */
+            border: 1px solid #ccc; /* Border around popup */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Shadow effect */
+            padding: 20px; /* Padding inside the popup */
+            z-index: 2000; /* Higher z-index to stay on top */
+            display: none; /* Initially hidden */
+            width: 300px; /* Set width for the popup */
+            color: black
+        }
+
+        .popup .close {
+            cursor: pointer;
+            float: right; /* Align close button to the right */
+            font-size: 20px; /* Font size for close button */
+            margin-top: -10px; /* Adjust position of close button */
+            color: #333; /* Color for close button */
+        }
+
+        .popup ul {
+            padding-left: 20px; /* Padding for the list inside popup */
+
         .button-footer {
             display:flex;
             justify-content: center;
             align-content: center;
+
         }
 
         .admin-information {
@@ -160,6 +208,31 @@
             <div class="col-2 container-fluid text-left">
             <span class="sidebarButton" style="position:relative; top: 11px;" onclick="toggleNav()">&#9776;</span>
             </div>
+
+            <div class="notification-box" onclick="togglePopup()">
+                <strong>{{ short_notice_count }}</strong>
+            </div>
+            
+            <div id="popup" class="popup" style="display: none;">
+                <span class="close" onclick="togglePopup()">&times;</span>
+                <div>
+                    {% if short_notice_cancellations %}
+                        <p>List of all user who have cancelled on short notice today:</p>
+                        <ul>
+                            {% for cancellation in short_notice_cancellations %}
+                                <li>Email: {{ cancellation.cancelled_by}}</li>
+                            {% endfor %}
+                        </ul>
+                        <form action="{% url 'clear_cancelled_bookings' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Clear All</button>
+                        </form>
+                    {% else %}
+                        <p>No short-notice cancellations today.</p>
+                    {% endif %}
+                </div>
+            </div>
+            
             <div class="col-8 container-fluid text-center h1">
                 <h1 style="font-size: 40px; position: relative; bottom: 9px;">HistoTrack</h1>
             </div>
@@ -733,6 +806,17 @@
             dropdown.style.display = "none";
         }
     });
+
+    
+    function togglePopup() {
+    var popup = document.getElementById('popup');
+    if (popup.style.display === "none" || popup.style.display === "") {
+        popup.style.display = "block"; // Show the popup
+    } else {
+        popup.style.display = "none"; // Hide the popup
+    }
+}
+
         </script>
 </body>
 </html>

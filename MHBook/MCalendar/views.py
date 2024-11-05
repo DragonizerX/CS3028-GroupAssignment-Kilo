@@ -6,12 +6,15 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.template import loader
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.utils import timezone
 
 from reportlab.pdfgen import canvas # type: ignore
 from django.contrib.admin.views.decorators import staff_member_required
 
+
 import uuid, io
-from .models import Users, Event, Equipment, Billing, Supervisor
+from .models import Users, Event, Equipment, Billing, Supervisor, CancelledBooking
+
 from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm, AddEquipmentForm
 
 from django.core.mail import send_mail
@@ -154,8 +157,18 @@ def requests(request):
 
 def cancelBooking(request, id):
     booking = get_object_or_404(Event, id=id)
+    if booking.bookingDate == timezone.now().date(): #check for same day cancelation
+        CancelledBooking.objects.create(
+            booking_name=booking.bookingName,
+            cancelled_by=request.user,  # assumes the user is authenticated
+            cancellation_date=timezone.now()
+        )
     booking.delete()
     return redirect('myBookings')
+
+def clear_cancelled_bookings(request):
+    CancelledBooking.objects.all().delete()
+    return redirect('CalendarPageAdmin') 
 
 def confirmAccept(request, id):
     requests = get_object_or_404(Users, id=id)
@@ -380,8 +393,15 @@ def AdminCalendarView(request):
     if request.user.is_superuser:
         equipment_list = Equipment.objects.all()
         supervisors = Supervisor.objects.all().order_by('first_name')
-        context = {'equipmentList': equipment_list, #Combine both Equipment and Supervisor Dictionaries into context
-                    'supervisors': supervisors
+
+        today = timezone.now().date() #Filter Cancelation from today
+        short_notice_cancellations = CancelledBooking.objects.filter(cancellation_date__date=today)
+        short_notice_count = short_notice_cancellations.count()
+
+        context = {'equipmentList': equipment_list, #Combine Equipment, Supervisor, Short_notice dictionaries into context
+                    'supervisors': supervisors,
+                    'short_notice_count': short_notice_count,
+                    'short_notice_cancellations': short_notice_cancellations
                     }
         return render(request, 'CalendarPageAdmin.html', context)
     else:
