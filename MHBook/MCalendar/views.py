@@ -489,6 +489,7 @@ def editBilling(request, id):
         
         if request.method == 'POST':
             
+            print(request.POST)
             for event in events:
                 assigned = f"{event.id}AssignedBooking"
                 if assigned in request.POST:

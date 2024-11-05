@@ -57,38 +57,38 @@
 
                     <!-- Is event assigned to billing? -->
                     <label style="margin: 2px 0;" for="{{ event.id }}AssignedBooking"> Assigned Booking:  </label>
-                    <input checked type="checkbox" style="margin: 2px 0;" id="{{ event.id }}AssignedBooking" name="{{ event.id }}AssignedBooking" placeholder="{{ event.AssignedBooking }}">
+                    <input checked type="checkbox" style="margin: 2px 0;" id="{{ event.id }}AssignedBooking" name="{{ event.id }}AssignedBooking" value="{{ event.AssignedBooking }}">
 
                     <!-- Booking Name -->
-                    <label style="margin: 2px 0;" for="{{ event.id }}BookingName"> Booking Name: </label>
-                    <input style="margin: 2px 0;" id="{{ event.id }}BookingName" name="BookingName" value="{{ event.bookingName }}">
+                    <div style="margin: 2px 0;"> Booking Name: </div>
+                    <div style="margin: 2px 0;">{{ event.bookingName }}</div>
 
                     <!-- Supervisor Name -->
-                    <div style="margin: 2px 0;"> Supervisor:  {{ event.supervisorName }}</div>
-                    <div style="margin: 2px 0;"></div>
+                    <div style="margin: 2px 0;"> Supervisor: </div>
+                    <div style="margin: 2px 0;">{{ event.supervisorName }}</div>
 
                     <!-- Event ID -->
-                    <div style="margin: 2px 0;"> Event ID:  {{ event.id }}</div>
-                    <div style="margin: 2px 0;"></div>
+                    <div style="margin: 2px 0;"> Event ID: </div>
+                    <div style="margin: 2px 0;">{{ event.id }}</div>
 
                     <!-- Date -->
-                    <label style="margin: 2px 0;" for="{{ event.id }}Date"> Date: {{ event.bookingDate }}</label>
-                    <input type="date" style="margin: 2px 0;" id="{{ event.id }}Date" name="Date" value="{{ event.bookingDate|date:'Y-m-d' }}">
+                    <div style="margin: 2px 0;"> Date: </div>
+                    <div style="margin: 2px 0;">{{ event.bookingDate|date:'Y-m-d' }}</div>
 
                     <!-- Start Time -->
-                    <label style="margin: 2px 0;" for="{{ event.id }}Start"> Start: {{ event.startTime|time:'H:i' }}</label>
-                    <input type="time" style="margin: 2px 0;" id="{{ event.id }}Start" name="Start" value="{{ event.startTime|time:'H:i' }}">
+                    <div style="margin: 2px 0;"> Start: </div>
+                    <div style="margin: 2px 0;">{{ event.startTime|time:'H:i' }}</div>
 
                     <!-- End Time -->
-                    <label style="margin: 2px 0;" for="{{ event.id }}End"> End: {{ event.finishTime|time:'H:i' }}</label>
-                    <input type="time" style="margin: 2px 0;" id="{{ event.id }}End" name="End" value="{{ event.finishTime|time:'H:i' }}">
+                    <div style="margin: 2px 0;" for="{{ event.id }}End"> End: </div>
+                    <div style="margin: 2px 0;">{{ event.finishTime|time:'H:i' }}</div>
 
                     <!-- Equipment ID -->
-                    <label style="margin: 2px 0;" for="{{ event.id }}Equipment"> Equipment ID: {{ event.equipment }}</label>
-                    <input style="margin: 2px 0;" id="{{ event.id }}Equipment" name="Equipment" value="{{ event.equipment }}">
+                    <div style="margin: 2px 0;"> Equipment ID: </div>
+                    <div style="margin: 2px 0;">{{ event.equipment }}</div>
 
-                    <div style="margin: 2px 0;"> Total Time: {{ event.totalTime }}</div>
-                    <div style="margin: 2px 0;"></div>
+                    <div style="margin: 2px 0;"> Total Time: </div>
+                    <div style="margin: 2px 0;">{{ event.totalTime }}</div>
 
                 </div>
                 {% endif %}
