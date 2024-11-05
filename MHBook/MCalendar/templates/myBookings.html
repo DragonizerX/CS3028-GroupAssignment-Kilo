@@ -163,7 +163,10 @@
                     <div class="detailsListItem">Finish: {{ z.finishTime|time:"H:i" }}</div>
                 </div>
             </div>
-            {%endfor%}
+        {%endfor%}
+        {% if hasBooking == False%}
+            <p>You have no current bookings.</p>
+        {% endif %}
 
         </div>
 

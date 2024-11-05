@@ -124,8 +124,10 @@ def myBookings(request):
         current_user = request.user.email
         myBookings = Event.objects.filter(email=current_user)
         template = loader.get_template('myBookings.html')
+        hasBooking = myBookings.exists()
         context = {
             'myBookings': myBookings,
+            'hasBooking': hasBooking,
         }
         return HttpResponse(template.render(context, request))
     else:
