@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.template import loader
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.utils import timezone
 
 
 from django.contrib.admin.views.decorators import staff_member_required
@@ -149,6 +150,9 @@ def requests(request):
 
 def cancelBooking(request, id):
     booking = get_object_or_404(Event, id=id)
+    print(booking)
+    if booking.bookingDate == timezone.now().date(): #check for same day cancelation
+        print("soy")
     booking.delete()
     return redirect('myBookings')
 
