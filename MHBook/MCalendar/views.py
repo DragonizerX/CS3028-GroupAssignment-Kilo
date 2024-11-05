@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.contrib.admin.views.decorators import staff_member_required
 
 import uuid
-from .models import Users, Event, Equipment, Billing, Supervisor
+from .models import Users, Event, Equipment, Billing, Supervisor, CancelledBooking
 from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm, AddEquipmentForm
 
 from django.core.mail import send_mail
@@ -150,9 +150,12 @@ def requests(request):
 
 def cancelBooking(request, id):
     booking = get_object_or_404(Event, id=id)
-    print(booking)
     if booking.bookingDate == timezone.now().date(): #check for same day cancelation
-        print("soy")
+        CancelledBooking.objects.create(
+            booking_name=booking.bookingName,
+            cancelled_by=request.user,  # assumes the user is authenticated
+            cancellation_date=timezone.now()
+        )
     booking.delete()
     return redirect('myBookings')
 

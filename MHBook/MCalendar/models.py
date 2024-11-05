@@ -67,6 +67,14 @@ class Supervisor(models.Model):
     email = models.EmailField(unique=True, blank=True)
     telephone = models.CharField(max_length=15, blank=True)
 
+class CancelledBooking(models.Model):
+    booking_name = models.CharField(max_length=80)
+    cancelled_by = models.CharField(max_length=80)
+    cancellation_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.booking_name} - {self.cancelled_by} on {self.cancellation_date}"
+
 
 class Event(models.Model):
     bookingName = models.CharField(max_length=80)
