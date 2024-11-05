@@ -10,7 +10,7 @@ from django.utils import timezone
 
 from reportlab.pdfgen import canvas # type: ignore
 from django.contrib.admin.views.decorators import staff_member_required
-
+from django.core.paginator import Paginator
 
 import uuid, io
 from .models import Users, Event, Equipment, Billing, Supervisor, CancelledBooking
@@ -121,9 +121,16 @@ def myBookings(request):
         myBookings = Event.objects.filter(bookingDate__gte=timezone.now().date())
         template = loader.get_template('myBookings.html')
         hasBooking = myBookings.exists()
+
+        # Paginator yaya
+        paginator = Paginator(myBookings, 10)
+        pageNumber = request.GET.get('page')
+        pageObj = paginator.get_page(pageNumber)
+
         context = {
             'myBookings': myBookings,
             'hasBooking': hasBooking,
+            'pageObj': pageObj,
         }
         return HttpResponse(template.render(context, request))
     if request.user.is_authenticated:
@@ -131,6 +138,12 @@ def myBookings(request):
         myBookings = Event.objects.filter(email=current_user, bookingDate__gte=timezone.now().date())
         template = loader.get_template('myBookings.html')
         hasBooking = myBookings.exists()
+
+        # Paginator
+        paginator = Paginator(myBookings, 10)
+        pageNumber = request.GET.get('page')
+        pageObj = paginator.get_page(pageNumber)
+
         context = {
             'myBookings': myBookings,
             'hasBooking': hasBooking,
@@ -145,9 +158,16 @@ def requests(request):
         requests = Users.objects.all().values()
         template = loader.get_template('requests.html')
         hasRequest = requests.filter(verified=False).exists()
+
+        # Paginator
+        paginator = Paginator(requests, 12) # For some reason it displays 2 less than what this value is ?? Currently it will display 10
+        pageNumber = request.GET.get('page')
+        pageObj = paginator.get_page(pageNumber)
+
         context = {
             'requests': requests,
-            'hasRequest': hasRequest
+            'hasRequest': hasRequest,
+            'pageObj': pageObj,
         }
         return HttpResponse(template.render(context, request))
     else:
@@ -443,11 +463,16 @@ def archivePage(request):
             totalHours += x.totalTime
         print(totalHours)
 
+        # Paginator
+        paginator = Paginator(eventList, 10)
+        pageNumber = request.GET.get('page')
+        pageObj = paginator.get_page(pageNumber)
 
         context = {
             'eventList': eventList,
             'equipmentList': equipmentList,
             'totalHours': totalHours,
+            'pageObj': pageObj,
         }
 
         return render(request, 'archive.html', context)
