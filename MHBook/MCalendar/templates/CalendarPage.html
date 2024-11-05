@@ -125,7 +125,7 @@
 
         {% if user.is_superuser %}
             <a href="{% url 'requests' %}">Requests</a>
-            <a href="{% url 'createBilling' %}">Billing</a>
+            <a href="{% url 'billings' %}">Billing</a>
             <a href="{% url 'archivePage' %}">Archive</a>
         {% endif %}
 
@@ -168,7 +168,7 @@
         
         <!--BOOKING FORM-->
         <div class="text-center mt-4">
-            <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#bookingForm" aria-expanded="false" aria-controls="bookingForm">
+            <button class="btn btn-sty" type="button" data-toggle="collapse" data-target="#bookingForm" aria-expanded="false" aria-controls="bookingForm">
                 Make New Booking 
             </button>
             
@@ -177,6 +177,7 @@
                     <form method="post" action="{% url 'create_event' %}">
                         {% csrf_token %}
                         <input type="hidden" id="equipmentInput" name="equipment" value="">
+                        <!--
                         <div class="row">
                             <div class="col-sm-3">
                                 <label for="bookingName" class="control-label">Name for Booking:</label>
@@ -185,6 +186,7 @@
                                 <input type="text" class="form-control" id="bookingName" name="bookingName" required>
                             </div>
                         </div>
+                        -->
                         <div class="row mt-2">
                             <div class="col-sm-3">
                                 <label for="supervisorName" class="control-label">Supervisor:</label>
@@ -208,7 +210,7 @@
                                 <input type="hidden" name="supervisorName" id="selectedSupervisorId" required>
                             </div>
                             <div class="col-sm-2">
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addSupervisorModal">
+                                <button type="button" class="btn btn-sty btn-block" data-toggle="modal" data-target="#addSupervisorModal">
                                     Add New
                                 </button>
                             </div>
@@ -333,10 +335,13 @@
                                         </div>
                                     </form>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" id="submitSupervisor">Add Supervisor</button>
+                                <div class="container px-5">
+                                    <div class="text-center">
+                                    <button type="button" class="detailsListItem btn btn-block btn-success" id="submitSupervisor">Add Supervisor</button>
+                                    <button type="button" class="detailsListItem btn btn-block btn-danger " data-dismiss="modal">Close</button>
+                                    </div>
                                 </div>
+                                <br>
                             </div>
                         </div>
                     </div>
@@ -507,6 +512,8 @@
                         this.reset();
                         document.getElementById('equipment').value = selectedEquipment;
                         document.getElementById('equipmentInput').value = selectedEquipment;
+                    } else if (data.status === 'error') {
+                        alert(data.message);
                     }
                 })
                 .catch(error => console.error('Error:', error));

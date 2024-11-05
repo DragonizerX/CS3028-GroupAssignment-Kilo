@@ -35,4 +35,7 @@ urlpatterns = [
     path("CalendarPageAdmin/", views.AdminCalendarView, name='CalendarPageAdmin'),
 
     path("createBilling/", views.createBilling, name="createBilling"),
+    path("billings/", views.billings, name="billings"),
+    path("editBilling/<int:id>", views.editBilling, name="editBilling"),
+    path('generatePDF/<int:id>/', views.generatePDF, name='generatePDF'),
 ]

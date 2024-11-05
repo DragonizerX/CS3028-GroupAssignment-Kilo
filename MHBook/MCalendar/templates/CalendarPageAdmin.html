@@ -113,6 +113,7 @@
         .dropdown-item:hover {
             background-color: #ddd;
         }
+
         .notification-box {
             background-color: #f9efea;
             color: #c42323;
@@ -153,8 +154,25 @@
 
         .popup ul {
             padding-left: 20px; /* Padding for the list inside popup */
+
+        .button-footer {
+            display:flex;
+            justify-content: center;
+            align-content: center;
+
         }
 
+        .admin-information {
+            font-size: 12px;       /* Larger font size */
+            max-width: 220px;      /* Wider tooltip */
+            padding: 10px;         /* Add padding for readability */
+            background-color: white;  /* Light background */
+            color: grey;           /* Text color */
+            border: 1px solid grey; /* Border for the tooltip */
+            border-radius: 2px;    /* Rounded corners */
+            z-index: 1000;         /* Ensure it appears above other elements */
+        }
+ 
         
     </style>
 </head>
@@ -175,7 +193,7 @@
 
         {% if user.is_superuser %}
             <a href="{% url 'requests' %}">Requests</a>
-            <a href="{% url 'createBilling' %}">Billing</a> <!-- UPDATE WHEN THE BILLING PAGE IS MADE -->
+            <a href="{% url 'billings' %}">Billing</a> <!-- UPDATE WHEN THE BILLING PAGE IS MADE -->
             <a href="{% url 'archivePage' %}">Archive</a>
         {% endif %}
 
@@ -224,19 +242,19 @@
 
     <div class="container rounded bg-white mt-5 mb-5 pb-5">
         <div class="container">
-        <!--EQUIPMENT SELECTION-->
-        <div id="equipmentSelect" class="form-group">
-                    
-            <label for="equipment">Select Equipment:</label>
-            <select class="form-control" id="equipment" name="equipment" required>
-                <option value="">-- Select Equipment --</option>
+            <!--EQUIPMENT SELECTION-->
+            <div id="equipmentSelect" class="form-group">
+                        
+                <label for="equipment">Select Equipment:</label>
+                <select class="form-control" id="equipment" name="equipment" required>
+                    <option value="">-- Select Equipment --</option>
 
-                {% for x in equipmentList %}
-                    <option value="{{ x.equipmentID_auto}}">-- {{ x.equipmentName }} -- {{ x.hourlyRate }} --</option>
-                {% endfor %}
+                    {% for x in equipmentList %}
+                        <option value="{{ x.equipmentID_auto}}">-- {{ x.equipmentName }} -- {{ x.hourlyRate }} --</option>
+                    {% endfor %}
 
-            </select>
-        </div>
+                </select>
+            </div>
 
         <div class="text-center mt-4">
 
@@ -326,14 +344,18 @@
                     <form method="post" action="{% url 'create_event' %}">
                         {% csrf_token %}
                         <input type="hidden" id="equipmentInput" name="equipment" value="">
-                        <div class="row">
+                        
+                        {% if user.is_superuser %}
+                        <div class="row mt-2">
                             <div class="col-sm-3">
-                                <label for="bookingName" class="control-label">Name for Booking:</label>
+                                <label for="user_email" class="control-label">User Email:</label>
                             </div>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="bookingName" name="bookingName" required>
+                                <input type="email" class="form-control" id="user_email" name="user_email">
                             </div>
                         </div>
+                        {% endif %}
+
                         <div class="row mt-2">
                             <div class="col-sm-3">
                                 <label for="supervisorName" class="control-label">Supervisor:</label>
@@ -357,7 +379,7 @@
                                 <input type="hidden" name="supervisorName" id="selectedSupervisorId" required>
                             </div>
                             <div class="col-sm-2">
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addSupervisorModal">
+                                <button type="button" class="btn btn-sty btn-block" data-toggle="modal" data-target="#addSupervisorModal">
                                     Add New
                                 </button>
                             </div>
@@ -439,7 +461,7 @@
                         {% if user.is_superuser %}
                         <div class="row mt-2">
                             <div class="col-sm-3">
-                                <label for="customPrice" class="control-label">Booking Price:</label>
+                                <label for="customPrice" class="control-label">Booking Price (per hour) :</label>
                             </div>
                             <div class="col-sm-9">
                                 <input type="number" step="0.01" class="form-control" id="customPrice" name="customPrice">
@@ -490,10 +512,13 @@
                                         </div>
                                     </form>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" id="submitSupervisor">Add Supervisor</button>
+                                <div class="container px-5">
+                                    <div class="text-center">
+                                    <button type="button" class="detailsListItem btn btn-block btn-success" id="submitSupervisor">Add Supervisor</button>
+                                    <button type="button" class="detailsListItem btn btn-block btn-danger " data-dismiss="modal">Close</button>
+                                    </div>
                                 </div>
+                                <br>
                             </div>
                         </div>
                     </div>
@@ -581,7 +606,8 @@
                     $(info.el).tooltip({
                         title: info.event.title,
                         placement: 'top',
-                        html: true
+                        html: true,
+                        template: '<div class="tooltip admin-information" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
                     });
                 }
             });
@@ -659,6 +685,11 @@
                 const selectedOption = document.getElementById('equipment').options[document.getElementById('equipment').selectedIndex];
                 const hourlyRate = selectedOption.text.split('--')[2].trim(); 
                 formData.append('hourlyRate', hourlyRate);
+
+                const userEmailField = document.getElementById('user_email');
+                if (userEmailField) {
+                    formData.append('user_email', userEmailField.value);
+                }
         
                 fetch("{% url 'create_event' %}", {
                     method: 'POST',
@@ -675,6 +706,8 @@
                         this.reset();
                         document.getElementById('equipment').value = selectedEquipment;
                         document.getElementById('equipmentInput').value = selectedEquipment;
+                    } else if (data.status === 'error') {
+                        alert(data.message);
                     }
                 })
                 .catch(error => console.error('Error:', error));
