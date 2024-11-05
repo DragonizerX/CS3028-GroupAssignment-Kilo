@@ -441,7 +441,7 @@ def createBilling(request):
 
             billing.save()
 
-            messages.success(request, "Billing created")
+            return redirect('billings')
 
         return render(request, 'createBilling.html', context)
     
@@ -497,10 +497,15 @@ def editBilling(request, id):
                 if assigned in request.POST:
                     continue
                 else:
-                    event.invoiceRef = 'none'
-                    event.save()
+                    if event.invoiceRef == billing.invoiceRef:
+                        event.invoiceRef = 'None'
+                        event.save()
 
-            billing.save()
+            associated_events = Event.objects.filter(invoiceRef=billing.invoiceRef)
+            if not associated_events.exists():
+                # No events are associated with this billing, so delete the billing
+                billing.delete()
+                
             return redirect('billings')
 
         template = loader.get_template('editBilling.html')
