@@ -113,11 +113,14 @@ def changePasswordPage(request):
     
 
 def myBookings(request):
+    
     if request.user.is_superuser:
         myBookings = Event.objects.all().values()
         template = loader.get_template('myBookings.html')
+        hasBooking = myBookings.exists()
         context = {
             'myBookings': myBookings,
+            'hasBooking': hasBooking,
         }
         return HttpResponse(template.render(context, request))
     if request.user.is_authenticated: ####
@@ -470,6 +473,7 @@ def createBilling(request):
         if request.method == "POST":
             selectedEvents = request.POST.getlist('selectEvent')
             selectedEventObjects = Event.objects.filter(id__in=selectedEvents)
+            equipmentList = Equipment.objects.all()
 
             supervisors = selectedEventObjects.values_list('supervisorName', flat=True).distinct()
 
@@ -487,9 +491,14 @@ def createBilling(request):
 
             billing.events.set(selectedEventObjects)
 
+            #print(selectedEventObjects)
             equipment_names = selectedEventObjects.values_list('equipment', flat=True).distinct()
-            billing.equipment.set(equipment_names)
-            billing.save()
+            for e in equipmentList:
+                print(e)
+                if e.equipmentName == equipment_names:
+                    print(e.equipmentID_auto+1)
+                    billing.equipment.set(e.equipmentID_auto+1)
+                    billing.save()
 
             cost = 0
             for event in selectedEventObjects:
