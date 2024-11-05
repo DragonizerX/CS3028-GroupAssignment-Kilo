@@ -397,6 +397,7 @@ def createBilling(request):
     if request.user.is_superuser:
         eventList = Event.objects.all()
         equipmentList = Equipment.objects.all()
+        equipment = Equipment.objects.all()
 
         supervisorName = request.GET.get('supervisorName')
         dateMin = request.GET.get('dateMin')
@@ -438,7 +439,16 @@ def createBilling(request):
 
             equipment_names = selectedEventObjects.values_list('equipment', flat=True).distinct()
             billing.equipment.set(equipment_names)
+            billing.save()
 
+            cost = 0
+            for event in selectedEventObjects:
+                for eq in equipment:
+                    if event.equipment == str(eq.equipmentID_auto):
+                        print("Here")
+                        cost += event.totalTime * eq.hourlyRate
+            billing.totalCost = cost
+            print(cost)
             billing.save()
 
             return redirect('billings')
