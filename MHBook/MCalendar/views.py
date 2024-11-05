@@ -118,7 +118,7 @@ def changePasswordPage(request):
 def myBookings(request):
     
     if request.user.is_superuser:
-        myBookings = Event.objects.all().values()
+        myBookings = Event.objects.filter(bookingDate__gte=timezone.now().date())
         template = loader.get_template('myBookings.html')
         hasBooking = myBookings.exists()
         context = {
@@ -126,9 +126,9 @@ def myBookings(request):
             'hasBooking': hasBooking,
         }
         return HttpResponse(template.render(context, request))
-    if request.user.is_authenticated: ####
+    if request.user.is_authenticated:
         current_user = request.user.email
-        myBookings = Event.objects.filter(email=current_user)
+        myBookings = Event.objects.filter(email=current_user, bookingDate__gte=timezone.now().date())
         template = loader.get_template('myBookings.html')
         hasBooking = myBookings.exists()
         context = {
