@@ -14,21 +14,31 @@
     <link rel="stylesheet" href="{% static 'global.css' %}">
 
     <style>
+    .dropdown-container {
+        position: relative; 
+    }
 
-        .details {
-            background-color: lightgrey;
-            display: grid;
-            grid-template-columns: 40% 60%;
-            gap: 2px 0;
-            padding: 5px;
-        }
+    .dropdown-content {
+        position: absolute; 
+        z-index: 1000; 
+        background-color: white; 
+        border: 1px solid #ccc; 
+        max-height: 200px; 
+        overflow-y: auto;
+        display: none; 
+    }
 
-        #cancelButton {
-            padding: 5px;
-            margin: 20px;
-        }
+    .dropdown-item {
+        padding: 8px 12px;
+        cursor: pointer;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f0f0f0;
+    }
 
     </style>
+
     <script>
         function confirmCancel(id) {
             const dialog = window.confirm('Are you sure you want to cancel this booking?');
@@ -51,6 +61,111 @@
               none;
             }
           }
+
+          document.addEventListener('DOMContentLoaded', function() {
+            function updateEndTimeOptions() {
+                const startTime = document.getElementById('start').value;
+                const finishTimeSelect = document.getElementById('finish');
+                const startHour = parseInt(startTime.split(':')[0]);
+                
+                const currentSelection = finishTimeSelect.value;
+                
+                finishTimeSelect.innerHTML = '';
+                
+                for(let i = 0; i < 24; i++) {
+                    if(i > startHour) {
+                        const timeStr = `${String(i).padStart(2, '0')}:00`;
+                        const option = new Option(timeStr, timeStr);
+                        finishTimeSelect.appendChild(option);
+                        
+                        if(timeStr === currentSelection) {
+                            option.selected = true;
+                        }
+                    }
+                }
+                
+                if(finishTimeSelect.value === '') {
+                    finishTimeSelect.value = `${String(startHour + 1).padStart(2, '0')}:00`;
+                }
+            }
+        
+            function validateTimes() {
+                const startTime = document.getElementById('start').value;
+                const finishTime = document.getElementById('finish').value;
+                const startHour = parseInt(startTime.split(':')[0]);
+                const finishHour = parseInt(finishTime.split(':')[0]);
+                
+                if(finishHour <= startHour) {
+                    alert('End time must be after start time');
+                    document.getElementById('finish').value = 
+                        `${String(startHour + 1).padStart(2, '0')}:00`;
+                    return false;
+                }
+                return true;
+            }
+        
+            const startSelect = document.getElementById('start');
+            if(startSelect) {
+                startSelect.addEventListener('change', updateEndTimeOptions);
+                updateEndTimeOptions();
+            }
+        
+            const finishSelect = document.getElementById('finish');
+            if(finishSelect) {
+                finishSelect.addEventListener('change', validateTimes);
+            }
+        
+            const form = document.querySelector('.details');
+            if(form) {
+                form.addEventListener('submit', function(e) {
+                    if(!validateTimes()) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
+        
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById("supervisorSearch");
+    const dropdown = document.getElementById("supervisorDropdown");
+
+    // Show dropdown when the input is focused
+    searchInput.addEventListener("focus", function() {
+        dropdown.style.display = "block";
+    });
+
+    // Filter dropdown items as user types
+    searchInput.addEventListener("keyup", function() {
+        const searchText = searchInput.value.toLowerCase();
+        const items = dropdown.getElementsByClassName("dropdown-item");
+
+        for (let item of items) {
+            const itemText = item.innerText.toLowerCase();
+            item.style.display = itemText.includes(searchText) ? "" : "none";
+        }
+    });
+
+    // Close dropdown if clicking outside of the input or dropdown
+    document.addEventListener("mousedown", function(event) {
+        if (!dropdown.contains(event.target) && event.target !== searchInput) {
+            dropdown.style.display = "none";
+        }
+    });
+
+    // Select a supervisor from the dropdown
+    window.selectSupervisor = function(id, name) {
+        searchInput.value = name; // Display selected name in input field
+        document.getElementById("selectedSupervisorId").value = id; // Store selected supervisor ID
+        dropdown.style.display = "none"; // Hide dropdown after selection
+    };
+});
+
+
+
+
     </script>
 </head>
 
@@ -92,51 +207,129 @@
         </div>
     </div>
 
-    <div class="container rounded bg-white mt-5 mb-5 pb-5">
+    <div class="container rounded bg-white mt-5 mb-5 pb-5 pt-3">
     
-    <form class="details" method="POST">
+    <form method="POST">
         {% csrf_token %}
         {% for x in editBooking %}
-        
-        <!--
-        <label for="name">Full Name: </label>
-        <input type="text" id="name" name="bookingName" placeholder="{{ x.bookingName }}">
-        -->
-        
-        <label for="supervisor">Supervisor: </label>
-        <input type="text" id="supervisor" name="supervisorName" placeholder="{{ x.supervisorName }}">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-text">
+                        <div class="details">
+                            <!--
+                            <label for="name">Full Name: </label>
+                            <input type="text" id="name" name="bookingName" placeholder="{{ x.bookingName }}">
+                            -->
+                            <label for="supervisor">Supervisor:</label>
 
-        <label for="date">Date: </label>
-        <input type="date" id="date" name="bookingDate" value="{{ x.bookingDate|date:'Y-m-d' }}">
+                            <!-- Dropdown Container -->
+                            <div class="dropdown-container">
+                                <!-- Search Input Field -->
+                                <input type="text" id="supervisorSearch" class="form-control" placeholder="Search for a supervisor">
 
-        <label for="start">Start time: </label>
-        <input type="time" id="start" name="startTime" value="{{ x.startTime|time:'H:i' }}">
+                                <!-- Custom Dropdown -->
+                                <div id="supervisorDropdown" class="dropdown-content">
+                                    {% for supervisor in supervisors %}
+                                        <div class="dropdown-item" onclick="selectSupervisor('{{ supervisor.id }}', '{{ supervisor.first_name }} {{ supervisor.last_name }}')">
+                                            {{ supervisor.first_name }} {{ supervisor.last_name }}
+                                        </div>
+                                    {% empty %}
+                                        <div class="dropdown-item">No supervisors available</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
 
-        <label for="finish">Finish time: </label>
-        <input type="time" id="finish" name="finishTime" value="{{ x.finishTime|time:'H:i' }}">
+                            <!-- Hidden Input to Store Selected Supervisor ID -->
+                            <input type="hidden" name="supervisorName" id="selectedSupervisorId" required>
 
-        <label for="comments">Comments: </label>
-        <input type="text" id="comments" name="comments" placeholder="{{ x.comments }}">
 
-        <label for="equipment">Equipment: </label>
-        <input type="text" id="equipment" name="equipment" placeholder="{{ x.equipment }}">
+                    
+                            
 
-        <!--
-        <select id="equipment" name="equipment"> <option selected>{{ x.equipment }}</option>
+                            <label for="date">Date: </label>
+                            <input type="date" id="date" name="bookingDate" value="{{ x.bookingDate|date:'Y-m-d' }}">
 
-            {% for equipment in equipmentList %}
-                <option value="{{ equipment }}">{{ equipment.equipmentID_auto }}</option>
-            {% endfor %}
-        </select> -->
+                            <label for="start">Start time: </label>
+                            <select class="form-control" id="start" name="startTime" required>
+                                <option value="00:00" {% if x.startTime|time:'H:i' == '00:00' %}selected{% endif %}>00:00</option>
+                                <option value="01:00" {% if x.startTime|time:'H:i' == '01:00' %}selected{% endif %}>01:00</option>
+                                <option value="02:00" {% if x.startTime|time:'H:i' == '02:00' %}selected{% endif %}>02:00</option>
+                                <option value="03:00" {% if x.startTime|time:'H:i' == '03:00' %}selected{% endif %}>03:00</option>
+                                <option value="04:00" {% if x.startTime|time:'H:i' == '04:00' %}selected{% endif %}>04:00</option>
+                                <option value="05:00" {% if x.startTime|time:'H:i' == '05:00' %}selected{% endif %}>05:00</option>
+                                <option value="06:00" {% if x.startTime|time:'H:i' == '06:00' %}selected{% endif %}>06:00</option>
+                                <option value="07:00" {% if x.startTime|time:'H:i' == '07:00' %}selected{% endif %}>07:00</option>
+                                <option value="08:00" {% if x.startTime|time:'H:i' == '08:00' %}selected{% endif %}>08:00</option>
+                                <option value="09:00" {% if x.startTime|time:'H:i' == '09:00' %}selected{% endif %}>09:00</option>
+                                <option value="10:00" {% if x.startTime|time:'H:i' == '10:00' %}selected{% endif %}>10:00</option>
+                                <option value="11:00" {% if x.startTime|time:'H:i' == '11:00' %}selected{% endif %}>11:00</option>
+                                <option value="12:00" {% if x.startTime|time:'H:i' == '12:00' %}selected{% endif %}>12:00</option>
+                                <option value="13:00" {% if x.startTime|time:'H:i' == '13:00' %}selected{% endif %}>13:00</option>
+                                <option value="14:00" {% if x.startTime|time:'H:i' == '14:00' %}selected{% endif %}>14:00</option>
+                                <option value="15:00" {% if x.startTime|time:'H:i' == '15:00' %}selected{% endif %}>15:00</option>
+                                <option value="16:00" {% if x.startTime|time:'H:i' == '16:00' %}selected{% endif %}>16:00</option>
+                                <option value="17:00" {% if x.startTime|time:'H:i' == '17:00' %}selected{% endif %}>17:00</option>
+                                <option value="18:00" {% if x.startTime|time:'H:i' == '18:00' %}selected{% endif %}>18:00</option>
+                                <option value="19:00" {% if x.startTime|time:'H:i' == '19:00' %}selected{% endif %}>19:00</option>
+                                <option value="20:00" {% if x.startTime|time:'H:i' == '20:00' %}selected{% endif %}>20:00</option>
+                                <option value="21:00" {% if x.startTime|time:'H:i' == '21:00' %}selected{% endif %}>21:00</option>
+                                <option value="22:00" {% if x.startTime|time:'H:i' == '22:00' %}selected{% endif %}>22:00</option>
+                                <option value="23:00" {% if x.startTime|time:'H:i' == '23:00' %}selected{% endif %}>23:00</option>
+                            </select>
 
-            <input type="submit" value="Submit" style="width: 80%; margin: auto;">
+                            <label for="finish">Finish time: </label>
+                            <select class="form-control" id="finish" name="finishTime" required>
+                                <option value="00:00" {% if x.finishTime|time:'H:i' == '00:00' %}selected{% endif %}>00:00</option>
+                                <option value="01:00" {% if x.finishTime|time:'H:i' == '01:00' %}selected{% endif %}>01:00</option>
+                                <option value="02:00" {% if x.finishTime|time:'H:i' == '02:00' %}selected{% endif %}>02:00</option>
+                                <option value="03:00" {% if x.finishTime|time:'H:i' == '03:00' %}selected{% endif %}>03:00</option>
+                                <option value="04:00" {% if x.finishTime|time:'H:i' == '04:00' %}selected{% endif %}>04:00</option>
+                                <option value="05:00" {% if x.finishTime|time:'H:i' == '05:00' %}selected{% endif %}>05:00</option>
+                                <option value="06:00" {% if x.finishTime|time:'H:i' == '06:00' %}selected{% endif %}>06:00</option>
+                                <option value="07:00" {% if x.finishTime|time:'H:i' == '07:00' %}selected{% endif %}>07:00</option>
+                                <option value="08:00" {% if x.finishTime|time:'H:i' == '08:00' %}selected{% endif %}>08:00</option>
+                                <option value="09:00" {% if x.finishTime|time:'H:i' == '09:00' %}selected{% endif %}>09:00</option>
+                                <option value="10:00" {% if x.finishTime|time:'H:i' == '10:00' %}selected{% endif %}>10:00</option>
+                                <option value="11:00" {% if x.finishTime|time:'H:i' == '11:00' %}selected{% endif %}>11:00</option>
+                                <option value="12:00" {% if x.finishTime|time:'H:i' == '12:00' %}selected{% endif %}>12:00</option>
+                                <option value="13:00" {% if x.finishTime|time:'H:i' == '13:00' %}selected{% endif %}>13:00</option>
+                                <option value="14:00" {% if x.finishTime|time:'H:i' == '14:00' %}selected{% endif %}>14:00</option>
+                                <option value="15:00" {% if x.finishTime|time:'H:i' == '15:00' %}selected{% endif %}>15:00</option>
+                                <option value="16:00" {% if x.finishTime|time:'H:i' == '16:00' %}selected{% endif %}>16:00</option>
+                                <option value="17:00" {% if x.finishTime|time:'H:i' == '17:00' %}selected{% endif %}>17:00</option>
+                                <option value="18:00" {% if x.finishTime|time:'H:i' == '18:00' %}selected{% endif %}>18:00</option>
+                                <option value="19:00" {% if x.finishTime|time:'H:i' == '19:00' %}selected{% endif %}>19:00</option>
+                                <option value="20:00" {% if x.finishTime|time:'H:i' == '20:00' %}selected{% endif %}>20:00</option>
+                                <option value="21:00" {% if x.finishTime|time:'H:i' == '21:00' %}selected{% endif %}>21:00</option>
+                                <option value="22:00" {% if x.finishTime|time:'H:i' == '22:00' %}selected{% endif %}>22:00</option>
+                                <option value="23:00" {% if x.finishTime|time:'H:i' == '23:00' %}selected{% endif %}>23:00</option>
+                            </select>
 
+                            <label for="comments">Comments: </label>
+                            <input type="text" id="comments" name="comments" placeholder="{{ x.comments }}">
+                        
+
+
+                            <label for="equipment">Equipment: </label>
+                            <select id="equipment" name="equipment"> <option selected>{{ x.equipment }}</option>
+
+                                {% for equipment in equipmentList %}
+                                    <option value="{{ equipment }}">{{ equipment }}</option>
+                                {% endfor %}
+                            </select>
+
+                        </div>
+    
+                        <br>
+                        <input class="btn btn-success btn-block" type="submit" value="Submit" style="width: 80%; margin: auto;">
+                    </p>
+                </div>
+            </div>
+            <br>
+            <button class="btn btn-danger btn-block" style="width: 80%; margin: auto;" onclick="confirmCancel({{ x.id }})">Cancel Booking</button>
             
-    </form>
-
-    <button id="cancelButton" onclick="confirmCancel({{ x.id }})">Cancel Booking</button>
-
-    {% endfor %}
+        {% endfor %}
+        </form>
 
     </div>
 

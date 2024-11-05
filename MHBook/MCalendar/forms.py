@@ -29,9 +29,15 @@ class ChangePasswordForm(SetPasswordForm):
 
 
 class EventForm(forms.ModelForm):
+    user_email = forms.EmailField(
+        required=False,
+        widget=forms.EmailInput(attrs={'class': 'form-control'}),
+        label="User's Email"
+    )
+
     class Meta:
         model = Event
-        fields = ['bookingName', 'supervisorName', 'bookingDate', 'startTime', 'finishTime', 'comments', 'equipment']
+        fields = ['bookingName', 'supervisorName', 'bookingDate', 'startTime', 'finishTime', 'comments', 'equipment', 'hourlyRate']
 
         widgets = {
             'bookingName': forms.TextInput(attrs={'class': 'form-control'}),
@@ -39,9 +45,12 @@ class EventForm(forms.ModelForm):
             'bookingDate': forms.DateInput(attrs={'class':'form-control','type':'date'}),
             'start_time':forms.TimeInput(attrs={'class':'form-control','type':'time'}),
             'finish_time': forms.TimeInput(attrs={'class':'form-control','type':'time'}),
-            'comments':forms.Textarea(attrs={'class':'form-contorl','rows':3}),
+            'comments':forms.Textarea(attrs={'class':'form-control','rows':3}),
             'equipment': forms.Select(attrs={'class': 'form-control'}),
+            'hourlyRate': forms.NumberInput(attrs={'class': 'form-control', 'readonly': True})
+            
         }
+
 
 class AddEquipmentForm(forms.ModelForm):
     class Meta:

@@ -91,7 +91,40 @@
             margin:20px auto;
             text-align:center;
         }
+        .dropdown-content {
+        display: none; /* Hidden by default */
+        position: absolute;
+        background-color: #f9f9f9;
+        border: 1px solid #ccc;
+        max-height: 200px;
+        overflow-y: auto;
+        width: 100%;
+        z-index: 1;
+        }
+        .dropdown-item {
+            padding: 8px;
+            cursor: pointer;
+        }
+        .dropdown-item:hover {
+            background-color: #ddd;
+        }
+        .button-footer {
+            display:flex;
+            justify-content: center;
+            align-content: center;
+        }
 
+        .admin-information {
+            font-size: 12px;       /* Larger font size */
+            max-width: 220px;      /* Wider tooltip */
+            padding: 10px;         /* Add padding for readability */
+            background-color: white;  /* Light background */
+            color: grey;           /* Text color */
+            border: 1px solid grey; /* Border for the tooltip */
+            border-radius: 2px;    /* Rounded corners */
+            z-index: 1000;         /* Ensure it appears above other elements */
+        }
+ 
         
     </style>
 </head>
@@ -136,19 +169,19 @@
 
     <div class="container rounded bg-white mt-5 mb-5 pb-5">
         <div class="container">
-        <!--EQUIPMENT SELECTION-->
-        <div id="equipmentSelect" class="form-group">
-                    
-            <label for="equipment">Select Equipment:</label>
-            <select class="form-control" id="equipment" name="equipment" required>
-                <option value="">-- Select Equipment --</option>
+            <!--EQUIPMENT SELECTION-->
+            <div id="equipmentSelect" class="form-group">
+                        
+                <label for="equipment">Select Equipment:</label>
+                <select class="form-control" id="equipment" name="equipment" required>
+                    <option value="">-- Select Equipment --</option>
 
-                {% for x in equipmentList %}
-                    <option value="{{ x.equipmentID_auto}}">-- {{ x.equipmentName }} -- {{ x.hourlyRate }} --</option>
-                {% endfor %}
+                    {% for x in equipmentList %}
+                        <option value="{{ x.equipmentID_auto}}">-- {{ x.equipmentName }} -- {{ x.hourlyRate }} --</option>
+                    {% endfor %}
 
-            </select>
-        </div>
+                </select>
+            </div>
 
         <div class="text-center mt-4">
 
@@ -252,8 +285,28 @@
                             <div class="col-sm-3">
                                 <label for="supervisorName" class="control-label">Supervisor:</label>
                             </div>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" id="supervisorName" name="supervisorName" required>
+                            <div class="col-sm-7">
+                                <!-- Search Input Field -->
+                                <input type="text" id="supervisorSearch" class="form-control" placeholder="Search for a supervisor" onkeyup="filterSupervisors()">
+                                
+                                <!-- Custom Dropdown -->
+                                <div id="supervisorDropdown" class="dropdown-content">
+                                    {% for supervisor in supervisors %}
+                                        <div class="dropdown-item" onclick="selectSupervisor('{{ supervisor.id }}', '{{ supervisor.first_name }} {{ supervisor.last_name }}')">
+                                            {{ supervisor.first_name }} {{ supervisor.last_name }}
+                                        </div>
+                                    {% empty %}
+                                        <div class="dropdown-item">No supervisors available</div>
+                                    {% endfor %}
+                                </div>
+                        
+                                <!-- Hidden Input to Store Selected Supervisor ID -->
+                                <input type="hidden" name="supervisorName" id="selectedSupervisorId" required>
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-sty btn-block" data-toggle="modal" data-target="#addSupervisorModal">
+                                    Add New
+                                </button>
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -330,6 +383,16 @@
                                 </select>
                             </div>
                         </div>
+                        {% if user.is_superuser %}
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="customPrice" class="control-label">Booking Price:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="number" step="0.01" class="form-control" id="customPrice" name="customPrice">
+                            </div>
+                        </div>
+                        {% endif %}
                         <div class="row mt-2">
                             <div class="col-sm-3">
                                 <label for="comments" class="control-label">Comments:</label>
@@ -344,6 +407,46 @@
                             </div>
                         </div>
                     </form>
+                    <div class="modal fade" id="addSupervisorModal" tabindex="-1" role="dialog" aria-labelledby="addSupervisorModalLabel" aria-hidden="true"> <!-- Modal for adding new supervisor to table -->
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addSupervisorModalLabel">Add New Supervisor</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="addSupervisorForm">
+                                        <div class="form-group">
+                                            <label for="firstName">First Name:</label> <!-- Input for new supervisor field -->
+                                            <input type="text" class="form-control" id="firstName" name="first_name" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="lastName">Last Name:</label>
+                                            <input type="text" class="form-control" id="lastName" name="last_name" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">Email:</label>
+                                            <input type="email" class="form-control" id="email" name="email" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="telephone">Telephone:</label>
+                                            <input type="tel" class="form-control" id="telephone" name="telephone" required
+                                                pattern="^\+?\d{10,15}$" title="Enter a valid phone number (e.g., +1234567890 or 1234567890)">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="container px-5">
+                                    <div class="text-center">
+                                    <button type="button" class="detailsListItem btn btn-block btn-success" id="submitSupervisor">Add Supervisor</button>
+                                    <button type="button" class="detailsListItem btn btn-block btn-danger " data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -351,133 +454,283 @@
 
     <!--JAVASCRIPT SCRIPTS-->
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'timeGridWeek',
-            allDaySlot: false,
-            slotMinTime: '00:00:00',
-            slotMaxTime: '24:00:00',
-            slotDuration: '01:00:00',
-            snapDuration: '01:00:00',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'timeGridWeek,timeGridDay'
-            },
-            slotLabelFormat: {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            },
-            selectable: true,
-            select: function(info) {
-                var date = info.start.toISOString().split('T')[0];
-                var time = info.start.toTimeString().split(' ')[0].slice(0, 5);
-                document.getElementById('bookingDate').value = date;
-                document.getElementById('startTime').value = time;
-                var endTime = info.end.toTimeString().split(' ')[0].slice(0, 5);
-                document.getElementById('finishTime').value = endTime;
-                $('#bookingForm').collapse('show');
-            },
-            height: 'auto',
-            expandRows: true,
-            events: function(fetchInfo, successCallback, failureCallback) {
-                const equipment = document.getElementById('equipment').value;
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                allDaySlot: false,
+                slotMinTime: '00:00:00',
+                slotMaxTime: '24:00:00',
+                slotDuration: '01:00:00',
+                snapDuration: '01:00:00',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'timeGridWeek,timeGridDay'
+                },
+                slotLabelFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                },
+                selectable: true,
+                select: function(info) {
+                    var date = info.start.toISOString().split('T')[0];
+                    var startTime = info.start.toTimeString().split(' ')[0].slice(0, 5);
+                    var endTime = info.end.toTimeString().split(' ')[0].slice(0, 5);
+                    
+                    document.getElementById('bookingDate').value = date;
+                    document.getElementById('startTime').value = startTime;
+                    
+                    // Validate and set end time
+                    const startHour = parseInt(startTime.split(':')[0]);
+                    const endHour = parseInt(endTime.split(':')[0]);
+                    
+                    if(endHour <= startHour) {
+                        endTime = `${String(startHour + 1).padStart(2, '0')}:00`;
+                    }
+                    
+                    document.getElementById('finishTime').value = endTime;
+                    updateEndTimeOptions(); // Update available end times
+                    $('#bookingForm').collapse('show');
+                },
+                height: 'auto',
+                expandRows: true,
+                events: function(fetchInfo, successCallback, failureCallback) {
+                    const equipment = document.getElementById('equipment').value;
+                    
+                    if (!equipment) {
+                        successCallback([]);
+                        return;
+                    }
+                    
+                    fetch(`/MCalendar/CalendarPage/get_events/?equipment=${encodeURIComponent(equipment)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const eventsWithDetails = data.map(event => ({
+                                ...event,
+                                title: `${event.title}\nSupervisor: ${event.supervisorName}\nComments: ${event.comments || 'None'}`
+                            }));
+                            successCallback(eventsWithDetails);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            failureCallback(error);
+                        });
+                },
+                eventContent: function(arg) {
+                    return {
+                        html: `<div>
+                            <b>${arg.event.title.split('\n')[0]}</b><br>
+                            <small>${arg.event.title.split('\n')[1]}</small><br>
+                            <small>${arg.event.title.split('\n')[2]}</small>
+                        </div>`
+                    };
+                },
+                eventDidMount: function(info) {
+                    $(info.el).tooltip({
+                        title: info.event.title,
+                        placement: 'top',
+                        html: true,
+                        template: '<div class="tooltip admin-information" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+                    });
+                }
+            });
+            
+            calendar.render();
+        
+            // Time validation functions
+            function updateEndTimeOptions() {
+                const startTime = document.getElementById('startTime').value;
+                const finishTimeSelect = document.getElementById('finishTime');
+                const startHour = parseInt(startTime.split(':')[0]);
                 
-                if (!equipment) {
-                    successCallback([]);
+                finishTimeSelect.innerHTML = '';
+                
+                for(let i = 0; i < 24; i++) {
+                    if(i > startHour) {
+                        const timeStr = `${String(i).padStart(2, '0')}:00`;
+                        const option = new Option(timeStr, timeStr);
+                        finishTimeSelect.appendChild(option);
+                    }
+                }
+                
+                if(finishTimeSelect.value === '') {
+                    finishTimeSelect.value = `${String(startHour + 1).padStart(2, '0')}:00`;
+                }
+            }
+        
+            function validateTimes() {
+                const startTime = document.getElementById('startTime').value;
+                const finishTime = document.getElementById('finishTime').value;
+                const startHour = parseInt(startTime.split(':')[0]);
+                const finishHour = parseInt(finishTime.split(':')[0]);
+                
+                if(finishHour <= startHour) {
+                    alert('End time must be after start time');
+                    document.getElementById('finishTime').value = 
+                        `${String(startHour + 1).padStart(2, '0')}:00`;
+                }
+            }
+        
+            // Add event listeners for time validation
+            document.getElementById('startTime').addEventListener('change', updateEndTimeOptions);
+            document.getElementById('finishTime').addEventListener('change', validateTimes);
+        
+            // Equipment change handler
+            document.getElementById('equipment').addEventListener('change', function() {
+                const selectedEquipment = this.value;
+                document.getElementById('equipmentInput').value = selectedEquipment;
+                calendar.refetchEvents();
+            });
+        
+            // Form submission handler
+            document.querySelector('#bookingForm form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const startTime = document.getElementById('startTime').value;
+                const finishTime = document.getElementById('finishTime').value;
+                const startHour = parseInt(startTime.split(':')[0]);
+                const finishHour = parseInt(finishTime.split(':')[0]);
+                
+                if(finishHour <= startHour) {
+                    alert('End time must be after start time');
                     return;
                 }
+        
+                var formData = new FormData(this);
+                var selectedEquipment = document.getElementById('equipment').value;
+                formData.append('equipment', selectedEquipment);
                 
-                fetch(`/MCalendar/CalendarPage/get_events/?equipment=${encodeURIComponent(equipment)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const eventsWithDetails = data.map(event => ({
-                            ...event,
-                            title: `${event.title}\nSupervisor: ${event.supervisorName}\nComments: ${event.comments || 'None'}`
-                        }));
-                        successCallback(eventsWithDetails);
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        failureCallback(error);
-                    });
-            },
-            eventContent: function(arg) {
-                return {
-                    html: `<div>
-                        <b>${arg.event.title.split('\n')[0]}</b><br>
-                        <small>${arg.event.title.split('\n')[1]}</small><br>
-                        <small>${arg.event.title.split('\n')[2]}</small>
-                    </div>`
-                };
-            },
-            eventDidMount: function(info) {
-                $(info.el).tooltip({
-                    title: info.event.title,
-                    placement: 'top',
-                    html: true
-                });
+                if (!selectedEquipment) {
+                    alert('Please select equipment before submitting the booking.');
+                    return;
+                }
+
+                const selectedOption = document.getElementById('equipment').options[document.getElementById('equipment').selectedIndex];
+                const hourlyRate = selectedOption.text.split('--')[2].trim(); 
+                formData.append('hourlyRate', hourlyRate);
+
+                const userEmailField = document.getElementById('user_email');
+                if (userEmailField) {
+                    formData.append('user_email', userEmailField.value);
+                }
+        
+                fetch("{% url 'create_event' %}", {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        calendar.refetchEvents();
+                        $('#bookingForm').collapse('hide');
+                        this.reset();
+                        document.getElementById('equipment').value = selectedEquipment;
+                        document.getElementById('equipmentInput').value = selectedEquipment;
+                    } else if (data.status === 'error') {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+        
+        function toggleNav() {
+            var element = document.getElementById("sidebar");
+            element.classList.toggle("toggle");
+        }
+        
+        function LogoutButton() {
+            if (confirm("You are about to logout,\nAre you sure you want to continue?")) {
+                window.location.href="{% url 'logout' %}";
+            } else {
+                none;
             }
-        });
+        }
 
-        calendar.render();
+            document.getElementById('submitSupervisor').addEventListener('click', function() {
+        var form = document.getElementById('addSupervisorForm');
+        var firstName = document.getElementById('firstName');
+        var lastName = document.getElementById('lastName');
+        var email = document.getElementById('email');
+        var telephone = document.getElementById('telephone');
 
-        // Equipment change handler
-        document.getElementById('equipment').addEventListener('change', function() {
-            const selectedEquipment = this.value;
-            document.getElementById('equipmentInput').value = selectedEquipment;
-            calendar.refetchEvents();
-        });
+        // Validate each field and store error messages
+        var errors = [];
 
-        // Form submission handler
-        document.querySelector('#bookingForm form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            var formData = new FormData(this);
+        if (!firstName.value.trim()) errors.push("First Name is required.");
+        if (!lastName.value.trim()) errors.push("Last Name is required.");
+        if (!email.value.trim()) errors.push("Email is required.");
+        
+        // Telephone validation
+        var phonePattern = /^\+?\d{10,15}$/;
+        if (!telephone.value.trim()) {
+            errors.push("Telephone is required.");
+        } else if (!phonePattern.test(telephone.value)) {
+            errors.push("Please enter a valid phone number (e.g., +1234567890 or 1234567890).");
+        }
+
+        // If there are errors, display them and prevent form submission
+        if (errors.length > 0) {
+            alert(errors.join("\n"));
+            return; // Stop submission if there are errors
+        }
+
+        // If no errors, proceed with form submission
+        var formData = new FormData(form);
+        fetch("{% url 'add_supervisor' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert(data.message);
+                $('#addSupervisorModal').modal('hide');
+                form.reset();
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
             
-            var selectedEquipment = document.getElementById('equipment').value;
-            formData.append('equipment', selectedEquipment);
-            if (!selectedEquipment) {
-                alert('Please select equipment before submitting the booking.');
-                return;
-            }
-
-            fetch("{% url 'create_event' %}", {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    calendar.refetchEvents();
-                    $('#bookingForm').collapse('hide');
-                    this.reset();
-                    document.getElementById('equipment').value = selectedEquipment;
-                    document.getElementById('equipmentInput').value = selectedEquipment;
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        });
+            document.getElementById("supervisorSearch").addEventListener("focus", function() {
+            document.getElementById("supervisorDropdown").style.display = "block";
     });
 
-    function toggleNav() {
+    function filterSupervisors() {
+        const searchInput = document.getElementById("supervisorSearch").value.toLowerCase();
+        const dropdown = document.getElementById("supervisorDropdown");
+        const items = dropdown.getElementsByClassName("dropdown-item");
 
-        var element = document.getElementById("sidebar");
-        element.classList.toggle("toggle");
+        for (let i = 0; i < items.length; i++) {
+            const itemText = items[i].innerText.toLowerCase();
+            items[i].style.display = itemText.includes(searchInput) ? "" : "none";
+        }
     }
 
-    function LogoutButton() {
-        if (confirm("You are about to logout,\nAre you sure you want to continue?")) {
-          window.location.href="{% url 'logout' %}";
-        } else {
-          none;
-        }
-      }
+    function selectSupervisor(id, name) {
+        document.getElementById("supervisorSearch").value = name; // Show selected supervisor in search field
+        document.getElementById("selectedSupervisorId").value = id; // Set selected supervisor ID
+        document.getElementById("supervisorDropdown").style.display = "none"; // Hide the dropdown
+    }
 
-    </script>
+    // Close dropdown if clicked outside
+    document.addEventListener("click", function(event) {
+        const dropdown = document.getElementById("supervisorDropdown");
+        if (!dropdown.contains(event.target) && event.target.id !== "supervisorSearch") {
+            dropdown.style.display = "none";
+        }
+    });
+        </script>
 </body>
 </html>

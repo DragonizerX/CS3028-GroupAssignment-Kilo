@@ -13,58 +13,6 @@
         <link rel="stylesheet" href="{% static 'global.css' %}">
         
         <title>My Bookings</title>
-
-        <style>
-
-            #bookings {
-                margin-left: 20px;
-                margin-bottom: 30px;
-                border: 3px solid black;
-                text-align: center;
-                max-width: 200px;
-                height: 50px;
-                line-height: 10px;
-            }
-
-            .bookingObject {
-                border: 3px solid black;
-                margin-top: 20px;
-                margin-left: 20px;
-                max-width: 500px;
-            }
-
-            .editDetails {
-                border-bottom: 3px solid black;
-                max-width: 500px;
-                height: 50px;
-                line-height: 50px;
-            }
-
-            .bookingName {
-                margin: auto;
-                padding: 0 20px;
-                float: left;
-            }
-
-            .editButton {
-                float: right;
-                margin: auto;
-                padding: 0 20px 0 0;
-            }
-
-            .details {
-                margin: 10px 0;
-                display: grid;
-                grid-template-columns: 50% 50%;
-            }
-
-            .detailsListItem {
-                list-style-type: none;
-                margin: auto;
-                padding: 4px 0;
-            }
-
-        </style>
         
         <script>
 
@@ -136,37 +84,48 @@
 
     <div class="container rounded bg-white mt-5 mb-5 pb-5">
 
-        <div style="padding: 50px 0 0 50px;margin-top: 50px;">
-
-
-            <div id="bookings">
-                <h3>My Bookings</h3>
-            </div>
-
-
-        {%for z in myBookings%}
-            <div class="bookingObject">
-                <div class="editDetails">
-                    <h5 class="bookingName">Booking ID: {{z.id}}</h5>
-                    <div class="editButton">
-                        <a href="http://127.0.0.1:8000/MCalendar/myBookings/editBooking/{{ z.id }}">
-                            <button>Edit/Delete</button>
-                        </a>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="p-3 py-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="text-right">Bookings</h2>
                     </div>
-                </div>
 
-                <div class="details">
-                    <!--<div class="detailsListItem">Name: {{ z.bookingName }}</div>-->
-                    <div class="detailsListItem">Date: {{ z.bookingDate }}</div>
-                    <div class="detailsListItem">Equipment: {{ z.equipment }}</div>
-                    <div class="detailsListItem">Start: {{ z.startTime|time:"H:i" }}</div>
-                    <div class="detailsListItem">Finish: {{ z.finishTime|time:"H:i" }}</div>
-                </div>
-            </div>
-        {%endfor%}
-        {% if hasBooking == False%}
-            <p>You have no current bookings.</p>
-        {% endif %}
+
+                    {% for z in myBookings %}
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h4>Booking ID: {{z.id}}</h4>
+                                
+                                    <div class="text-center">
+                                        <a class="btn btn-sty" href="http://127.0.0.1:8000/MCalendar/myBookings/editBooking/{{ z.id }}">
+                                            Edit / Delete
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card-body">
+                                <p class="card-text">
+                                    <div class="details">
+                                        <!--<div class="detailsListItem">Name: {{ z.bookingName }}</div>-->
+                                        <div class="detailsListItem">Date: {{ z.bookingDate }}</div>
+                                        <div class="detailsListItem">Start: {{ z.startTime|time:"H:i" }}</div>
+                                        <div class="detailsListItem">Finish: {{ z.finishTime|time:"H:i" }}</div>
+                                        <div class="detailsListItem">Equipment: {{ z.equipment }}</div>
+                                    </div>
+                                </p>
+                            </div>
+                        </div>
+
+                        <br>
+
+                    {%endfor%}
+                    {% if hasBooking == False%}
+                        <p>You have no current bookings.</p>
+                    {% endif %}
 
         </div>
 

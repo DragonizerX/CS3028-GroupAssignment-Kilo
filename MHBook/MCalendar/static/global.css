@@ -1,7 +1,8 @@
 body {
-    background: #f8f2ef;
+    background: #f9efea;
     margin-top:100px;
-    
+    padding-bottom: 5px !important;
+    height: 100%;
 }
 
 .form-control:focus {
@@ -103,3 +104,75 @@ cursor:pointer;
 display: none;
 }
   
+.centered-text {
+    text-align: center;
+    font-size: 48px;
+    font-weight: bold;
+    color: #29a1c8;
+    margin-top: 20px;
+}
+
+.user_card {
+    width: 350px;
+    margin-top: auto;
+    margin-bottom: auto;
+    background: #fff;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 5px;
+
+}
+
+.form_container {
+    margin-top: 20px;
+}
+
+#form-title{
+    color: #008080;
+}
+
+.page-title{
+    color: #008080;
+}
+
+.login_container {
+    padding: 0 2rem;
+}
+.input-group-text {
+    background: #008080 !important;
+    color: #fff !important;
+    border: 0 !important;
+    border-radius: 0.25rem 0 0 0.25rem !important;
+}
+.input_user,
+.input_pass:focus {
+    box-shadow: none !important;
+    outline: 0px !important;
+}
+
+#messages{
+    background-color: #0f2e2e;
+    color: #fff;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px; 
+}
+
+.details {
+    margin: 10px 0;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    gap: 3px
+}
+
+.detailsListItem {
+    list-style-type: none;
+    margin: auto;
+    padding: 4px 0;
+}
