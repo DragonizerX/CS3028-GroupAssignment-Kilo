@@ -10,6 +10,7 @@ urlpatterns = [
     path('account/', views.accountPage, name='accountPage'),
     path('changePassword/', views.changePasswordPage, name = 'changePassword'),
     path('add_supervisor/', views.add_supervisor, name='add_supervisor'),
+    path('clear_cancelled_bookings/', views.clear_cancelled_bookings, name='clear_cancelled_bookings'),
     # Accessable via http://127.0.0.1:8000/MCalendar/myBookings/
     path("myBookings/", views.myBookings, name="myBookings"),
     # Accessable via http://127.0.0.1:8000/MCalendar/myBookings/editBooking/1
