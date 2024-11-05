@@ -410,12 +410,19 @@ def archivePage(request):
             eventList = eventList.filter(bookingDate__lte=dateMax)
 
         if archiveValidQuery(equipment) and equipment != 'Select...':
-            eventList = eventList.filter(equipment__name=equipment)
+            eventList = eventList.filter(equipment__contains=equipment)
+
+
+        totalHours = 0
+        for x in eventList:
+            totalHours += x.totalTime
+        print(totalHours)
 
 
         context = {
             'eventList': eventList,
-            'equipmentList': equipmentList
+            'equipmentList': equipmentList,
+            'totalHours': totalHours,
         }
 
         return render(request, 'archive.html', context)

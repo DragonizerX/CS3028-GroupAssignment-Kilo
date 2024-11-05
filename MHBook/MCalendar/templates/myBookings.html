@@ -92,12 +92,12 @@
                     </div>
 
 
-                    {%for z in myBookings%}
+                    {% for z in myBookings %}
 
                         <div class="card">
                             <div class="card-header">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <h4 class="bookingName">Booking ID: {{z.id}}</h4>
+                                    <h4>Booking ID: {{z.id}}</h4>
                                 
                                     <div class="text-center">
                                         <a class="btn btn-sty" href="http://127.0.0.1:8000/MCalendar/myBookings/editBooking/{{ z.id }}">

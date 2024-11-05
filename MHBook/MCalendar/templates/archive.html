@@ -60,6 +60,7 @@
             <div class="p-3 py-5">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 class="text-right">Archive</h2>
+                    <h5 class="text-right">Total Accumulated Hours: {{ totalHours }} </h5>
                 </div>
                 
                 <form method="GET" action=".">
@@ -67,7 +68,6 @@
                         <div class="form-group col-12">
                             <div class="input-group">
                                 <input class="form-control py-2" type="search" name="bookingName" placeholder="Booking Name..." />
-                                </span>
                             </div>
                         </div>        
                     </div>
@@ -76,7 +76,6 @@
                         <div class="form-group col-12">
                             <div class="input-group">
                                 <input class="form-control py-2" type="search" name="supervisorName" placeholder="Supervisor Name..." />
-                                </span>
                             </div>
                         </div>        
                     </div>
@@ -98,7 +97,7 @@
                                 <option selected>Select...</option>
                                 
                                 {% for equipment in equipmentList %}
-                                <option value="{{ equipment }}">{{ equipment }}</option>
+                                    <option value="{{ equipment }}">{{ equipment }}</option>
                                 {% endfor %}
                             </select>
 
@@ -106,30 +105,40 @@
                     
                     </div>
 
-                    <button type="submit" class="btn btn-block btn-sty">Search</button>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-11 col-lg-11">
+                            <button type="submit" class="btn btn-block btn-sty">Search</button>
+                        </div>
+                        <div class="form-group col-md-1 col-lg-1">
+                            <button type="submit" class="btn btn-block btn-sty" style="background: #c42323;">X</button>
+                        </div>
+                    </div>
                 
-                    
                 </form>
 
 
-
+                
 
                 {% for event in eventList %}
 
                 <div class="card">
                     <div class="card-header">
-                        Booking ID: {{ event.id }}
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4>Booking ID: {{ event.id }}</h4>
+                        </div>
                     </div>
                     
                     <div class="card-body">
                         <p class="card-text">
-                            <ul>
-                                <li>Booking Name: {{ event.bookingName }}</li>
-                                <li>Supervisor: {{ event.supervisorName }}</li>
-                                <li>Date: {{ event.bookingDate }}</li>
-                                <li>From: {{ event.startTime }} to {{ event.finishTime }}</li>
-                                <li>Equipment: {{ event.equipment }}</li>
-                            </ul>
+                            <div class="details">
+                                <div class="detailsListItem">Booking Name: {{ event.bookingName }}</div>
+                                <div class="detailsListItem">Supervisor: {{ event.supervisorName }}</div>
+                                <div class="detailsListItem">Date: {{ event.bookingDate }}</div>
+                                <div class="detailsListItem">From: {{ event.startTime }} to {{ event.finishTime }}</div>
+                                <div class="detailsListItem">Equipment: {{ event.equipment }}</div>
+                                <div class="detailsListItem">Hours Booked: {{ event.totalTime }}</div>
+                            </div>
                         </p>
                     </div>
                     
@@ -139,7 +148,8 @@
 
                 {% endfor %}
 
-
+                
+                
             </div>
         </div>
 

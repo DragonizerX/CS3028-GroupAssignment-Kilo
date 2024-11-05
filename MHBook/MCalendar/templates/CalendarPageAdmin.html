@@ -108,6 +108,11 @@
         .dropdown-item:hover {
             background-color: #ddd;
         }
+        .button-footer {
+            display:flex;
+            justify-content: center;
+            align-content: center;
+        }
 
         .admin-information {
             font-size: 12px;       /* Larger font size */
@@ -164,19 +169,19 @@
 
     <div class="container rounded bg-white mt-5 mb-5 pb-5">
         <div class="container">
-        <!--EQUIPMENT SELECTION-->
-        <div id="equipmentSelect" class="form-group">
-                    
-            <label for="equipment">Select Equipment:</label>
-            <select class="form-control" id="equipment" name="equipment" required>
-                <option value="">-- Select Equipment --</option>
+            <!--EQUIPMENT SELECTION-->
+            <div id="equipmentSelect" class="form-group">
+                        
+                <label for="equipment">Select Equipment:</label>
+                <select class="form-control" id="equipment" name="equipment" required>
+                    <option value="">-- Select Equipment --</option>
 
-                {% for x in equipmentList %}
-                    <option value="{{ x.equipmentID_auto}}">-- {{ x.equipmentName }} -- {{ x.hourlyRate }} --</option>
-                {% endfor %}
+                    {% for x in equipmentList %}
+                        <option value="{{ x.equipmentID_auto}}">-- {{ x.equipmentName }} -- {{ x.hourlyRate }} --</option>
+                    {% endfor %}
 
-            </select>
-        </div>
+                </select>
+            </div>
 
         <div class="text-center mt-4">
 
@@ -307,7 +312,7 @@
                                 <input type="hidden" name="supervisorName" id="selectedSupervisorId" required>
                             </div>
                             <div class="col-sm-2">
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addSupervisorModal">
+                                <button type="button" class="btn btn-sty btn-block" data-toggle="modal" data-target="#addSupervisorModal">
                                     Add New
                                 </button>
                             </div>
@@ -440,10 +445,13 @@
                                         </div>
                                     </form>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" id="submitSupervisor">Add Supervisor</button>
+                                <div class="container px-5">
+                                    <div class="text-center">
+                                    <button type="button" class="detailsListItem btn btn-block btn-success" id="submitSupervisor">Add Supervisor</button>
+                                    <button type="button" class="detailsListItem btn btn-block btn-danger " data-dismiss="modal">Close</button>
+                                    </div>
                                 </div>
+                                <br>
                             </div>
                         </div>
                     </div>
