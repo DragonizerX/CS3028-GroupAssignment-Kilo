@@ -64,12 +64,10 @@
                 </div>
                 
                 <form method="GET" action=".">
-                    {% csrf_token %}
                     <div class="form-row">
                         <div class="form-group col-12">
                             <div class="input-group">
                                 <input class="form-control py-2" type="search" name="bookingName" placeholder="Booking Name..." />
-                                {{ event.bookingName }}
                             </div>
                         </div>        
                     </div>
