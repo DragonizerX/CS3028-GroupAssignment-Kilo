@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         {% if user.is_superuser %}
             <a href="{% url 'requests' %}">Requests</a>
-            <a href="{% url 'createBilling' %}">Billing</a> <!-- UPDATE WHEN THE BILLING PAGE IS MADE -->
+            <a href="{% url 'billings' %}">Billing</a> <!-- UPDATE WHEN THE BILLING PAGE IS MADE -->
             <a href="{% url 'archivePage' %}">Archive</a>
         {% endif %}
 
@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 
-    <!-- top bar (includes sidebar button and whatever else)-->
+    <!-- top bar (includes sidebar button and whatever else crazy)-->
     <div class="container-fluid text-white topbar">
         <div class="row">
             <div class="col-2 container-fluid text-left">
@@ -216,10 +216,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="card-body">
                     <p class="card-text">
                         <div class="details">
-                            
+                            <!--
                             <label for="name">Full Name: </label>
                             <input type="text" id="name" name="bookingName" placeholder="{{ x.bookingName }}">
-                            
+                            -->
                             <label for="supervisor">Supervisor:</label>
 
                             <!-- Dropdown Container -->

@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Edit Billings</title>
+    <script>
+        
+    </script>
+
+    <style>
+
+        .form {
+            display: grid;
+            grid-template-columns: 50% 50%;
+            box-shadow: 2px 2px 5px hsl(265 0% 70%);
+            border-radius: 10px;
+            margin: 30px auto 0 auto;
+            background-color: hsl(0 0 85%);
+            border: none;
+            padding: 10px;
+            max-width: 600px;
+        }
+
+        .event {
+            display: grid;
+            grid-template-columns: 60% 40%;
+            box-shadow: 2px 2px 5px hsl(265 0% 70%);
+            border-radius: 10px;
+            margin: 30px auto 0 auto;
+            background-color: hsl(0 0 85%);
+            border: none;
+            padding: 10px;
+            max-width: 500px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <form method="POST">
+        {% csrf_token %}
+        {% if user.is_superuser %}
+
+        <div class="form">
+            <div> Supervisor: {{ billing.supervisor }}</div>
+            <div> Issued: {{ billing.issueDate }}</div>
+            <div> Billing ID: {{ billing.id }}</div>
+            <div> Total Cost: £{{ billing.totalCost }}</div>
+        </div>
+
+        {% for event in events %}
+                {% if event.invoiceRef == billing.invoiceRef %}
+                <div class="event">
+                    <!-- Event inputs -->
+
+                    <!-- Is event assigned to billing? -->
+                    <label style="margin: 2px 0;" for="{{ event.id }}AssignedBooking"> Assigned Booking:  </label>
+                    <input checked type="checkbox" style="margin: 2px 0;" id="{{ event.id }}AssignedBooking" name="{{ event.id }}AssignedBooking" value="{{ event.AssignedBooking }}">
+
+                    <!-- Booking Name -->
+                    <div style="margin: 2px 0;"> Booking Name: </div>
+                    <div style="margin: 2px 0;">{{ event.bookingName }}</div>
+
+                    <!-- Supervisor Name -->
+                    <div style="margin: 2px 0;"> Supervisor: </div>
+                    <div style="margin: 2px 0;">{{ event.supervisorName }}</div>
+
+                    <!-- Event ID -->
+                    <div style="margin: 2px 0;"> Event ID: </div>
+                    <div style="margin: 2px 0;">{{ event.id }}</div>
+
+                    <!-- Date -->
+                    <div style="margin: 2px 0;"> Date: </div>
+                    <div style="margin: 2px 0;">{{ event.bookingDate|date:'Y-m-d' }}</div>
+
+                    <!-- Start Time -->
+                    <div style="margin: 2px 0;"> Start: </div>
+                    <div style="margin: 2px 0;">{{ event.startTime|time:'H:i' }}</div>
+
+                    <!-- End Time -->
+                    <div style="margin: 2px 0;" for="{{ event.id }}End"> End: </div>
+                    <div style="margin: 2px 0;">{{ event.finishTime|time:'H:i' }}</div>
+
+                    <!-- Equipment ID -->
+                    <div style="margin: 2px 0;"> Equipment ID: </div>
+                    <div style="margin: 2px 0;">{{ event.equipment }}</div>
+
+                    <div style="margin: 2px 0;"> Total Time: </div>
+                    <div style="margin: 2px 0;">{{ event.totalTime }}</div>
+
+                </div>
+                {% endif %}
+        {% endfor %}
+
+        <input type="submit" value="Submit" style="max-width: 300px;">
+
+        {% endif %}
+    </form>
+
+</body>
+</html>

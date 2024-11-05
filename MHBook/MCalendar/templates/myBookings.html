@@ -59,7 +59,7 @@
 
             {% if user.is_superuser %}
                 <a href="{% url 'requests' %}">Requests</a>
-                <a href="{% url 'createBilling' %}">Billing</a> <!-- UPDATE WHEN THE BILLING PAGE IS MADE -->
+                <a href="{% url 'billings' %}">Billing</a> <!-- UPDATE WHEN THE BILLING PAGE IS MADE -->
                 <a href="{% url 'archivePage' %}">Archive</a>
             {% endif %}
 
@@ -110,7 +110,7 @@
                             <div class="card-body">
                                 <p class="card-text">
                                     <div class="details">
-                                        <div class="detailsListItem">Name: {{ z.bookingName }}</div>
+                                        <!--<div class="detailsListItem">Name: {{ z.bookingName }}</div>-->
                                         <div class="detailsListItem">Date: {{ z.bookingDate }}</div>
                                         <div class="detailsListItem">Start: {{ z.startTime|time:"H:i" }}</div>
                                         <div class="detailsListItem">Finish: {{ z.finishTime|time:"H:i" }}</div>
@@ -123,6 +123,9 @@
                         <br>
 
                     {%endfor%}
+                    {% if hasBooking == False%}
+                        <p>You have no current bookings.</p>
+                    {% endif %}
 
         </div>
 

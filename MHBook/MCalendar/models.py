@@ -51,6 +51,8 @@ class Users(AbstractBaseUser, PermissionsMixin):
     EMAIL_FIELD = 'email'
     REQUIRED_FIELDS = []
 
+    def getFullName(self):
+        return f"{self.first_name} {self.last_name}"
 
     def __str__(self):
         return self.email
@@ -69,6 +71,7 @@ class Supervisor(models.Model):
 
 
 class Event(models.Model):
+    invoiceRef = models.CharField(max_length=10, default="None")
     bookingName = models.CharField(max_length=80)
     supervisorName = models.CharField(max_length=80)
     email = models.EmailField()
@@ -131,8 +134,7 @@ class Equipment(models.Model):
     
 class Billing(models.Model): 
     invoiceRef = models.CharField(max_length=10, blank=False, null=False)
-    supervisor = models.ManyToManyField(Supervisor) # includes first and last name, can be changed in billing.html
-    user = models.ManyToManyField(Users) # includes first and last name, can be changed in billing.html
+    supervisor = models.CharField(max_length=64, blank=False, null=False) # includes first and last name, can be changed in billing.html
     events = models.ManyToManyField(Event) # includes booking reference no which for now is the booking id, and takes the start and finish time parameters to calculate the differnce in minutes to display time used
     issueDate = models.DateField(default=timezone.now)
     startDate = models.DateField(default=(timezone.now().date() - relativedelta(months=3))) # Default is 3 months difference but we need to be able to change this and finish date

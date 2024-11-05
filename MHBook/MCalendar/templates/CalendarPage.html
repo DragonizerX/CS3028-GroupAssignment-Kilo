@@ -125,7 +125,7 @@
 
         {% if user.is_superuser %}
             <a href="{% url 'requests' %}">Requests</a>
-            <a href="{% url 'createBilling' %}">Billing</a>
+            <a href="{% url 'billings' %}">Billing</a>
             <a href="{% url 'archivePage' %}">Archive</a>
         {% endif %}
 
@@ -177,6 +177,7 @@
                     <form method="post" action="{% url 'create_event' %}">
                         {% csrf_token %}
                         <input type="hidden" id="equipmentInput" name="equipment" value="">
+                        <!--
                         <div class="row">
                             <div class="col-sm-3">
                                 <label for="bookingName" class="control-label">Name for Booking:</label>
@@ -185,6 +186,7 @@
                                 <input type="text" class="form-control" id="bookingName" name="bookingName" required>
                             </div>
                         </div>
+                        -->
                         <div class="row mt-2">
                             <div class="col-sm-3">
                                 <label for="supervisorName" class="control-label">Supervisor:</label>
