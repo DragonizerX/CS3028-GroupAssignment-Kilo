@@ -217,9 +217,9 @@ def editBooking(request, id):
             if finishTime:
                 booking.finishTime = finishTime
 
-            comments = request.POST.get('comments')
-            if comments:
-                booking.comments = comments
+            notes = request.POST.get('notes')
+            if notes:
+                booking.notes = notes
 
             equipment = request.POST.get('equipment')
             if equipment:
@@ -254,7 +254,7 @@ def create_event(request):
             booking_Date = request.POST.get('bookingDate')
             start_Time = request.POST.get('startTime')
             finish_Time = request.POST.get('finishTime')
-            comments_ = request.POST.get('comments')
+            notes = request.POST.get('notes')
             equipment_id = request.POST.get('equipment')
             equipment = Equipment.objects.get(equipmentID_auto=equipment_id)
             hourly_rate = equipment.hourlyRate
@@ -293,7 +293,7 @@ def create_event(request):
                 bookingDate=booking_Date,
                 startTime=start_Time,
                 finishTime = finish_Time,
-                comments=comments_,
+                notes=notes_,
                 equipment=equipment.equipmentName,
                 hourlyRate=hourly_rate,
             )
@@ -332,7 +332,7 @@ def get_events(request):
                 'start': f"{event.bookingDate}T{event.startTime}",
                 'end': f"{event.bookingDate}T{event.finishTime}",
                 'supervisorName': event.supervisorName,
-                'comments': event.comments,
+                'notes': event.notes,
                 'totalTime': event.totalTime,
                 'hourlyRate': event.hourlyRate
             }
@@ -417,6 +417,7 @@ def archivePage(request):
 
         bookingName = request.GET.get('bookingName')
         supervisorName = request.GET.get('supervisorName')
+        notes = request.GET.get('notes')
         dateMin = request.GET.get('dateMin')
         dateMax = request.GET.get('dateMax')
         equipment = request.GET.get('equipment')
@@ -427,6 +428,9 @@ def archivePage(request):
 
         if archiveValidQuery(supervisorName):
             eventList = eventList.filter(supervisorName__icontains=supervisorName)
+
+        if archiveValidQuery(notes):
+            eventList = eventList.filter(notes__icontains=notes)
 
         if archiveValidQuery(dateMin):
             eventList = eventList.filter(bookingDate__gte=dateMin)
