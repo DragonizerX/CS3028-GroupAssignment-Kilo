@@ -313,7 +313,7 @@ def create_event(request):
                 bookingDate=booking_Date,
                 startTime=start_Time,
                 finishTime = finish_Time,
-                notes=notes_,
+                notes=notes,
                 equipment=equipment.equipmentName,
                 hourlyRate=hourly_rate,
             )
