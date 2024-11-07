@@ -630,41 +630,6 @@ def billings(request):
         logout(request)
         return redirect("loginPage")
     
-
-def editBilling(request, id):
-    if request.user.is_superuser:
-        billing = get_object_or_404(Billing, id=id)
-        events = Event.objects.all()
-        
-        if request.method == 'POST':
-            
-            print(request.POST)
-            for event in events:
-                assigned = f"{event.id}AssignedBooking"
-                if assigned in request.POST:
-                    continue
-                else:
-                    if event.invoiceRef == billing.invoiceRef:
-                        event.invoiceRef = 'None'
-                        event.save()
-
-            associated_events = Event.objects.filter(invoiceRef=billing.invoiceRef)
-            if not associated_events.exists():
-                # No events are associated with this billing, so delete the billing
-                billing.delete()
-                
-            return redirect('billings')
-
-        template = loader.get_template('editBilling.html')
-        context = {
-            'billing': billing,
-            'events': events,
-        }
-        return HttpResponse(template.render(context, request))
-    else:
-        messages.success(request, "Please log in before entering that page!")
-        return redirect("loginPage")
-    
 def generatePDF(request, id):
 
     if request.user.is_superuser:
