@@ -38,4 +38,7 @@ urlpatterns = [
     path("billings/", views.billings, name="billings"),
     path("editBilling/<int:id>", views.editBilling, name="editBilling"),
     path('generatePDF/<int:id>/', views.generatePDF, name='generatePDF'),
+
+    path('deleteBilling/<int:id>/', views.deleteBilling, name='deleteBilling'),
+    path('deleteEvent/<int:id>/', views.deleteEvent, name='deleteEvent'),
 ]

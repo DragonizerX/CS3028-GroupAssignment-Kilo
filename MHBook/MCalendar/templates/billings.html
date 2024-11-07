@@ -210,15 +210,18 @@
             <div> Supervisor: {{ b.supervisor }}</div>
             <div> Issued: {{ b.issueDate }}</div>
             <button onclick="displayEvents({{ b.id }})" class="displayDropdown">show</button>
-            <a href="http://127.0.0.1:8000/MCalendar/editBilling/{{ b.id }}" class="editBilling">
-                <button onclick="" class="editBilling">edit</button>
-            </a>
             <div> Billing ID: {{ b.id }}</div>
             <div> Total Cost: £{{ b.totalCost }}</div>
+            <div> <!--Billing Delete-->  
+                <form method="POST" action="{% url 'deleteBilling' b.id %}">
+                    {% csrf_token %}
+                    <button style="color: red; font-weight: bold;">X</button>
+                </form>
+            </div>
             <div>
-            <a href="{% url 'generatePDF' b.id %}">
-                <button>pdf</button>
-            </a>
+                <a href="{% url 'generatePDF' b.id %}">
+                    <button>pdf</button>
+                </a>
             </div>
         </div>
         <!-- Events Dropdowns -->
@@ -236,6 +239,13 @@
                         <div class="eventItem"> End: {{ e.finishTime|time:'H:i' }}</div>
                         <div class="eventItem"> Equipment: {{ e.equipment }}</div>
                         <div class="eventItem"> Total Time: {{ e.totalTime }}</div>
+                        <!--Event Remove-->
+                        <div> 
+                            <form method="POST" action="{% url 'deleteEvent' e.id %}">
+                                {% csrf_token %}
+                                <button style="color: red; font-weight: bold;">X</button>
+                            </form>
+                        </div>
                     </div>
                 {% endif %}
             {% endfor %}

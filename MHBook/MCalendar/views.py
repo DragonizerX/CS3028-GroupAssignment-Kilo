@@ -567,6 +567,35 @@ def createBilling(request):
         messages.success(request, "Please log in before entering that page! Admin access only.")
         logout(request)
         return redirect("loginPage")
+
+# For deleting whole billings
+def deleteBilling(request, id):
+    if request.user.is_superuser:
+        billing = get_object_or_404(Billing, id=id)
+
+        Event.objects.filter(invoiceRef=billing.invoiceRef).update(invoiceRef='None')
+
+        billing.delete()
+
+        return redirect('billings')
+    else:
+        messages.success(request, "Please log in before entering that page! Admin access only.")
+        logout(request)
+        return redirect("loginPage")
+
+# DOESN'T DELETE EVENT, just removes event from billing
+def deleteEvent(request, id):
+    if request.user.is_superuser:
+        event = get_object_or_404(Event, id=id)
+
+        event.invoiceRef = 'None'
+        event.save()
+
+        return redirect('billings')
+    else:
+        messages.success(request, "Please log in before entering that page! Admin access only.")
+        logout(request)
+        return redirect("loginPage")
     
 def billings(request):
 
