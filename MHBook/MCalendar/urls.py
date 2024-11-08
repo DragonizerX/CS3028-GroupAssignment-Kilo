@@ -39,5 +39,5 @@ urlpatterns = [
     path('generatePDF/<int:id>/', views.generatePDF, name='generatePDF'),
 
     path('deleteBilling/<int:id>/', views.deleteBilling, name='deleteBilling'),
-    path('deleteEvent/<int:id>/', views.deleteEvent, name='deleteEvent'),
+    path('deleteEvent/', views.deleteEvent, name='deleteEvent'),
 ]

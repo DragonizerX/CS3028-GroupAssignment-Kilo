@@ -584,12 +584,22 @@ def deleteBilling(request, id):
         return redirect("loginPage")
 
 # DOESN'T DELETE EVENT, just removes event from billing
-def deleteEvent(request, id):
+def deleteEvent(request):
     if request.user.is_superuser:
-        event = get_object_or_404(Event, id=id)
+        if request.method == 'POST':
+            # Get a list of selected event IDs
+            selectedEvent = request.POST.getlist('selected_events')
 
-        event.invoiceRef = 'None'
-        event.save()
+            if selectedEvent:
+                # Query and update each selected event
+                for id in selectedEvent:
+                    event = Event.objects.get(id=id)
+                    billingInvoiceRef = event.invoiceRef
+                    event.invoiceRef = 'None'  # Or any specific action you want
+                    event.save()
+
+                    if not Event.objects.filter(invoiceRef=billingInvoiceRef).exists():
+                        Billing.objects.filter(invoiceRef=billingInvoiceRef).delete()
 
         return redirect('billings')
     else:
