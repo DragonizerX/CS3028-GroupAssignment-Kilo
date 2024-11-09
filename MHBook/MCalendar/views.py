@@ -567,6 +567,45 @@ def createBilling(request):
         messages.success(request, "Please log in before entering that page! Admin access only.")
         logout(request)
         return redirect("loginPage")
+
+# For deleting whole billings
+def deleteBilling(request, id):
+    if request.user.is_superuser:
+        billing = get_object_or_404(Billing, id=id)
+
+        Event.objects.filter(invoiceRef=billing.invoiceRef).update(invoiceRef='None')
+
+        billing.delete()
+
+        return redirect('billings')
+    else:
+        messages.success(request, "Please log in before entering that page! Admin access only.")
+        logout(request)
+        return redirect("loginPage")
+
+# DOESN'T DELETE EVENT, just removes event from billing
+def deleteEvent(request):
+    if request.user.is_superuser:
+        if request.method == 'POST':
+            # Get a list of selected event IDs
+            selectedEvent = request.POST.getlist('selected_events')
+
+            if selectedEvent:
+                # Query and update each selected event
+                for id in selectedEvent:
+                    event = Event.objects.get(id=id)
+                    billingInvoiceRef = event.invoiceRef
+                    event.invoiceRef = 'None'  # Or any specific action you want
+                    event.save()
+
+                    if not Event.objects.filter(invoiceRef=billingInvoiceRef).exists():
+                        Billing.objects.filter(invoiceRef=billingInvoiceRef).delete()
+
+        return redirect('billings')
+    else:
+        messages.success(request, "Please log in before entering that page! Admin access only.")
+        logout(request)
+        return redirect("loginPage")
     
 def billings(request):
 
@@ -599,41 +638,6 @@ def billings(request):
     else:
         messages.success(request, "Please log in before entering that page! Admin access only.")
         logout(request)
-        return redirect("loginPage")
-    
-
-def editBilling(request, id):
-    if request.user.is_superuser:
-        billing = get_object_or_404(Billing, id=id)
-        events = Event.objects.all()
-        
-        if request.method == 'POST':
-            
-            print(request.POST)
-            for event in events:
-                assigned = f"{event.id}AssignedBooking"
-                if assigned in request.POST:
-                    continue
-                else:
-                    if event.invoiceRef == billing.invoiceRef:
-                        event.invoiceRef = 'None'
-                        event.save()
-
-            associated_events = Event.objects.filter(invoiceRef=billing.invoiceRef)
-            if not associated_events.exists():
-                # No events are associated with this billing, so delete the billing
-                billing.delete()
-                
-            return redirect('billings')
-
-        template = loader.get_template('editBilling.html')
-        context = {
-            'billing': billing,
-            'events': events,
-        }
-        return HttpResponse(template.render(context, request))
-    else:
-        messages.success(request, "Please log in before entering that page!")
         return redirect("loginPage")
     
 def generatePDF(request, id):

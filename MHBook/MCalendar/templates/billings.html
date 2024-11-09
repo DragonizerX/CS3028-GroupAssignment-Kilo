@@ -1,4 +1,5 @@
 {% load static %}
+{{ redirect_to_login_immediately }}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -209,35 +210,46 @@
             <div> Supervisor: {{ b.supervisor }}</div>
             <div> Issued: {{ b.issueDate }}</div>
             <button onclick="displayEvents({{ b.id }})" class="displayDropdown">show</button>
-            <a href="http://127.0.0.1:8000/MCalendar/editBilling/{{ b.id }}" class="editBilling">
-                <button onclick="" class="editBilling">edit</button>
-            </a>
             <div> Billing ID: {{ b.id }}</div>
             <div> Total Cost: £{{ b.totalCost }}</div>
+            <div> <!--Billing Delete-->  
+                <form method="POST" action="{% url 'deleteBilling' b.id %}">
+                    {% csrf_token %}
+                    <button style="color: red; font-weight: bold;" onclick="return confirm('Are you sure you would like to permanently delete this billing?')">X</button>
+                </form>
+            </div>
             <div>
-            <a href="{% url 'generatePDF' b.id %}">
-                <button>pdf</button>
-            </a>
+                <a href="{% url 'generatePDF' b.id %}">
+                    <button>pdf</button>
+                </a>
             </div>
         </div>
         <!-- Events Dropdowns -->
         <div id="{{ b.id }}" class="eventsDiv">
-            {% for e in events %}
-                {% if e.invoiceRef == b.invoiceRef %}
-                    <div class="event">
-                        <div class="eventItem"> Booking: {{ e.bookingName }}</div>
-                        <div class="eventItem"> Supervisor: {{ e.supervisorName }}</div>
-                        <div class="eventItem"> Event ID: {{ e.id }}</div>
-                        <div></div>
-                        <div class="eventItem"> Date: {{ e.bookingDate }}</div>
-                        <div></div>
-                        <div class="eventItem"> Start: {{ e.startTime|time:'H:i' }}</div>
-                        <div class="eventItem"> End: {{ e.finishTime|time:'H:i' }}</div>
-                        <div class="eventItem"> Equipment: {{ e.equipment }}</div>
-                        <div class="eventItem"> Total Time: {{ e.totalTime }}</div>
-                    </div>
-                {% endif %}
-            {% endfor %}
+            <form method="POST" action="{% url 'deleteEvent' %}">
+                {% csrf_token %}
+                {% for e in events %}
+                    {% if e.invoiceRef == b.invoiceRef %}
+                        <div class="event">
+                            <div class="eventItem"> Booking: {{ e.bookingName }}</div>
+                            <div class="eventItem"> Supervisor: {{ e.supervisorName }}</div>
+                            <div class="eventItem"> Event ID: {{ e.id }}</div>
+                            <div></div>
+                            <div class="eventItem"> Date: {{ e.bookingDate }}</div>
+                            <div></div>
+                            <div class="eventItem"> Start: {{ e.startTime|time:'H:i' }}</div>
+                            <div class="eventItem"> End: {{ e.finishTime|time:'H:i' }}</div>
+                            <div class="eventItem"> Equipment: {{ e.equipment }}</div>
+                            <div class="eventItem"> Total Time: {{ e.totalTime }}</div>
+                            <!--Event Remove-->
+                            <div>
+                                <input type="checkbox" name="selected_events" value="{{ e.id }}" id="event_{{ e.id }}">
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <button type="submit" class="btn btn-danger">Delete Selected Events</button>
+            </form>
         </div>
     {% endfor %}
 
