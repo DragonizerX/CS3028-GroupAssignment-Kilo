@@ -40,137 +40,12 @@
 
     </style>
 
-    <script>
-        function confirmCancel(id) {
-            const dialog = window.confirm('Are you sure you want to cancel this booking?');
-    
-            if (dialog) {
-                window.location.href = `/MCalendar/cancelBooking/${id}/`;
-            }
-        }
-
-        function toggleNav() {
-    
-            var element = document.getElementById("sidebar");
-            element.classList.toggle("toggle");
-        }
-
-        function LogoutButton() {
-            if (confirm("You are about to logout,\nAre you sure you want to continue?")) {
-              window.location.href="{% url 'logout' %}";
-            } else {
-              none;
-            }
-          }
-
-          document.addEventListener('DOMContentLoaded', function() {
-            function updateEndTimeOptions() {
-                const startTime = document.getElementById('start').value;
-                const finishTimeSelect = document.getElementById('finish');
-                const startHour = parseInt(startTime.split(':')[0]);
-                
-                const currentSelection = finishTimeSelect.value;
-                
-                finishTimeSelect.innerHTML = '';
-                
-                for(let i = 0; i < 24; i++) {
-                    if(i > startHour) {
-                        const timeStr = `${String(i).padStart(2, '0')}:00`;
-                        const option = new Option(timeStr, timeStr);
-                        finishTimeSelect.appendChild(option);
-                        
-                        if(timeStr === currentSelection) {
-                            option.selected = true;
-                        }
-                    }
-                }
-                
-                if(finishTimeSelect.value === '') {
-                    finishTimeSelect.value = `${String(startHour + 1).padStart(2, '0')}:00`;
-                }
-            }
-        
-            function validateTimes() {
-                const startTime = document.getElementById('start').value;
-                const finishTime = document.getElementById('finish').value;
-                const startHour = parseInt(startTime.split(':')[0]);
-                const finishHour = parseInt(finishTime.split(':')[0]);
-                
-                if(finishHour <= startHour) {
-                    alert('End time must be after start time');
-                    document.getElementById('finish').value = 
-                        `${String(startHour + 1).padStart(2, '0')}:00`;
-                    return false;
-                }
-                return true;
-            }
-        
-            const startSelect = document.getElementById('start');
-            if(startSelect) {
-                startSelect.addEventListener('change', updateEndTimeOptions);
-                updateEndTimeOptions();
-            }
-        
-            const finishSelect = document.getElementById('finish');
-            if(finishSelect) {
-                finishSelect.addEventListener('change', validateTimes);
-            }
-        
-            const form = document.querySelector('.details');
-            if(form) {
-                form.addEventListener('submit', function(e) {
-                    if(!validateTimes()) {
-                        e.preventDefault();
-                    }
-                });
-            }
-        });
-        
-
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById("supervisorSearch");
-    const dropdown = document.getElementById("supervisorDropdown");
-
-    // Show dropdown when the input is focused
-    searchInput.addEventListener("focus", function() {
-        dropdown.style.display = "block";
-    });
-
-    // Filter dropdown items as user types
-    searchInput.addEventListener("keyup", function() {
-        const searchText = searchInput.value.toLowerCase();
-        const items = dropdown.getElementsByClassName("dropdown-item");
-
-        for (let item of items) {
-            const itemText = item.innerText.toLowerCase();
-            item.style.display = itemText.includes(searchText) ? "" : "none";
-        }
-    });
-
-    // Close dropdown if clicking outside of the input or dropdown
-    document.addEventListener("mousedown", function(event) {
-        if (!dropdown.contains(event.target) && event.target !== searchInput) {
-            dropdown.style.display = "none";
-        }
-    });
-
-    // Select a supervisor from the dropdown
-    window.selectSupervisor = function(id, name) {
-        searchInput.value = name; // Display selected name in input field
-        document.getElementById("selectedSupervisorId").value = id; // Store selected supervisor ID
-        dropdown.style.display = "none"; // Hide dropdown after selection
-    };
-});
-
-
-
-
-    </script>
 </head>
 
 <body>
+
+    <!-- This is the auto logout warning Message. DO NOT REMOVE! -->
+    <div id="warningMessage" style="position:fixed;bottom:10px;right:10px;display:none;">Warning, the user is about to be logged out!</div>
 
     <!-- sidebar -->
     <div id="sidebar" class="sidenav">
@@ -335,6 +210,169 @@ document.addEventListener('DOMContentLoaded', function() {
         </form>
 
     </div>
+
+    <script>
+        function confirmCancel(id) {
+            const dialog = window.confirm('Are you sure you want to cancel this booking?');
+    
+            if (dialog) {
+                window.location.href = `/MCalendar/cancelBooking/${id}/`;
+            }
+        }
+
+        function toggleNav() {
+    
+            var element = document.getElementById("sidebar");
+            element.classList.toggle("toggle");
+        }
+
+        function LogoutButton() {
+            if (confirm("You are about to logout,\nAre you sure you want to continue?")) {
+              window.location.href="{% url 'logout' %}";
+            } else {
+              none;
+            }
+          }
+
+          document.addEventListener('DOMContentLoaded', function() {
+            function updateEndTimeOptions() {
+                const startTime = document.getElementById('start').value;
+                const finishTimeSelect = document.getElementById('finish');
+                const startHour = parseInt(startTime.split(':')[0]);
+                
+                const currentSelection = finishTimeSelect.value;
+                
+                finishTimeSelect.innerHTML = '';
+                
+                for(let i = 0; i < 24; i++) {
+                    if(i > startHour) {
+                        const timeStr = `${String(i).padStart(2, '0')}:00`;
+                        const option = new Option(timeStr, timeStr);
+                        finishTimeSelect.appendChild(option);
+                        
+                        if(timeStr === currentSelection) {
+                            option.selected = true;
+                        }
+                    }
+                }
+                
+                if(finishTimeSelect.value === '') {
+                    finishTimeSelect.value = `${String(startHour + 1).padStart(2, '0')}:00`;
+                }
+            }
+        
+            function validateTimes() {
+                const startTime = document.getElementById('start').value;
+                const finishTime = document.getElementById('finish').value;
+                const startHour = parseInt(startTime.split(':')[0]);
+                const finishHour = parseInt(finishTime.split(':')[0]);
+                
+                if(finishHour <= startHour) {
+                    alert('End time must be after start time');
+                    document.getElementById('finish').value = 
+                        `${String(startHour + 1).padStart(2, '0')}:00`;
+                    return false;
+                }
+                return true;
+            }
+        
+            const startSelect = document.getElementById('start');
+            if(startSelect) {
+                startSelect.addEventListener('change', updateEndTimeOptions);
+                updateEndTimeOptions();
+            }
+        
+            const finishSelect = document.getElementById('finish');
+            if(finishSelect) {
+                finishSelect.addEventListener('change', validateTimes);
+            }
+        
+            const form = document.querySelector('.details');
+            if(form) {
+                form.addEventListener('submit', function(e) {
+                    if(!validateTimes()) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
+        
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById("supervisorSearch");
+    const dropdown = document.getElementById("supervisorDropdown");
+
+    // Show dropdown when the input is focused
+    searchInput.addEventListener("focus", function() {
+        dropdown.style.display = "block";
+    });
+
+    // Filter dropdown items as user types
+    searchInput.addEventListener("keyup", function() {
+        const searchText = searchInput.value.toLowerCase();
+        const items = dropdown.getElementsByClassName("dropdown-item");
+
+        for (let item of items) {
+            const itemText = item.innerText.toLowerCase();
+            item.style.display = itemText.includes(searchText) ? "" : "none";
+        }
+    });
+
+    // Close dropdown if clicking outside of the input or dropdown
+    document.addEventListener("mousedown", function(event) {
+        if (!dropdown.contains(event.target) && event.target !== searchInput) {
+            dropdown.style.display = "none";
+        }
+    });
+
+    // Select a supervisor from the dropdown
+    window.selectSupervisor = function(id, name) {
+        searchInput.value = name; // Display selected name in input field
+        document.getElementById("selectedSupervisorId").value = id; // Store selected supervisor ID
+        dropdown.style.display = "none"; // Hide dropdown after selection
+    };
+});
+
+
+        // This is the auto-logout code, do not change!
+        let idleTime = 0;
+        const idleTimeout = 300;
+        const warningTimeout = 290;
+        let messageBox = document.getElementById("warningMessage");
+
+        function resetTime() {
+            idleTime = 0;
+            messageBox.style.display = ("none");
+        }
+
+        function cycle() {
+            idleTime++;
+            if (idleTime >= warningTimeout) {
+                warningMessage();
+            }
+            if (idleTime >= idleTimeout) {
+                logoutUser();
+            }
+        }
+
+        function warningMessage() {
+            messageBox.style.display = ("block");
+        }
+
+        function logoutUser() {
+            window.location.href = "{% url 'logout' %}";
+        }
+
+        window.onload = function() {
+            document.onmousemove = resetTime;
+            document.onkeypress = resetTime;
+            setInterval(cycle, 1000);
+        };
+        // End of auto-logout code
+
+    </script>
 
 </body>
 </html>

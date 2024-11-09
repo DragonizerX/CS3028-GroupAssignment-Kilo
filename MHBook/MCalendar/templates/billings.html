@@ -13,33 +13,6 @@
     <link rel="stylesheet" href="{% static 'global.css' %}">
 
     <title>View Billings</title>
-    <script>
-
-        function displayEvents(id) {
-            let eventsDiv = document.getElementById(id);
-            let style = window.getComputedStyle(eventsDiv).display;
-            if (style == 'none') {
-                eventsDiv.style.display = 'block';
-            } else {
-                eventsDiv.style.display = 'none';
-            }
-        }
-
-        function toggleNav() {
-    
-            var element = document.getElementById("sidebar");
-            element.classList.toggle("toggle");
-        }
-    
-        function LogoutButton() {
-            if (confirm("You are about to logout,\nAre you sure you want to continue?")) {
-                window.location.href="{% url 'logout' %}";
-            } else {
-                none;
-            }
-        }
-
-    </script>
 
     <style>
 
@@ -148,6 +121,10 @@
 </head>
 
 <body>
+
+    <!-- This is the auto logout warning Message. DO NOT REMOVE! -->
+    <div id="warningMessage" style="position:fixed;bottom:10px;right:10px;display:none;">Warning, the user is about to be logged out!</div>
+
     <!-- sidebar -->
     <div id="sidebar" class="sidenav">
             
@@ -251,6 +228,70 @@
             {% endfor %}
         </div>
     {% endfor %}
+
+    <script>
+
+        function displayEvents(id) {
+            let eventsDiv = document.getElementById(id);
+            let style = window.getComputedStyle(eventsDiv).display;
+            if (style == 'none') {
+                eventsDiv.style.display = 'block';
+            } else {
+                eventsDiv.style.display = 'none';
+            }
+        }
+
+        function toggleNav() {
+    
+            var element = document.getElementById("sidebar");
+            element.classList.toggle("toggle");
+        }
+    
+        function LogoutButton() {
+            if (confirm("You are about to logout,\nAre you sure you want to continue?")) {
+                window.location.href="{% url 'logout' %}";
+            } else {
+                none;
+            }
+        }
+
+        // This is the auto-logout code, do not change!
+        let idleTime = 0;
+        const idleTimeout = 300;
+        const warningTimeout = 290;
+        let messageBox = document.getElementById("warningMessage");
+
+        function resetTime() {
+            idleTime = 0;
+            messageBox.style.display = ("none");
+        }
+
+        function cycle() {
+            idleTime++;
+            if (idleTime >= warningTimeout) {
+                warningMessage();
+            }
+            if (idleTime >= idleTimeout) {
+                logoutUser();
+            }
+        }
+
+        function warningMessage() {
+            messageBox.style.display = ("block");
+        }
+
+        function logoutUser() {
+            window.location.href = "{% url 'logout' %}";
+        }
+
+        window.onload = function() {
+            document.onmousemove = resetTime;
+            document.onkeypress = resetTime;
+            setInterval(cycle, 1000);
+        };
+        // End of auto-logout code
+
+    </script>
 
 </body>
 </html>
