@@ -155,6 +155,7 @@ def myBookings(request):
         messages.success(request, "Please log in before entering that page!")
         return redirect("loginPage")
 
+
 def requests(request):
     if request.user.is_superuser:
         requests = Users.objects.all().values()
@@ -177,6 +178,7 @@ def requests(request):
         logout(request)
         return redirect("loginPage")
 
+
 def cancelBooking(request, id):
     booking = get_object_or_404(Event, id=id)
     if booking.bookingDate == timezone.now().date(): #check for same day cancelation
@@ -191,6 +193,7 @@ def cancelBooking(request, id):
 def clear_cancelled_bookings(request):
     CancelledBooking.objects.all().delete()
     return redirect('CalendarPageAdmin') 
+
 
 def confirmAccept(request, id):
     requests = get_object_or_404(Users, id=id)
@@ -209,6 +212,7 @@ def confirmReject(request, id):
     requests = get_object_or_404(Users, id=id)
     requests.delete()
     return redirect('requests')
+
 
 def editBooking(request, id):
     if request.user.is_authenticated:
@@ -261,9 +265,11 @@ def editBooking(request, id):
         messages.success(request, "Please log in before entering that page!")
         return redirect("loginPage")
 
+
 @ensure_csrf_cookie
 def calendar_view(request):
     return render(request, 'CalendarPage.html')
+
 
 @ensure_csrf_cookie
 def create_event(request):
@@ -337,6 +343,7 @@ def create_event(request):
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
+
 def get_events(request):
     try:
         equipment_id = request.GET.get('equipment', '')
@@ -364,6 +371,7 @@ def get_events(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
+
 def add_equipment(request):
     if request.method == 'POST':
         form = AddEquipmentForm(request.POST)
@@ -384,6 +392,8 @@ def add_equipment(request):
     else:
         return render(request, 'CalendarPage.html', {'form': form})
     
+
+
 def delete_equipment(request):
     if request.method == 'POST':
         equipment_id = request.POST.get('delete_equipment')
@@ -397,6 +407,7 @@ def delete_equipment(request):
     # If it's a GET request, render the deletion form with the dropdown
     equipment_list = Equipment.objects.all()
     return render(request, 'CalendarPageAdmin.html', {'equipmentList': equipment_list})
+
 
 def CalendarPage(request):
     if request.user.is_authenticated:
@@ -488,12 +499,13 @@ def archivePage(request):
         logout(request)
         return redirect("loginPage")
 
-
 def archiveValidQuery(param): # createBilling is using this aswell to sort through filters. Thanks!
     return param != '' and param is not None
 
-# createBilling functions
+
+# Create Billing functions
 def generateInvoiceRef():
+    # Generates a universal unique id (uuid)
     return str(uuid.uuid4())[:10]
 
 def createBilling(request):
@@ -570,6 +582,7 @@ def createBilling(request):
         logout(request)
         return redirect("loginPage")
 
+
 # For deleting whole billings
 def deleteBilling(request, id):
     if request.user.is_superuser:
@@ -584,6 +597,7 @@ def deleteBilling(request, id):
         messages.success(request, "Please log in before entering that page! Admin access only.")
         logout(request)
         return redirect("loginPage")
+
 
 # DOESN'T DELETE EVENT, just removes event from billing
 def deleteEvent(request):
@@ -609,6 +623,7 @@ def deleteEvent(request):
         logout(request)
         return redirect("loginPage")
     
+
 def billings(request):
 
     if request.user.is_superuser:
@@ -642,6 +657,7 @@ def billings(request):
         logout(request)
         return redirect("loginPage")
     
+
 def generatePDF(request, id):
 
     if request.user.is_superuser:
@@ -703,9 +719,9 @@ def generatePDF(request, id):
     else:
         messages.success(request, "Please log in before entering that page! Admin access only.")
         logout(request)
-        return redirect("loginPage")
-    
-    
+        return redirect("loginPage") 
+
+
 def add_supervisor(request): #function for adding new supervisors
     if request.method == 'POST':
         first_name = request.POST.get('first_name')

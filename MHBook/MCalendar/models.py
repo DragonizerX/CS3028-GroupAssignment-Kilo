@@ -77,7 +77,6 @@ class CancelledBooking(models.Model):
     def __str__(self):
         return f"{self.booking_name} - {self.cancelled_by} on {self.cancellation_date}"
 
-
 class Event(models.Model):
     invoiceRef = models.CharField(max_length=10, default="None")
     bookingName = models.CharField(max_length=80)
@@ -130,7 +129,6 @@ class Event(models.Model):
     #@property
     #def totalTime(self):
     #    pass    
-
 
 class Equipment(models.Model):
     equipmentID_auto = models.AutoField(primary_key=True)
