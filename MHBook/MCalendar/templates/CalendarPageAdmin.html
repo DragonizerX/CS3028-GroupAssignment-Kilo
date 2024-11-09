@@ -481,7 +481,7 @@
                         {% endif %}
                         <div class="row mt-2">
                             <div class="col-sm-3">
-                                <label for="comments" class="control-label">Comments:</label>
+                                <label for="notes" class="control-label">Notes:</label>
                             </div>
                             <div class="col-sm-9">
                                 <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Enter Project Information: E.g: (Project Name/Project Info)"></textarea>
@@ -595,7 +595,7 @@
                         .then(data => {
                             const eventsWithDetails = data.map(event => ({
                                 ...event,
-                                title: `${event.title}\nSupervisor: ${event.supervisorName}\nComments: ${event.comments || 'None'}`
+                                title: `${event.title}\nSupervisor: ${event.supervisorName}\nNotess: ${event.notes || 'None'}`
                             }));
                             successCallback(eventsWithDetails);
                         })

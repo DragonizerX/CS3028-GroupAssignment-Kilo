@@ -126,6 +126,7 @@ def myBookings(request):
         paginator = Paginator(myBookings, 10)
         pageNumber = request.GET.get('page')
         pageObj = paginator.get_page(pageNumber)
+        #print(myBookings)
 
         context = {
             'myBookings': myBookings,
@@ -133,6 +134,7 @@ def myBookings(request):
             'pageObj': pageObj,
         }
         return HttpResponse(template.render(context, request))
+    
     if request.user.is_authenticated:
         current_user = request.user.email
         myBookings = Event.objects.filter(email=current_user, bookingDate__gte=timezone.now().date())
@@ -465,7 +467,7 @@ def archivePage(request):
         totalHours = 0
         for x in eventList:
             totalHours += x.totalTime
-        print(totalHours)
+        #print(totalHours)
 
         # Paginator
         paginator = Paginator(eventList, 10)

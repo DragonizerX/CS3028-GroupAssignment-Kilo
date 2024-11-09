@@ -306,8 +306,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <option value="23:00" {% if x.finishTime|time:'H:i' == '23:00' %}selected{% endif %}>23:00</option>
                             </select>
 
-                            <label for="comments">Comments: </label>
-                            <input type="text" id="comments" name="comments" placeholder="{{ x.comments }}">
+                            <label for="notes">Notes: </label>
+                            <input type="text" id="notes" name="notes" placeholder="{{ x.notes }}">
                         
 
 
