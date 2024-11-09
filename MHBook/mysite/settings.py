@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'MCalendar'
+    'MCalendar',
 ]
 
 AUTH_USER_MODEL = 'MCalendar.Users'
@@ -50,7 +50,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_auto_logout.middleware.auto_logout',
 ]
 
 
@@ -68,7 +67,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django_auto_logout.context_processors.auto_logout_client',
             ],
         },
     },
@@ -139,9 +137,3 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'histotrackltd@gmail.com'
 EMAIL_HOST_PASSWORD = 'hrcr svsf fxyy fdnr'
-
-AUTO_LOGOUT = {
-    'IDLE_TIME': 300,
-    'REDIRECT_TO_LOGIN_IMMEDIATELY': True,
-    'MESSAGE': 'You have been auto logged out!',
-}
