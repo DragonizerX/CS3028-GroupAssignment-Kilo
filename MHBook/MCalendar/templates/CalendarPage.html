@@ -20,94 +20,6 @@
 
     <link rel="stylesheet" href="{% static 'global.css' %}">
 
-    <style> 
-        #calendar {
-            margin: 10px auto;
-            padding: 10px;
-            max-width: 1000px;
-            border-radius: 30px;
-        }
-        .fc-toolbar {
-            padding: 20px;
-        }
-        .fc-toolbar-title {
-            font-weight: 200;
-        }
-        .fc-timegrid-slot {
-            height: 35px;
-            border-bottom: 1px solid;
-        }
-        .fc-timegrid-slot-label {
-            font-size: 0.9em;
-            color: darkgrey;
-        }
-        .fc-highlight {
-            background-color: lightblue;
-        }
-        .fc-col-header-cell {
-            background-color: white;
-            padding: 10px 0;
-            font-weight: 500;
-        }
-        .fc-timegrid-col {
-            background-color: white;
-        }
-        #bookingForm .card-body {
-            padding: 20px;
-        }
-        #bookingForm .row {
-            margin-bottom: 5px;
-        }
-        #bookingForm .control-label {
-            padding-top: 7px;
-        }
-        #bookingForm .btn-success {
-            margin-top: 10px;
-        }
-        .btn-info {
-            margin:10px;
-            padding:10px;
-        }
-        .text-center.mt-4 {
-            margin-top: 5px;
-            padding-top: 5px;
-            max-width: 1000px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .fc-button {
-            background-color: lightblue;
-            border: none;
-        }
-        .fc-button:hover {
-            background-color: lightblue;
-        }
-        .fc-button-primary:not(:disabled) {
-            background-color: lightblue;
-        }
-        #equipmentSelect {
-            width:500px;
-            margin:20px auto;
-            text-align:center;
-        }
-        .dropdown-content {
-        display: none; /* Hidden by default */
-        position: absolute;
-        background-color: #f9f9f9;
-        border: 1px solid #ccc;
-        max-height: 200px;
-        overflow-y: auto;
-        width: 100%;
-        z-index: 1;
-        }
-        .dropdown-item {
-            padding: 8px;
-            cursor: pointer;
-        }
-        .dropdown-item:hover {
-            background-color: #ddd;
-        }
-    </style>
 </head>
 
 <body>
@@ -197,7 +109,7 @@
                             </div>
                             <div class="col-sm-7">
                                 <!-- Search Input Field -->
-                                <input type="text" id="supervisorSearch" class="form-control" placeholder="Search for a supervisor" onkeyup="filterSupervisors()">
+                                <input type="text" autocomplete="off" id="supervisorSearch" class="form-control" placeholder="Search for a supervisor" onkeyup="filterSupervisors()">
                                 
                                 <!-- Custom Dropdown -->
                                 <div id="supervisorDropdown" class="dropdown-content">
@@ -421,7 +333,9 @@
                     return {
                         html: '<b>' + arg.event.title + '</b>'
                     };
-                }
+                },
+
+                eventClassNames: 'bookedSlot'
             });
             
             calendar.render();
