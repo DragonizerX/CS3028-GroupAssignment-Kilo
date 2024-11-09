@@ -43,7 +43,7 @@
             height: 35px;
             border-bottom: 1px solid;
         }
-        .fc-timegrid-slot-label {
+        .fc-timegrid-slot-label { 
             font-size: 0.9em;
             color: darkgrey;
         }
@@ -54,10 +54,13 @@
             background-color: white;
             padding: 10px 0;
             font-weight: 500;
+            text-decoration:none;
         }
+
         .fc-timegrid-col {
             background-color: white;
         }
+
         #deleteEquipForm #addEquipForm #bookingForm .card-body {
             padding: 20px;
         }
@@ -75,6 +78,7 @@
             margin:10px;
             padding:10px;
         }
+        
         .text-center.mt-4 {
             margin-top: 5px;
             padding-top: 5px;
@@ -89,14 +93,17 @@
         .fc-button:hover {
             background-color: lightblue;
         }
+
         .fc-button-primary:not(:disabled) {
-            background-color: lightblue;
+            background-color: #006a6a;
         }
+
         #equipmentSelect {
             width:500px;
             margin:20px auto;
             text-align:center;
         }
+        
         .dropdown-content {
         display: none; /* Hidden by default */
         position: absolute;
@@ -107,6 +114,7 @@
         width: 100%;
         z-index: 1;
         }
+
         .dropdown-item {
             padding: 8px;
             cursor: pointer;
@@ -116,7 +124,7 @@
         }
 
         .notification-box {
-            background-color: #f9efea;
+            background-color: #fff;
             color: #c42323;
             padding: 8px;
             border-radius: 5px;
@@ -131,10 +139,11 @@
         }
 
         .popup {
+            display:flex;
+            flex-direction: column;
             position: fixed; /* Fixed positioning to stay in view */
-            left: 10%;
-            top: 18%;
-            transform: translate(-50%, -50%);
+            left: 100px;
+            top: 7px;
             background-color: white; /* Popup background color */
             border: 1px solid #ccc; /* Border around popup */
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Shadow effect */
@@ -155,7 +164,8 @@
 
         .popup ul {
             padding-left: 20px; /* Padding for the list inside popup */
-
+        }
+        
         .button-footer {
             display:flex;
             justify-content: center;
@@ -471,10 +481,10 @@
                         {% endif %}
                         <div class="row mt-2">
                             <div class="col-sm-3">
-                                <label for="notes" class="control-label">Notes:</label>
+                                <label for="comments" class="control-label">Comments:</label>
                             </div>
                             <div class="col-sm-9">
-                                <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                                <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Enter Project Information: E.g: (Project Name/Project Info)"></textarea>
                             </div>
                         </div>
                         <div class="row mt-3">
@@ -585,7 +595,7 @@
                         .then(data => {
                             const eventsWithDetails = data.map(event => ({
                                 ...event,
-                                title: `${event.title}\nSupervisor: ${event.supervisorName}\nNotes: ${event.notes || 'None'}`
+                                title: `${event.title}\nSupervisor: ${event.supervisorName}\nComments: ${event.comments || 'None'}`
                             }));
                             successCallback(eventsWithDetails);
                         })
@@ -816,7 +826,7 @@
     } else {
         popup.style.display = "none"; // Hide the popup
     }
-}
+    }
 
         </script>
 </body>
