@@ -222,6 +222,23 @@ def editBooking(request, id):
         supervisors = Supervisor.objects.all().order_by('first_name')
         
         if request.method == 'POST':
+            new_date = request.POST.get('bookingDate')
+            new_start = request.POST.get('startTime')
+            new_finish = request.POST.get('finishTime')
+            new_equipment = request.POST.get('equipment')
+
+            # Check for overlapping bookings
+            overlapping_bookings = Event.objects.filter(
+                equipment=new_equipment,
+                bookingDate=new_date,
+                startTime__lt=new_finish,
+                finishTime__gt=new_start
+            ).exclude(id=id)  # Exclude current booking from check
+            
+            if overlapping_bookings.exists():
+                messages.error(request, "This time slot is already booked for this equipment.")
+                return redirect('editBooking', id=id)
+
             """bookingName = request.POST.get('bookingName')
             if bookingName:
                 booking.bookingName = bookingName"""
