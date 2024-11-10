@@ -123,7 +123,7 @@
 <body>
 
     <!-- This is the auto logout warning Message. DO NOT REMOVE! -->
-    <div id="warningMessage" style="position:fixed;bottom:10px;right:10px;display:none;">Warning, the user is about to be logged out!</div>
+    <div id="warningMessage" class="popWarning">Warning, the user is about to be logged out!</div>
 
     <!-- sidebar -->
     <div id="sidebar" class="sidenav">
@@ -161,74 +161,132 @@
         </div>
     </div>
 
-    <button id="createBilling" onclick="location.href = '/MCalendar/createBilling'"> Create Billing </button>
+    <div class="container rounded bg-white mt-5 mb-5">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="p-3 py-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="text-right">Billing</h2>
+                    </div>
 
-    <form method="GET" action=".">
-        <div id="navBar">
-            <!-- Supervisor selection -->
-            <input class="supervisorSearch" type="search" name="supervisorName" placeholder="-- Supervisor --"/>
-            <!-- Date inputs -->
-            <div class="dates">
-                <label for="startDate">Start Date</label>
-                <input type="date" id="startDate" name="dateMin">
-            </div>
-            <div class="dates">
-                <label for="endDate">End Date</label>
-                <input type="date" id="endDate" name="dateMax">
-            </div>
-            <input type="submit" id="filter" value="Filter">
-        </div>
-    </form>
+                    <hr>
 
-    <!-- Billings -->
-    {% for b in billingsList %}
-        <!-- Billings Label -->
-        <div class="billingsLabel">
-            <div> Supervisor: {{ b.supervisor }}</div>
-            <div> Issued: {{ b.issueDate }}</div>
-            <button onclick="displayEvents({{ b.id }})" class="displayDropdown">show</button>
-            <div> Billing ID: {{ b.id }}</div>
-            <div> Total Cost: £{{ b.totalCost }}</div>
-            <div> <!--Billing Delete-->  
-                <form method="POST" action="{% url 'deleteBilling' b.id %}">
-                    {% csrf_token %}
-                    <button style="color: red; font-weight: bold;" onclick="return confirm('Are you sure you would like to permanently delete this billing?')">X</button>
-                </form>
-            </div>
-            <div>
-                <a href="{% url 'generatePDF' b.id %}">
-                    <button>pdf</button>
-                </a>
-            </div>
-        </div>
-        <!-- Events Dropdowns -->
-        <div id="{{ b.id }}" class="eventsDiv">
-            <form method="POST" action="{% url 'deleteEvent' %}">
-                {% csrf_token %}
-                {% for e in events %}
-                    {% if e.invoiceRef == b.invoiceRef %}
-                        <div class="event">
-                            <div class="eventItem"> Booking: {{ e.bookingName }}</div>
-                            <div class="eventItem"> Supervisor: {{ e.supervisorName }}</div>
-                            <div class="eventItem"> Event ID: {{ e.id }}</div>
-                            <div></div>
-                            <div class="eventItem"> Date: {{ e.bookingDate }}</div>
-                            <div></div>
-                            <div class="eventItem"> Start: {{ e.startTime|time:'H:i' }}</div>
-                            <div class="eventItem"> End: {{ e.finishTime|time:'H:i' }}</div>
-                            <div class="eventItem"> Equipment: {{ e.equipment }}</div>
-                            <div class="eventItem"> Total Time: {{ e.totalTime }}</div>
-                            <!--Event Remove-->
-                            <div>
-                                <input type="checkbox" name="selected_events" value="{{ e.id }}" id="event_{{ e.id }}">
+                    <button class="btn btn-sty btn-block" onclick="location.href = '/MCalendar/createBilling'"> Create Billing </button>
+
+                    <hr>
+
+                    <form method="GET" action=".">
+                        <div class="form-row">
+                            <div class="form-group col-12">
+                                <div class="input-group">
+                                    <input class="form-control py-2" type="search" name="supervisorName" placeholder="Supervisor Name..." />
+                                </div>
+                            </div>        
+                        </div>
+    
+                        <div class="form-row">
+                          
+                            <div class="form-group col-md-6 col-lg-6">
+                                <label for="startDate">Start Date</label>
+                                <input type="date" class="form-control" id="startDate" name="dateMin">
+                            </div>
+                            <div class="form-group col-md-6 col-lg-6">
+                                <label for="endDate">End Date</label>
+                                <input type="date" class="form-control" id="endDate" name="dateMax">
+                            </div>
+                        
+                        </div>
+    
+                        <button type="submit" class="btn btn-block btn-sty mb-3">Search</button>
+
+                    </form>
+
+                    <!-- Billings -->
+                    {% for b in billingsList %}
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h4 class="text-right">
+                                        Billing ID: {{ b.id }}
+                                        --
+                                        Supervisor: {{ b.supervisor }}
+                                    </h4>
+                                
+                                    <div class="text-center">
+                                   
+                                        <form method="POST" action="{% url 'deleteBilling' b.id %}">
+                                            <a onclick="displayEvents({{ b.id }})" class="btn btn-sty">show</a>
+                                            <a class="btn btn-sty" href="{% url 'generatePDF' b.id %}">pdf</a>
+                                            {% csrf_token %}
+                                            <button class="btn btn-danger" onclick="return confirm('Are you sure you would like to permanently delete this billing?')">X</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card-body">
+                                <p class="card-text">
+                                    <div class="details">
+                                        <div class="detailsListItem">Issued: {{ b.issueDate }}</div>
+                                        <div class="detailsListItem">Total Cost: £{{ b.totalCost }}</div>
+                                    </div>
+
+                                    <div id="{{ b.id }}" class="eventsDiv">
+                                        <form method="POST" action="{% url 'deleteEvent' %}">
+                                            {% csrf_token %}
+                                            {% for e in events %}
+                                                {% if e.invoiceRef == b.invoiceRef %}
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <h5 class="text-right">
+                                                                Name of Booking: {{ e.bookingName }}
+                                                                --
+                                                                Supervisor: {{ e.supervisorName }}
+                                                            </h5>
+                                                        
+                                                            <div class="text-center">
+                                                                <div>
+                                                                    <input type="checkbox" name="selected_events" value="{{ e.id }}" id="event_{{ e.id }}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="card-body">
+                                                        <p class="card-text">
+                                                            <div class="details">
+                                                                <div class="detailsListItem">Date: {{ e.bookingDate }}</div>
+                                                                <div class="detailsListItem">Event ID: {{ e.id }}</div>
+                                                                <div class="detailsListItem">Start: {{ e.startTime|time:'H:i' }}</div>
+                                                                <div class="detailsListItem">End: {{ e.finishTime|time:'H:i' }}</div>
+                                                                <div class="detailsListItem">Equipment: {{ e.equipment }}</div>
+                                                                <div class="detailsListItem">Total Time: {{ e.totalTime }}</div>
+                                                            </div>
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <br>
+                                                
+                                                {% endif %}
+                                            {% endfor %}
+
+                                            <button type="submit" class="btn btn-danger btn-block">Delete Selected Events</button>
+                                        </form>
+                                    </div>
+
+                                </p>
                             </div>
                         </div>
-                    {% endif %}
-                {% endfor %}
-                <button type="submit" class="btn btn-danger">Delete Selected Events</button>
-            </form>
+
+                        <br>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
-    {% endfor %}
+    </div>
 
     <script>
 

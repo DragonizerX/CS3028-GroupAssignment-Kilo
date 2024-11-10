@@ -75,7 +75,7 @@
 <body>
 
     <!-- This is the auto logout warning Message. DO NOT REMOVE! -->
-    <div id="warningMessage" style="position:fixed;bottom:10px;right:10px;display:none;">Warning, the user is about to be logged out!</div>
+    <div id="warningMessage" class="popWarning">Warning, the user is about to be logged out!</div>
 
     <!-- sidebar -->
     <div id="sidebar" class="sidenav">
@@ -118,8 +118,10 @@
             <div class="col-md-12">
                 <div class="p-3 py-5">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h2 class="text-right">Billing</h2>
+                        <h2 class="text-right">Create Billing</h2>
                     </div>
+
+                    <hr>
 
                     {% if messages %}
                         <ul class="messages">
@@ -189,7 +191,7 @@
                 {% endif %}
             {% endfor %}
 
-                        <input type="submit" id="create" value="Create Billing">
+                        <input class="btn btn-sty btn-block" type="submit" value="Create Billing">
                     </form>
                 </div>
             </div>

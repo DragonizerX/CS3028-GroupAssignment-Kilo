@@ -5,6 +5,10 @@ body {
     height: 100%;
 }
 
+a {
+    text-decoration:none !important;
+}
+
 .form-control:focus {
     box-shadow: none;
     border-color: #006a6a !important;
@@ -16,6 +20,17 @@ body {
     box-shadow: none;
     border: none;
     padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.btn-danger {
+    color: #ffffff;
+    box-shadow: none;
+    border: none;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .btn-sty:hover {
@@ -232,6 +247,7 @@ display: none;
     max-width: 1000px;
     margin-left: auto;
     margin-right: auto;
+    flex-wrap: nowrap;
 }
 
 .fc-button {
@@ -334,4 +350,11 @@ z-index: 1;
 
 .bookedSlot {
     background-color: #008080;
+}
+
+.popWarning {
+    position:fixed;
+    bottom:10px;
+    right:10px;
+    display:none;
 }
