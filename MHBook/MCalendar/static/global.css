@@ -303,7 +303,6 @@ z-index: 1;
 }
 
 .popup {
-    display:flex;
     flex-direction: column;
     position: fixed; /* Fixed positioning to stay in view */
     left: 100px;
@@ -353,8 +352,18 @@ z-index: 1;
 }
 
 .popWarning {
-    position:fixed;
     bottom:10px;
     right:10px;
-    display:none;
+    display:none; /* Initially hidden */
+    flex-direction: column;
+    position: fixed; /* Fixed positioning to stay in view */
+    background-color: white; /* Popup background color */
+    border: 1px solid #ccc; /* Border around popup */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    padding: 20px; /* Padding inside the popup */
+    z-index: 2000; /* Higher z-index to stay on top */
+    width: 300px; /* Set width for the popup */
+    color: red;
+    text-align: center;
+    font-weight: bold;
 }
