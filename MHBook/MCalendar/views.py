@@ -236,8 +236,13 @@ def editBooking(request, id):
             ).exclude(id=id)  # Exclude current booking from check
             
             if overlapping_bookings.exists():
-                messages.error(request, "This time slot is already booked for this equipment.")
-                return redirect('editBooking', id=id)
+                context = {
+                    'editBooking': [booking],
+                    'equipmentList': equipmentList,
+                    'supervisors': supervisors,
+                    'error_message': "This time slot is already booked for this equipment."
+                }
+                return render(request, 'editBooking.html', context)
 
             """bookingName = request.POST.get('bookingName')
             if bookingName:

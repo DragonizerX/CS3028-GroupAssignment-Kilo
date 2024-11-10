@@ -84,6 +84,15 @@
     </div>
 
     <div class="container rounded bg-white mt-5 mb-5 pb-5 pt-3">
+
+    {% if error_message %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ error_message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
     
     <form method="POST">
         {% csrf_token %}
