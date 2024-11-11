@@ -174,3 +174,18 @@ display: none;
     margin: auto;
     padding: 4px 0;
 }
+
+.fc-event-content {
+    white-space: nowrap;         
+    overflow: hidden;          
+    align-items: center;          
+    padding: 2px;                
+    box-sizing: border-box;       
+    max-width: 100%;              
+}
+
+.fc-event-title, .fc-event-time {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
