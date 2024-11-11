@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'MCalendar'
+    'MCalendar',
+    'HSamples'
 ]
 
 AUTH_USER_MODEL = 'MCalendar.Users'
