@@ -608,12 +608,14 @@ def deleteEvent(request):
             selectedEvent = request.POST.getlist('selected_events')
 
             if selectedEvent:
-                # Query and update each selected event
                 for id in selectedEvent:
                     event = Event.objects.get(id=id)
+                    billing = Billing.objects.filter(events=event).first()
                     billingInvoiceRef = event.invoiceRef
-                    event.invoiceRef = 'None'  # Or any specific action you want
+                    event.invoiceRef = 'None'
+                    billing.events.remove(event)
                     event.save()
+                    billing.save()
 
                     if not Event.objects.filter(invoiceRef=billingInvoiceRef).exists():
                         Billing.objects.filter(invoiceRef=billingInvoiceRef).delete()
@@ -662,59 +664,144 @@ def billings(request):
 def generatePDF(request, id):
 
     if request.user.is_superuser:
-        # Retrieve the billing instance or return a 404 if not found
         billing = get_object_or_404(Billing, id=id)
         
-        # Set up a BytesIO buffer to store the PDF
         buffer = io.BytesIO()
         p = canvas.Canvas(buffer)
-        
-        # Set PDF title and metadata
         p.setTitle(f"Invoice_{billing.invoiceRef}")
 
-        # Define content formatting (customize based on your needs)
+        # Info for client
+        p.setFont("Helvetica", 8)
+        y_position = 800
+        p.drawString(50, y_position, "If you have any queries, feel free to get in touch.")
+        y_position -= 10
+        p.drawString(50, y_position, "University of Aberdeen, Institute of Medical Sciences, Foresthill, Aberdeen, AB25 2ZD")
+        y_position -= 10
+        p.drawString(50, y_position, "Gillian Milne, gillian.milne@abdn.ac.uk")
+
+        # Head
+        y_position -= 10
+        p.line(50, y_position, 550, y_position)
+        y_position -= 20
         p.setFont("Helvetica-Bold", 16)
-        p.drawString(100, 800, "Microscopy and Histology Invoice")
+        p.drawString(50, y_position, "Microscopy and Histology Invoice")
+        y_position -= 10
+        p.line(50, y_position, 550, y_position)
+
+        # Important Info
+        p.setFont("Helvetica-Bold", 12)
+        y_position -= 30
+        p.drawString(50, y_position, "Supervisor: ")
+
+        width = p.stringWidth("Supervisor: ", "Helvetica-Bold", 12)
         p.setFont("Helvetica", 12)
+        p.drawString(50 + width, y_position, f"{billing.supervisor}")
 
-        # Display billing information (update fields according to your model)
-        y_position = 750
-        p.drawString(100, y_position, f"Invoice Reference code: {billing.invoiceRef}")
+        p.setFont("Helvetica-Bold", 12)
         y_position -= 20
-        p.drawString(100, y_position, f"Total Cost: {billing.totalCost}")
-        y_position -= 20
-        p.drawString(100, y_position, f"Supervisor: {billing.supervisor}")
-        y_position -= 20
-        p.drawString(100, y_position, f"Issue Date: {billing.issueDate}")
+        p.drawString(50, y_position, "Invoice Reference code: ")
 
-        # List the events and equipment in the billing, if applicable
-        y_position -= 40
-        p.setFont("Helvetica-Bold", 14)
-        p.drawString(100, y_position, "Events:")
-        y_position -= 20
+        width = p.stringWidth("Invoice Reference code: ", "Helvetica-Bold", 12)
         p.setFont("Helvetica", 12)
+        p.drawString(50 + width, y_position, f"{billing.invoiceRef}")
 
-        # Loop through events in the billing
+        p.setFont("Helvetica-Bold", 12)
+        y_position -= 21
+        p.drawString(50, y_position, "Total Cost: ")
+
+        width = p.stringWidth("Total Cost: ", "Helvetica-Bold", 12)
+        p.setFont("Helvetica", 12)
+        p.drawString(50 + width, y_position, f"£{billing.totalCost:.2f}")
+
+        p.setFont("Helvetica-Bold", 12)
+        y_position -= 20
+        p.drawString(50, y_position, "Issue Date: ")
+
+        width = p.stringWidth("Issue Date: ", "Helvetica-Bold", 12)
+        p.setFont("Helvetica", 12)
+        p.drawString(50 + width, y_position, f"{billing.issueDate}")
+
+        y_position -= 20
+        p.line(50, y_position, 550, y_position)
+
+        # Events listing
+        y_position -= 20
+        p.setFont("Helvetica-Bold", 13)
+        p.drawString(50, y_position, "Events:")
+        y_position -= 10
+        p.setFont("Helvetica", 12)
+        p.line(50, y_position, 550, y_position)
+        y_position -= 20
+
         for event in billing.events.all():
-            p.drawString(120, y_position, f"{event.bookingName} on {event.bookingDate}")
-            y_position -= 20
+            # Checks for space & creates new page
+            if y_position <= 50:
+                p.showPage()
+                y_position = 800
+                p.line(100, y_position, 550, y_position)
+                y_position -= 20
 
-        # Reset y_position and list equipment
-        y_position -= 20
-        p.setFont("Helvetica-Bold", 14)
-        p.drawString(100, y_position, "Equipment:")
-        y_position -= 20
-        p.setFont("Helvetica", 12)
-        
-        for equipment in billing.equipment.all():
-            p.drawString(120, y_position, f"- {equipment}")
+            # name
+            p.setFont("Helvetica-Bold", 10)
+            p.drawString(100, y_position, "Booking Name: ")
+
+            width = p.stringWidth("Booking Name: ", "Helvetica-Bold", 10)
+            p.setFont("Helvetica", 10)
+            p.drawString(100 + width, y_position, f"{event.bookingName}")
+
+            # id
+            p.setFont("Helvetica-Bold", 10)
+            p.drawString(300, y_position, "Booking ID: ")
+
+            width = p.stringWidth("Booking ID: ", "Helvetica-Bold", 10)
+            p.setFont("Helvetica", 10)
+            p.drawString(300 + width, y_position, f"{event.id}")
+
+            # date
+            p.setFont("Helvetica-Bold", 10)
+            p.drawString(425, y_position, "Booking Date: ")
+
+            width = p.stringWidth("Booking Date: ", "Helvetica-Bold", 10)
+            p.setFont("Helvetica", 10)
+            p.drawString(425 + width, y_position, f"{event.bookingDate}")
+
+            # equipment
+            y_position -= 8
+            p.line(300, y_position, 550, y_position)
+            y_position -= 15
+            p.setFont("Helvetica-Bold", 10)
+            p.drawString(300, y_position, "Hour(s)")
+            p.drawString(400, y_position, "Rate/hr")
+            p.drawString(500, y_position, "Cost")
+
+            y_position -= 20
+            p.drawString(100, y_position, f"{event.equipment}")
+
+            p.setFont("Helvetica", 10)
+            p.drawString(300, y_position, f"{event.totalTime}")
+            p.drawString(400, y_position, f"{event.hourlyRate}")
+            cost = event.hourlyRate * event.totalTime
+            p.drawString(500, y_position, f"£{cost:.2f}")
+            
+            # end
+            y_position -= 20
+            p.line(100, y_position, 550, y_position)
             y_position -= 20
         
-        # Save the PDF
+        p.setFont("Helvetica-Bold", 12)
+        y_position -= 5
+        p.drawString(350, y_position, "Invoice Total Cost: ")
+
+        width = p.stringWidth("Invoice Total Cost: ", "Helvetica-Bold", 12)
+        p.setFont("Helvetica", 12)
+        p.drawString(350 + width, y_position, f"£{billing.totalCost:.2f}")
+        y_position -= 15
+        p.line(50, y_position, 550, y_position)
+        
+        # DOne
         p.showPage()
         p.save()
         
-        # Prepare PDF for download
         buffer.seek(0)
         return FileResponse(buffer, as_attachment=True, filename=f"Invoice_{billing.invoiceRef}.pdf")
     else:
