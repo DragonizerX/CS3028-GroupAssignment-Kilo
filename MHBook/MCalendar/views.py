@@ -631,12 +631,19 @@ def billings(request):
         billingsList = Billing.objects.all()
         equipmentList = Equipment.objects.all()
         events = Event.objects.all()
+        supervisors = Supervisor.objects.all().order_by('first_name')
 
         supervisorName = request.GET.get('supervisorName')
         dateMin = request.GET.get('dateMin')
         dateMax = request.GET.get('dateMax')
+        
+        supervisor = Supervisor.objects.get(id=supervisorName)
+        supervisor_full_name = f"{supervisor.first_name} {supervisor.last_name}"
+        #print("supervisor: ", supervisor_full_name, "start date: ", dateMin, "end date: ", dateMax)
+        
+        
 
-        if archiveValidQuery(supervisorName):
+        if archiveValidQuery(supervisor_full_name):
             billingsList = billingsList.filter(supervisor__icontains=supervisorName)
 
         if archiveValidQuery(dateMin):
@@ -648,7 +655,8 @@ def billings(request):
         context = {
         'billingsList': billingsList,
         'equipmentList': equipmentList,
-        'events': events
+        'events': events,
+        'supervisors': supervisors
         }
 
         return render(request, 'billings.html', context)

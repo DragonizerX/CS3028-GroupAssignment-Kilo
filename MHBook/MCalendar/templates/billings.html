@@ -191,9 +191,19 @@
                     <form method="GET" action=".">
                         <div class="form-row">
                             <div class="form-group col-12">
-                                <div class="input-group">
-                                    <input class="form-control py-2" type="search" name="supervisorName" placeholder="Supervisor Name..." />
+                                <label for="supervisorName" class="control-label">Supervisor:</label>
+                                <input type="text" autocomplete="off" id="supervisorSearch" class="form-control" class = "dropdown-search" placeholder="Please select a supervisor" onkeyup="filterSupervisors()">
+
+                                <div id="supervisorDropdown" class="dropdown-content">
+                                    {% for supervisor in supervisors %}
+                                        <div class="dropdown-item" onclick="selectSupervisor('{{ supervisor.id }}', '{{ supervisor.first_name }} {{ supervisor.last_name }}')">
+                                            {{ supervisor.first_name }} {{ supervisor.last_name }}
+                                        </div>
+                                    {% empty %}
+                                        <div class="dropdown-item">No supervisors available</div>
+                                    {% endfor %}
                                 </div>
+                                <input type="hidden" name="supervisorName" id="selectedSupervisorId" required>
                             </div>        
                         </div>
     
@@ -365,6 +375,34 @@
         };
         // End of auto-logout code
 
+        document.getElementById("supervisorSearch").addEventListener("focus", function() {
+        document.getElementById("supervisorDropdown").style.display = "block";
+    });
+    
+        function filterSupervisors() {
+            const searchInput = document.getElementById("supervisorSearch").value.toLowerCase();
+            const dropdown = document.getElementById("supervisorDropdown");
+            const items = dropdown.getElementsByClassName("dropdown-item");
+        
+            for (let i = 0; i < items.length; i++) {
+                const itemText = items[i].innerText.toLowerCase();
+                items[i].style.display = itemText.includes(searchInput) ? "" : "none";
+            }
+        }
+        
+        function selectSupervisor(id, name) {
+            document.getElementById("supervisorSearch").value = name; // Show selected supervisor in search field
+            document.getElementById("selectedSupervisorId").value = id; // Set selected supervisor ID
+            document.getElementById("supervisorDropdown").style.display = "none"; // Hide the dropdown
+        }
+        
+        // Close dropdown if clicked outside
+        document.addEventListener("click", function(event) {
+            const dropdown = document.getElementById("supervisorDropdown");
+            if (!dropdown.contains(event.target) && event.target.id !== "supervisorSearch") {
+                dropdown.style.display = "none";
+            }
+        });
     </script>
 
 </body>

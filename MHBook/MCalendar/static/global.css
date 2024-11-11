@@ -275,12 +275,12 @@ background-color: #f9f9f9;
 border: 1px solid #ccc;
 max-height: 200px;
 overflow-y: auto;
-width: 100%;
+width: 94.5%;
 z-index: 1;
 }
 
 .dropdown-item {
-    padding: 8px;
+    padding: 6px;
     cursor: pointer;
 }
 .dropdown-item:hover {
@@ -366,4 +366,9 @@ z-index: 1;
     color: red;
     text-align: center;
     font-weight: bold;
+}
+
+.required:after{
+    content: " *";
+    color: red;
 }

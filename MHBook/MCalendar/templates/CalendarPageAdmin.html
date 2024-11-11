@@ -214,7 +214,7 @@
 
                         <div class="row mt-2">
                             <div class="col-sm-3">
-                                <label for="supervisorName" class="control-label">Supervisor:</label>
+                                <label class = "required" for="supervisorName" class="control-label">Supervisor:</label>
                             </div>
                             <div class="col-sm-7">
                                 <!-- Search Input Field -->
@@ -242,7 +242,7 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-sm-3">
-                                <label for="bookingDate" class="control-label">Date of Booking:</label>
+                                <label class = "required" for="bookingDate" class="control-label">Date of Booking:</label>
                             </div>
                             <div class="col-sm-9">
                                 <input type="date" class="form-control" id="bookingDate" name="bookingDate" required>
@@ -250,7 +250,7 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-sm-3">
-                                <label for="startTime" class="control-label">Start Time:</label>
+                                <label class = "required" for="startTime" class="control-label">Start Time:</label>
                             </div>
                             <div class="col-sm-9">
                                 <select class="form-control" id="startTime" name="startTime" required>
@@ -283,7 +283,7 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-sm-3">
-                                <label for="finishTime" class="control-label">End Time:</label>
+                                <label class = "required" for="finishTime" class="control-label">End Time:</label>
                             </div>
                             <div class="col-sm-9">
                                 <select class="form-control" id="finishTime" name="finishTime" required>
@@ -350,19 +350,19 @@
                                 <div class="modal-body">
                                     <form id="addSupervisorForm">
                                         <div class="form-group">
-                                            <label for="firstName">First Name:</label> <!-- Input for new supervisor field -->
+                                            <label class = "required" for="firstName">First Name:</label> <!-- Input for new supervisor field -->
                                             <input type="text" class="form-control" id="firstName" name="first_name" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="lastName">Last Name:</label>
+                                            <label class = "required" for="lastName">Last Name:</label>
                                             <input type="text" class="form-control" id="lastName" name="last_name" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="email">Email:</label>
+                                            <label class = "required" for="email">Email:</label>
                                             <input type="email" class="form-control" id="email" name="email" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="telephone">Telephone:</label>
+                                            <label class = "required" for="telephone">Telephone:</label>
                                             <input type="tel" class="form-control" id="telephone" name="telephone" required
                                                 pattern="^\+?\d{10,15}$" title="Enter a valid phone number (e.g., +1234567890 or 1234567890)">
                                         </div>
