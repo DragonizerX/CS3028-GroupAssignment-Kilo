@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_session_timeout.middleware.SessionTimeoutMiddleware',
 ]
 
 
@@ -137,3 +138,7 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'histotrackltd@gmail.com'
 EMAIL_HOST_PASSWORD = 'hrcr svsf fxyy fdnr'
+
+SESSION_EXPIRE_SECONDS = 3600
+
+SESSION_TIMEOUT_REDIRECT = '/MCalendar/login/'
