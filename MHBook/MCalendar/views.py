@@ -643,7 +643,7 @@ def billings(request):
             if supervisorName.isnumeric() == True:
                 supervisor = Supervisor.objects.get(id=supervisorName)
                 supervisor_full_name = f"{supervisor.first_name} {supervisor.last_name}"
-                print("proof", supervisorName)
+                
                 
             
 
