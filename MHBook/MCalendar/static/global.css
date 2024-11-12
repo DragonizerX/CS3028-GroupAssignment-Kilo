@@ -5,6 +5,10 @@ body {
     height: 100%;
 }
 
+a {
+    text-decoration:none !important;
+}
+
 .form-control:focus {
     box-shadow: none;
     border-color: #006a6a !important;
@@ -16,6 +20,17 @@ body {
     box-shadow: none;
     border: none;
     padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.btn-danger {
+    color: #ffffff;
+    box-shadow: none;
+    border: none;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .btn-sty:hover {
@@ -173,6 +188,184 @@ display: none;
     list-style-type: none;
     margin: auto;
     padding: 4px 0;
+}
+
+#calendar {
+    margin: 10px auto;
+    padding: 10px;
+    max-width: 1000px;
+    border-radius: 30px;
+}
+.fc-toolbar {
+    padding: 20px;
+}
+.fc-toolbar-title {
+    font-weight: 200;
+}
+.fc-timegrid-slot {
+    height: 35px;
+    border-bottom: 1px solid;
+}
+.fc-timegrid-slot-label { 
+    font-size: 0.9em;
+    color: darkgrey;
+}
+.fc-highlight {
+    background-color: lightblue;
+}
+.fc-col-header-cell {
+    background-color: white;
+    padding: 10px 0;
+    font-weight: 500;
+}
+
+.fc-col-header-cell .fc-scrollgrid-sync-inner a{
+    text-decoration:none !important;
+    color: #111 !important;
+}
+
+.fc-timegrid-col {
+    background-color: white;
+}
+
+#deleteEquipForm #addEquipForm #bookingForm .card-body {
+    padding: 20px;
+}
+#deleteEquipForm #addEquipForm #bookingForm .row {
+    margin-bottom: 5px;
+}
+#deleteEquipForm #addEquipForm #bookingForm .control-label {
+    padding-top: 7px;
+}
+#deleteEquipForm #addEquipForm #bookingForm .btn-success {
+    margin-top: 10px;
+}
+
+.text-center.mt-4 {
+    margin-top: 5px;
+    padding-top: 5px;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+    flex-wrap: nowrap;
+}
+
+.fc-button {
+    background-color: lightblue;
+    border: none;
+}
+.fc-button:hover {
+    background-color: lightblue;
+}
+
+.fc-button-primary:not(:disabled) {
+    background-color: #006a6a;
+}
+
+#equipmentSelect {
+    width:500px;
+    margin:20px auto;
+    text-align:center;
+}
+
+.dropdown-content {
+display: none; /* Hidden by default */
+position: absolute;
+background-color: #f9f9f9;
+border: 1px solid #ccc;
+max-height: 200px;
+overflow-y: auto;
+width: 100%;
+z-index: 1;
+}
+
+.dropdown-item {
+    padding: 8px;
+    cursor: pointer;
+}
+.dropdown-item:hover {
+    background-color: #ddd;
+}
+
+.notification-box {
+    background-color: #fff;
+    color: #c42323;
+    padding: 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 35px; /* Adjust the width as needed */
+    position: absolute; /* Change to absolute positioning */
+    left: 50px; /* Adjust as needed to move it left */
+    top: 20px; /* Adjust as needed for vertical positioning */
+    text-align: center;
+    font-size: 12px;
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+.popup {
+    flex-direction: column;
+    position: fixed; /* Fixed positioning to stay in view */
+    left: 100px;
+    top: 7px;
+    background-color: white; /* Popup background color */
+    border: 1px solid #ccc; /* Border around popup */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    padding: 20px; /* Padding inside the popup */
+    z-index: 2000; /* Higher z-index to stay on top */
+    display: none; /* Initially hidden */
+    width: 300px; /* Set width for the popup */
+    color: black
+}
+
+.popup .close {
+    cursor: pointer;
+    float: right; /* Align close button to the right */
+    font-size: 20px; /* Font size for close button */
+    margin-top: -10px; /* Adjust position of close button */
+    color: #333; /* Color for close button */
+}
+
+.popup ul {
+    padding-left: 20px; /* Padding for the list inside popup */
+}
+
+.button-footer {
+    display:flex;
+    justify-content: center;
+    align-content: center;
+
+}
+
+.admin-information {
+    font-size: 12px;       /* Larger font size */
+    max-width: 220px;      /* Wider tooltip */
+    padding: 10px;         /* Add padding for readability */
+    background-color: white;  /* Light background */
+    color: grey;           /* Text color */
+    border: 1px solid grey; /* Border for the tooltip */
+    border-radius: 2px;    /* Rounded corners */
+    z-index: 1000;         /* Ensure it appears above other elements */
+}
+
+.bookedSlot {
+    background-color: #008080;
+}
+
+.popWarning {
+    bottom:10px;
+    right:10px;
+    display:none; /* Initially hidden */
+    flex-direction: column;
+    position: fixed; /* Fixed positioning to stay in view */
+    background-color: white; /* Popup background color */
+    border: 1px solid #ccc; /* Border around popup */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    padding: 20px; /* Padding inside the popup */
+    z-index: 2000; /* Higher z-index to stay on top */
+    width: 300px; /* Set width for the popup */
+    color: red;
+    text-align: center;
+    font-weight: bold;
 }
 
 .fc-event-content {
