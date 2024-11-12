@@ -96,15 +96,15 @@ def changePasswordPage(request):
 
         if request.method == 'POST':
             form = ChangePasswordForm(current_user, request.POST)
-            if form.is_valid(): #If the form's data is valid then data is
+            if form.is_valid(): 
                 form.save()
                 changePasswordText = ("Your password was successfully changed at  %s. You can now log in to HistoTrack with your new password." % str(dateformat.format((timezone.now()), 'Y-m-d H:i:s')))
                 send_mail(
-                "Your Password Has Changed!",
-                changePasswordText,
-                "histotrackltd@gmail.com",
-                [request.user.email],
-                fail_silently=False,
+                    "Your Password Has Changed!",
+                    changePasswordText,
+                    "histotrackltd@gmail.com",
+                    [request.user.email],
+                    fail_silently=False,
                 )
                 messages.success(request, "Your Password Has Been Updated, Please Log In Again")
                 return redirect('loginPage')
