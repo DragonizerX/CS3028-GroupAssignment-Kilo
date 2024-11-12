@@ -638,21 +638,23 @@ def billings(request):
         supervisorName = request.GET.get('supervisorName')
         dateMin = request.GET.get('dateMin')
         dateMax = request.GET.get('dateMax')
-        
+
         if supervisorName != None:
-            supervisor = Supervisor.objects.get(id=supervisorName)
-            supervisor_full_name = f"{supervisor.first_name} {supervisor.last_name}"
+            if supervisorName.isnumeric() == True:
+                supervisor = Supervisor.objects.get(id=supervisorName)
+                supervisor_full_name = f"{supervisor.first_name} {supervisor.last_name}"
+                print("proof", supervisorName)
+                
             
-        
 
-            if archiveValidQuery(supervisor_full_name):
-                billingsList = billingsList.filter(supervisor__icontains=supervisorName)
+                if archiveValidQuery(supervisor_full_name):
+                    billingsList = billingsList.filter(supervisor__icontains=supervisor_full_name)
 
-            if archiveValidQuery(dateMin):
-                billingsList = billingsList.filter(issueDate__gte=dateMin)
+                if archiveValidQuery(dateMin):
+                    billingsList = billingsList.filter(issueDate__gte=dateMin)
 
-            if archiveValidQuery(dateMax):
-                billingsList = billingsList.filter(issueDate__lte=dateMax)
+                if archiveValidQuery(dateMax):
+                    billingsList = billingsList.filter(issueDate__lte=dateMax)
             
             
         context = {
