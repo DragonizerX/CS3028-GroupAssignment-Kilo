@@ -98,7 +98,7 @@ def changePasswordPage(request):
             form = ChangePasswordForm(current_user, request.POST)
             if form.is_valid(): 
                 form.save()
-                changePasswordText = ("Your password was successfully changed at  %s. You can now log in to HistoTrack with your new password." % str(dateformat.format((timezone.now()), 'Y-m-d H:i:s')))
+                changePasswordText = ("Your password was successfully changed at  %s." % str(dateformat.format((timezone.now()), 'Y-m-d H:i:s')))
                 send_mail(
                     "Your Password Has Changed!",
                     changePasswordText,
