@@ -633,25 +633,28 @@ def billings(request):
         events = Event.objects.all()
         supervisors = Supervisor.objects.all().order_by('first_name')
 
+        supervisorName = None
+
         supervisorName = request.GET.get('supervisorName')
         dateMin = request.GET.get('dateMin')
         dateMax = request.GET.get('dateMax')
         
-        supervisor = Supervisor.objects.get(id=supervisorName)
-        supervisor_full_name = f"{supervisor.first_name} {supervisor.last_name}"
-        #print("supervisor: ", supervisor_full_name, "start date: ", dateMin, "end date: ", dateMax)
+        if supervisorName != None:
+            supervisor = Supervisor.objects.get(id=supervisorName)
+            supervisor_full_name = f"{supervisor.first_name} {supervisor.last_name}"
+            
         
-        
 
-        if archiveValidQuery(supervisor_full_name):
-            billingsList = billingsList.filter(supervisor__icontains=supervisorName)
+            if archiveValidQuery(supervisor_full_name):
+                billingsList = billingsList.filter(supervisor__icontains=supervisorName)
 
-        if archiveValidQuery(dateMin):
-            billingsList = billingsList.filter(issueDate__gte=dateMin)
+            if archiveValidQuery(dateMin):
+                billingsList = billingsList.filter(issueDate__gte=dateMin)
 
-        if archiveValidQuery(dateMax):
-            billingsList = billingsList.filter(issueDate__lte=dateMax)
-
+            if archiveValidQuery(dateMax):
+                billingsList = billingsList.filter(issueDate__lte=dateMax)
+            
+            
         context = {
         'billingsList': billingsList,
         'equipmentList': equipmentList,
