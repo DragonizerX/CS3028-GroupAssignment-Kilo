@@ -641,11 +641,10 @@ def deleteEvent(request):
                 for id in selectedEvent:
                     event = Event.objects.get(id=id)
                     billing = Billing.objects.filter(events=event).first()
-
                     billingInvoiceRef = event.invoiceRef
                     event.invoiceRef = 'None'
                     billing.events.remove(event)
-
+                    billing.totalCost -= (float(event.totalTime) * float(event.hourlyRate))
                     event.save()
                     billing.save()
 
