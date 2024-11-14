@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
-from django.http import HttpResponse, JsonResponse, FileResponse
+from django.http import HttpResponse, JsonResponse, FileResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -19,6 +19,9 @@ from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm, AddEquipm
 
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+
+
 # Create your views here.b
 
 def loginPage(request):
@@ -188,7 +191,10 @@ def requests(request):
         return redirect("loginPage")
 
 
+
 def cancelBooking(request, id):
+    if id is None:
+        return redirect('myBookings')
     booking = get_object_or_404(Event, id=id)
     if booking.bookingDate == timezone.now().date(): #check for same day cancelation
         CancelledBooking.objects.create(
@@ -198,6 +204,7 @@ def cancelBooking(request, id):
         )
     booking.delete()
     return redirect('myBookings')
+
 
 def clear_cancelled_bookings(request):
     CancelledBooking.objects.all().delete()
@@ -303,6 +310,7 @@ def calendar_view(request):
 
 
 @ensure_csrf_cookie
+@login_required
 def create_event(request):
     if request.method == 'POST':
         try:
@@ -374,7 +382,7 @@ def create_event(request):
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
-
+@login_required
 def get_events(request):
     try:
         equipment_id = request.GET.get('equipment', '')
@@ -398,11 +406,15 @@ def get_events(request):
             }
             event_list.append(event_data)
             
+        #return redirect('/MCalendar/CalendarPage/')
         return JsonResponse(event_list, safe=False)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=400)
+        if request.user.is_superuser:
+            return redirect('/MCalendar/CalendarPageAdmin/')
+        else:
+            return redirect('/MCalendar/CalendarPage/')
 
-
+@login_required
 def add_equipment(request):
     if request.method == 'POST':
         form = AddEquipmentForm(request.POST)
@@ -424,7 +436,7 @@ def add_equipment(request):
         return render(request, 'CalendarPage.html', {'form': form})
     
 
-
+@login_required
 def delete_equipment(request):
     if request.method == 'POST':
         equipment_id = request.POST.get('delete_equipment')
@@ -439,7 +451,7 @@ def delete_equipment(request):
     equipment_list = Equipment.objects.all()
     return render(request, 'CalendarPageAdmin.html', {'equipmentList': equipment_list})
 
-
+@login_required
 def CalendarPage(request):
     if request.user.is_authenticated:
         equipment_list = Equipment.objects.all()
@@ -452,7 +464,7 @@ def CalendarPage(request):
         messages.success(request, "Please log in before entering that page!")
         return redirect("loginPage")
 
-
+@login_required
 def AdminCalendarView(request):
     if request.user.is_superuser:
         equipment_list = Equipment.objects.all()
@@ -473,7 +485,7 @@ def AdminCalendarView(request):
         logout(request)
         return redirect("loginPage")
     
-
+@login_required
 def archivePage(request):
     if request.user.is_superuser:
         eventList = Event.objects.all()
@@ -529,16 +541,18 @@ def archivePage(request):
         messages.success(request, "Please log in before entering that page! Admin access only.")
         logout(request)
         return redirect("loginPage")
-
+@login_required
 def archiveValidQuery(param): # createBilling is using this aswell to sort through filters. Thanks!
     return param != '' and param is not None
 
 
 # Create Billing functions
+@login_required
 def generateInvoiceRef():
     # Generates a universal unique id (uuid)
     return str(uuid.uuid4())[:10]
 
+@login_required
 def createBilling(request):
 
     if request.user.is_superuser:
@@ -615,6 +629,7 @@ def createBilling(request):
 
 
 # For deleting whole billings
+@login_required
 def deleteBilling(request, id):
     if request.user.is_superuser:
         billing = get_object_or_404(Billing, id=id)
@@ -631,6 +646,7 @@ def deleteBilling(request, id):
 
 
 # DOESN'T DELETE EVENT, just removes event from billing
+@login_required
 def deleteEvent(request):
     if request.user.is_superuser:
         if request.method == 'POST':
@@ -658,7 +674,7 @@ def deleteEvent(request):
         logout(request)
         return redirect("loginPage")
     
-
+@login_required
 def billings(request):
 
     if request.user.is_superuser:
@@ -692,7 +708,7 @@ def billings(request):
         logout(request)
         return redirect("loginPage")
     
-
+@login_required
 def generatePDF(request, id):
 
     if request.user.is_superuser:
@@ -841,7 +857,7 @@ def generatePDF(request, id):
         logout(request)
         return redirect("loginPage")
 
-
+@login_required(login_url='/MCalendar/login/')
 def add_supervisor(request): #function for adding new supervisors
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
@@ -861,7 +877,13 @@ def add_supervisor(request): #function for adding new supervisors
         supervisor = Supervisor(first_name=first_name, last_name=last_name, email=email, telephone=telephone)
         supervisor.save()
 
-        #Response to let users no it was a success
-        return JsonResponse({'status': 'success', 'message': 'Supervisor added successfully.'})
+        #Response to let users know it was a success
+        return JsonResponse({'status': 'success', 'message': 'Supervisor added successfully.'})   
+        
 
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})    
+
+
+def custom_404_view(request, exception):
+    # Redirect to the login page
+    return redirect('/MCalendar/login/')

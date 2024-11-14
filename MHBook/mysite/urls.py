@@ -21,3 +21,5 @@ urlpatterns = [
     path("MCalendar/", include('MCalendar.urls')),
     path('admin/', admin.site.urls),
 ]
+
+

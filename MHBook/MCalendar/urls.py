@@ -1,5 +1,10 @@
 from django.urls import path
 from . import views
+from django.shortcuts import render
+from django.conf.urls import handler404
+from .views import custom_404_view
+
+handler404 = custom_404_view
 
 #app_name = "MCalendar"
 
