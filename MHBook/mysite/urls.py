@@ -22,3 +22,5 @@ urlpatterns = [
     path("HSamples/", include('HSamples.urls')),
     path('admin/', admin.site.urls),
 ]
+
+

@@ -1,6 +1,26 @@
 {% load static %}
+{{ redirect_to_login_immediately }}
 
 <head>
+    <title>Account</title>
+
+    <!--
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.js'></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+    
+    <link rel="stylesheet" href="{% static 'global.css' %}">-->
+
+
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css">
@@ -16,6 +36,9 @@
 
 </head>
 <body>
+
+<!-- This is the auto logout warning Message. DO NOT REMOVE! -->
+<div id="warningMessage" class="popWarning">Warning, the user is about to be logged out!</div>
 
 <!-- sidebar -->
 <div id="sidebar" class="sidenav">
@@ -64,6 +87,9 @@
                         <a href="{% url 'changePassword' %}" class="btn btn-sty">Change Password</a>
                     </div>
                 </div>
+
+                <hr>
+                
                 <form method="POST" action="">
                     {% csrf_token %}
 
@@ -139,6 +165,43 @@
             none;
         }
     }
+
+    // This is the auto-logout code, do not change!
+    let idleTime = 0;
+    const idleTimeout = 300;
+    const warningTimeout = 290;
+    let messageBox = document.getElementById("warningMessage");
+
+    function resetTime() {
+        idleTime = 0;
+        messageBox.style.display = ("none");
+    }
+
+    function cycle() {
+        idleTime++;
+        if (idleTime >= warningTimeout) {
+            warningMessage();
+        }
+        if (idleTime >= idleTimeout) {
+            logoutUser();
+        }
+    }
+
+    function warningMessage() {
+        messageBox.style.display = ("block");
+    }
+
+    function logoutUser() {
+        window.location.href = "{% url 'logout' %}";
+    }
+
+    window.onload = function() {
+        document.onmousemove = resetTime;
+        document.onkeypress = resetTime;
+        setInterval(cycle, 1000);
+    };
+    // End of auto-logout code
+
 </script>
 
 </body>

@@ -77,7 +77,6 @@ class CancelledBooking(models.Model):
     def __str__(self):
         return f"{self.booking_name} - {self.cancelled_by} on {self.cancellation_date}"
 
-
 class Event(models.Model):
     invoiceRef = models.CharField(max_length=10, default="None")
     bookingName = models.CharField(max_length=80)
@@ -86,7 +85,7 @@ class Event(models.Model):
     bookingDate = models.DateField()
     startTime = models.TimeField()
     finishTime = models.TimeField()
-    comments = models.TextField(max_length = 1000)
+    notes = models.TextField(max_length = 1000)
     equipment = models.CharField(max_length=100, default='Not specified')
     totalTime = models.IntegerField(default=0)
     hourlyRate = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
@@ -130,7 +129,6 @@ class Event(models.Model):
     #@property
     #def totalTime(self):
     #    pass    
-
 
 class Equipment(models.Model):
     equipmentID_auto = models.AutoField(primary_key=True)
