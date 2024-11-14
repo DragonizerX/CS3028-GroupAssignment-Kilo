@@ -367,3 +367,18 @@ z-index: 1;
     text-align: center;
     font-weight: bold;
 }
+
+.fc-event-content {
+    white-space: nowrap;         
+    overflow: hidden;          
+    align-items: center;          
+    padding: 2px;                
+    box-sizing: border-box;       
+    max-width: 100%;              
+}
+
+.fc-event-title, .fc-event-time {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
