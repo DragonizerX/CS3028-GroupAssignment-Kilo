@@ -147,6 +147,7 @@ def myBookings(request):
         context = {
             'myBookings': myBookings,
             'hasBooking': hasBooking,
+            'pageObj': pageObj,
         }
         return HttpResponse(template.render(context, request))
     else:
