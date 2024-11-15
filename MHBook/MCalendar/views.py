@@ -541,7 +541,7 @@ def archivePage(request):
         messages.success(request, "Please log in before entering that page! Admin access only.")
         logout(request)
         return redirect("loginPage")
-@login_required
+
 def archiveValidQuery(param): # createBilling is using this aswell to sort through filters. Thanks!
     return param != '' and param is not None
 
