@@ -547,7 +547,7 @@ def archiveValidQuery(param): # createBilling is using this aswell to sort throu
 
 
 # Create Billing functions
-@login_required
+
 def generateInvoiceRef():
     # Generates a universal unique id (uuid)
     return str(uuid.uuid4())[:10]
