@@ -129,15 +129,14 @@ def changePasswordPage(request):
 def myBookings(request):
     
     if request.user.is_superuser:
-        myBookings = Event.objects.filter(bookingDate__gte=timezone.now().date())
+        myBookings = Event.objects.filter(bookingDate__gte=timezone.now().date()) # Filter makes sure no past bookings display
         template = loader.get_template('myBookings.html')
-        hasBooking = myBookings.exists()
+        hasBooking = myBookings.exists() # Later used for displaying a message that there are no current bookings
 
-        # Paginator yaya
+        # Paginator Stuff
         paginator = Paginator(myBookings, 10)
         pageNumber = request.GET.get('page')
         pageObj = paginator.get_page(pageNumber)
-        #print(myBookings)
 
         context = {
             'myBookings': myBookings,
@@ -148,7 +147,7 @@ def myBookings(request):
     
     if request.user.is_authenticated:
         current_user = request.user.email
-        myBookings = Event.objects.filter(email=current_user, bookingDate__gte=timezone.now().date())
+        myBookings = Event.objects.filter(email=current_user, bookingDate__gte=timezone.now().date()) # Also makes sure only bookings that are associated with the user's email get dsiplayed
         template = loader.get_template('myBookings.html')
         hasBooking = myBookings.exists()
 
@@ -172,10 +171,10 @@ def requests(request):
     if request.user.is_superuser:
         requests = Users.objects.all().values()
         template = loader.get_template('requests.html')
-        hasRequest = requests.filter(verified=False).exists()
+        hasRequest = requests.filter(verified=False).exists() # Checks if there are any requests
 
         # Paginator
-        paginator = Paginator(requests, 12) # For some reason it displays 2 less than what this value is ?? Currently it will display 10
+        paginator = Paginator(requests, 12)
         pageNumber = request.GET.get('page')
         pageObj = paginator.get_page(pageNumber)
 
@@ -193,15 +192,18 @@ def requests(request):
 
 
 def cancelBooking(request, id):
+    # Failsafe if an issue occurs
     if id is None:
         return redirect('myBookings')
+    
     booking = get_object_or_404(Event, id=id)
-    if booking.bookingDate == timezone.now().date(): #check for same day cancelation
+    if booking.bookingDate == timezone.now().date(): #check for same day cancelation 
         CancelledBooking.objects.create(
             booking_name=booking.bookingName,
             cancelled_by=request.user,  # assumes the user is authenticated
             cancellation_date=timezone.now()
         )
+    # Booking gets purged
     booking.delete()
     return redirect('myBookings')
 
@@ -213,11 +215,12 @@ def clear_cancelled_bookings(request):
 
 def confirmAccept(request, id):
     requests = get_object_or_404(Users, id=id)
-    requests.verified = True
+    requests.verified = True # If user accepted, now able to log in
+    # Sends confirmation email
     send_mail(
         "Your Account Is Verified!",
         "Congratulations!\n\nYour account has been verified and is in our HistoTrack system. You may now log in.",
-        "histotrackltd@gmail.com",
+        "histotrackltd@gmail.com", # Change if necessary
         [requests.email],
         fail_silently=False,
     )
@@ -226,6 +229,7 @@ def confirmAccept(request, id):
 
 def confirmReject(request, id):
     requests = get_object_or_404(Users, id=id)
+    # Purges user account
     requests.delete()
     return redirect('requests')
 
@@ -258,11 +262,8 @@ def editBooking(request, id):
                     'error_message': "This time slot is already booked for this equipment."
                 }
                 return render(request, 'editBooking.html', context)
-
-            """bookingName = request.POST.get('bookingName')
-            if bookingName:
-                booking.bookingName = bookingName"""
-
+        
+            # Updates form only if there is an input
             supervisorName = request.POST.get('supervisorName')
             if supervisorName:
                 supervisor = Supervisor.objects.get(id=supervisorName)
@@ -549,7 +550,7 @@ def archiveValidQuery(param): # createBilling is using this aswell to sort throu
 # Create Billing functions
 
 def generateInvoiceRef():
-    # Generates a universal unique id (uuid)
+    # Generates a uuid
     return str(uuid.uuid4())[:10]
 
 @login_required
@@ -585,12 +586,15 @@ def createBilling(request):
 
             supervisors = selectedEventObjects.values_list('supervisorName', flat=True).distinct()
 
+            # Won't let you create a billing with multiple supervisors
             if supervisors.count() > 1:
                 messages.error(request, "Can only create billings for one Supervisor at most.")
                 return render(request, 'createBilling.html', context)
 
             billing = Billing()
+            # Gets the uuid
             billing.invoiceRef = generateInvoiceRef()
+            # Sets all refs in events to the billing ref
             for event in selectedEventObjects:
                 event.invoiceRef = billing.invoiceRef
                 event.save()
@@ -599,23 +603,19 @@ def createBilling(request):
 
             billing.events.set(selectedEventObjects)
 
-            #print(selectedEventObjects)
             equipment_names = selectedEventObjects.values_list('equipment', flat=True).distinct()
             for e in equipmentList:
-                print(e)
                 if e.equipmentName == equipment_names:
-                    print(e.equipmentID_auto+1)
                     billing.equipment.set(e.equipmentID_auto+1)
                     billing.save()
 
+            # For calculating cost
             cost = 0
             for event in selectedEventObjects:
                 for eq in equipment:
                     if event.equipment == eq.equipmentName:
-                        print("Here")
                         cost += event.totalTime * eq.hourlyRate
             billing.totalCost = cost
-            print(cost)
             billing.save()
 
             return redirect('billings')
@@ -634,7 +634,7 @@ def deleteBilling(request, id):
     if request.user.is_superuser:
         billing = get_object_or_404(Billing, id=id)
 
-        Event.objects.filter(invoiceRef=billing.invoiceRef).update(invoiceRef='None')
+        Event.objects.filter(invoiceRef=billing.invoiceRef).update(invoiceRef='None') # Makes sure to reset event refs since billing doesn't exist anymore
 
         billing.delete()
 
@@ -650,7 +650,6 @@ def deleteBilling(request, id):
 def deleteEvent(request):
     if request.user.is_superuser:
         if request.method == 'POST':
-            # Get a list of selected event IDs
             selectedEvent = request.POST.getlist('selected_events')
 
             if selectedEvent:
@@ -660,11 +659,11 @@ def deleteEvent(request):
                     billingInvoiceRef = event.invoiceRef
                     event.invoiceRef = 'None'
                     billing.events.remove(event)
-                    billing.totalCost -= (float(event.totalTime) * float(event.hourlyRate))
+                    billing.totalCost -= (float(event.totalTime) * float(event.hourlyRate)) # Necessary to remove from total cost
                     event.save()
                     billing.save()
 
-
+                    # If no events in a billing, delete the billing
                     if not Event.objects.filter(invoiceRef=billingInvoiceRef).exists():
                         Billing.objects.filter(invoiceRef=billingInvoiceRef).delete()
 
@@ -840,13 +839,14 @@ def generatePDF(request, id):
         y_position -= 5
         p.drawString(350, y_position, "Invoice Total Cost: ")
 
+        # Cost
         width = p.stringWidth("Invoice Total Cost: ", "Helvetica-Bold", 12)
         p.setFont("Helvetica", 12)
         p.drawString(350 + width, y_position, f"£{billing.totalCost:.2f}")
         y_position -= 15
         p.line(50, y_position, 550, y_position)
         
-        # DOne
+        # Done
         p.showPage()
         p.save()
         
