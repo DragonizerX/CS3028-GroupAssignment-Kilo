@@ -38,7 +38,7 @@
 
             {% if user.is_superuser %}
                 <a href="{% url 'requests' %}">Requests</a>
-                <a href="{% url 'billings' %}">Billing</a> <!-- UPDATE WHEN THE BILLING PAGE IS MADE -->
+                <a href="{% url 'billings' %}">Billing</a>
                 <a href="{% url 'archivePage' %}">Archive</a>
             {% endif %}
 
@@ -80,6 +80,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h4>Booking ID: {{z.id}}</h4>
                                 
+                                    <!-- Redirects to editBooking page -->
                                     <div class="text-center">
                                         <a class="btn btn-sty" href="http://127.0.0.1:8000/MCalendar/myBookings/editBooking/{{ z.id }}">
                                             Edit / Delete
@@ -91,7 +92,6 @@
                             <div class="card-body">
                                 <p class="card-text">
                                     <div class="details">
-                                        <!--<div class="detailsListItem">Name: {{ z.bookingName }}</div>-->
                                         <div class="detailsListItem">Date: {{ z.bookingDate }}</div>
                                         <div class="detailsListItem">Equipment: {{ z.equipment }}</div>
                                         <div class="detailsListItem">Start: {{ z.startTime|time:"H:i" }}</div>

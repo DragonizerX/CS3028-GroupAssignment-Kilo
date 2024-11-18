@@ -64,7 +64,7 @@
 
         {% if user.is_superuser %}
             <a href="{% url 'requests' %}">Requests</a>
-            <a href="{% url 'billings' %}">Billing</a> <!-- UPDATE WHEN THE BILLING PAGE IS MADE -->
+            <a href="{% url 'billings' %}">Billing</a>
             <a href="{% url 'archivePage' %}">Archive</a>
         {% endif %}
 
@@ -73,7 +73,7 @@
         </div>
     </div>
 
-    <!-- top bar (includes sidebar button and whatever else crazy)-->
+    <!-- top bar (includes sidebar button and whatever else)-->
     <div class="container-fluid text-white topbar">
         <div class="row">
             <div class="col-2 container-fluid text-left">
@@ -115,10 +115,6 @@
                 <div class="card-body">
                     <p class="card-text">
                         <div class="details">
-                            <!--
-                            <label for="name">Full Name: </label>
-                            <input type="text" id="name" name="bookingName" placeholder="{{ x.bookingName }}">
-                            -->
                             <label for="supervisor">Supervisor:</label>
 
                             <!-- Dropdown Container -->
@@ -148,6 +144,7 @@
                             <label for="date">Date: </label>
                             <input type="date" id="date" name="bookingDate" value="{{ x.bookingDate|date:'Y-m-d' }}">
 
+                            <!-- Time options -->
                             <label for="start">Start time: </label>
                             <select class="form-control" id="start" name="startTime" required>
                                 <option value="00:00" {% if x.startTime|time:'H:i' == '00:00' %}selected{% endif %}>00:00</option>
@@ -238,6 +235,7 @@
     </div>
 
     <script>
+        // Cancels booking after confirming with user
         function confirmCancel(id) {
             const dialog = window.confirm('Are you sure you want to cancel this booking?');
     

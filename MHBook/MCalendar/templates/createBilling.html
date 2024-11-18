@@ -92,7 +92,7 @@
 
         {% if user.is_superuser %}
             <a href="{% url 'requests' %}">Requests</a>
-            <a href="{% url 'billings' %}">Billing</a> <!-- UPDATE WHEN THE BILLING PAGE IS MADE -->
+            <a href="{% url 'billings' %}">Billing</a>
             <a href="{% url 'archivePage' %}">Archive</a>
         {% endif %}
 
@@ -127,6 +127,8 @@
 
                     <hr>
 
+                    <!-- Shows error messages -->
+                    <!-- ie shows error when creating a billing with multiple supervisors, not allowed -->
                     {% if messages %}
                         <ul class="messages">
                             {% for message in messages %}
@@ -135,6 +137,7 @@
                         </ul>
                     {% endif %}
 
+                    <!-- Filter form: supervisor, start date and end date -->
                     <form method="GET" action=".">
                         <div class="form-row">
                             <div class="form-group col-12">
@@ -165,7 +168,7 @@
         {% csrf_token %}
         {% for event in eventList %}
             {% if event.invoiceRef == "None" %}
-
+                <!-- Displays bookings that arent yet assigned, so the supervisor can use them to create a billing -->
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center">

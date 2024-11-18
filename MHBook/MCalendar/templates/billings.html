@@ -140,7 +140,7 @@
 
         {% if user.is_superuser %}
             <a href="{% url 'requests' %}">Requests</a>
-            <a href="{% url 'billings' %}">Billing</a> <!-- UPDATE WHEN THE BILLING PAGE IS MADE -->
+            <a href="{% url 'billings' %}">Billing</a>
             <a href="{% url 'archivePage' %}">Archive</a>
         {% endif %}
 
@@ -162,6 +162,7 @@
         </div>
     </div>
 
+    <!-- Body -->
     <div class="container rounded bg-white mt-5 mb-5">
         <div class="row">
             <div class="col-md-12">
@@ -172,10 +173,12 @@
 
                     <hr>
 
+                    <!-- Takes to createBilling page -->
                     <button class="btn btn-sty btn-block" onclick="location.href = '/MCalendar/createBilling'"> Create Billing </button>
 
                     <hr>
 
+                    <!-- Filter form: supervisor, start date and end date -->
                     <form method="GET" action=".">
                         <div class="form-row">
                             <div class="form-group col-12">
@@ -293,6 +296,7 @@
 
     <script>
 
+        // Dropdown function for billing cards
         function displayEvents(id) {
             let eventsDiv = document.getElementById(id);
             let style = window.getComputedStyle(eventsDiv).display;
