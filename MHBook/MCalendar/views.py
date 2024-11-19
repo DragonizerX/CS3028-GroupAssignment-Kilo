@@ -863,10 +863,9 @@ def add_supervisor(request): #function for adding new supervisors
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         email = request.POST.get('email')
-        telephone = request.POST.get('telephone')
 
         #Input validation for all fields
-        if not first_name or not last_name or not email or not telephone:
+        if not first_name or not last_name or not email:
             return JsonResponse({'status': 'error', 'message': 'All fields are required.'})
 
         #Ensures unique email
@@ -874,7 +873,7 @@ def add_supervisor(request): #function for adding new supervisors
             return JsonResponse({'status': 'error', 'message': 'Supervisor with this email already exists.'})
         
         #Add new supervisor to table
-        supervisor = Supervisor(first_name=first_name, last_name=last_name, email=email, telephone=telephone)
+        supervisor = Supervisor(first_name=first_name, last_name=last_name, email=email, telephone="")
         supervisor.save()
 
         #Response to let users know it was a success

@@ -355,11 +355,6 @@
                                             <label for="email">Email:</label>
                                             <input type="email" class="form-control" id="email" name="email" required>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="telephone">Telephone:</label>
-                                            <input type="tel" class="form-control" id="telephone" name="telephone" required
-                                                pattern="^\+?\d{10,15}$" title="Enter a valid phone number (e.g., +1234567890 or 1234567890)">
-                                        </div>
                                     </form>
                                 </div>
                                 <div class="container px-5">
@@ -592,14 +587,6 @@
         if (!firstName.value.trim()) errors.push("First Name is required.");
         if (!lastName.value.trim()) errors.push("Last Name is required.");
         if (!email.value.trim()) errors.push("Email is required.");
-        
-        // Telephone validation
-        var phonePattern = /^\+?\d{10,15}$/;
-        if (!telephone.value.trim()) {
-            errors.push("Telephone is required.");
-        } else if (!phonePattern.test(telephone.value)) {
-            errors.push("Please enter a valid phone number (e.g., +1234567890 or 1234567890).");
-        }
 
         // If there are errors, display them and prevent form submission
         if (errors.length > 0) {
