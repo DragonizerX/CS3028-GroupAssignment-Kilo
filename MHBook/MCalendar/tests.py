@@ -345,7 +345,7 @@ class RequestsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "You have no current account requests.")
 
-class billingsTests(TestCase):
+class BillingsTests(TestCase):
     def setUp(self):
         # Create User
         self.user = Users.objects.create_user(
@@ -457,3 +457,141 @@ class billingsTests(TestCase):
 
         # Since no events billing should be deleted too
         self.assertFalse(Billing.objects.filter(id=self.billing.id).exists())        
+
+class CreateBillingTests(TestCase):
+    def setUp(self):
+        # Create User
+        self.user = Users.objects.create_user(
+            first_name='test', 
+            last_name='user', 
+            email='TestUser@icloud.com', 
+            password='testPass', 
+            verified=True, 
+        )
+        # Create superuser
+        self.superuser = Users.objects.create_superuser(
+            first_name='super', 
+            last_name='user', 
+            email='AdminUser@icloud.com', 
+            password='testPass', 
+            telephone=''
+        )
+        # Create equipment
+        self.equipment = Equipment.objects.create(
+            equipmentName='Projector', 
+            hourlyRate=10.00, 
+        )
+        # Create events
+        self.event1 = Event.objects.create(
+            bookingName=f'{self.user.first_name} {self.user.last_name}', 
+            supervisorName='John Pork', 
+            email=self.user.email, 
+            bookingDate=timezone.now().date() + timezone.timedelta(days=1), 
+            startTime='10:00', 
+            finishTime='12:00', 
+            totalTime=2.0, 
+            notes='Test note', 
+            equipment=self.equipment.equipmentName, 
+            hourlyRate=self.equipment.hourlyRate, 
+        )
+        self.event2 = Event.objects.create(
+            bookingName=f'{self.user.first_name} {self.user.last_name}', 
+            supervisorName='John Pork', 
+            email=self.user.email, 
+            bookingDate=timezone.now().date() + timezone.timedelta(days=1), 
+            startTime='12:00', 
+            finishTime='15:00', 
+            totalTime=3.0, 
+            notes='Test note', 
+            equipment=self.equipment.equipmentName, 
+            hourlyRate=self.equipment.hourlyRate, 
+        )
+        self.event3 = Event.objects.create(
+            bookingName=f'{self.user.first_name} {self.user.last_name}', 
+            supervisorName='Jane Pork', 
+            email=self.user.email, 
+            bookingDate=timezone.now().date() + timezone.timedelta(days=5), 
+            startTime='15:00', 
+            finishTime='18:00', 
+            totalTime=3.0, 
+            notes='Test note', 
+            equipment=self.equipment.equipmentName, 
+            hourlyRate=self.equipment.hourlyRate, 
+        )
+
+    # Tests
+    def test_redirect_if_not_superuser(self):
+        self.client.login(email='TestUser@icloud.com', password='testPass')
+        response = self.client.get(reverse('createBilling'))
+        self.assertEqual(response.status_code, 302)
+
+        self.assertRedirects(response, reverse('loginPage'))
+    
+    def test_access_if_superuser(self):
+        self.client.login(email='AdminUser@icloud.com', password='testPass')
+        response = self.client.get(reverse('createBilling'))
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTemplateUsed(response, 'createBilling.html')
+        self.assertIn('Create Billing', response.content.decode())
+
+    def test_create_billing_one_supervisor(self):
+        self.client.login(email='AdminUser@icloud.com', password='testPass')
+
+        selected_events = [self.event1.id, self.event2.id]
+        response = self.client.post(reverse('createBilling'), {'selectEvent': selected_events})
+        self.assertEqual(response.status_code, 302) # code 302 as after successful post django redirects
+
+        # Billing creation Check
+        billing = Billing.objects.first()
+        self.assertIsNotNone(billing)
+        self.assertEqual(billing.supervisor, 'John Pork')
+        self.assertEqual(billing.events.count(), 2)
+
+        # Invoice Reference Check
+        for event_id in selected_events:
+            event = Event.objects.get(id=event_id)
+            self.assertEqual(event.invoiceRef, billing.invoiceRef)
+        
+        # Total Cost Check
+        expected_cost = (self.event1.totalTime + self.event2.totalTime) * self.equipment.hourlyRate
+        self.assertEqual(billing.totalCost, expected_cost)
+
+        self.assertRedirects(response, reverse('billings'))
+
+    def test_create_billing_multiple_supervisors(self):
+        self.client.login(email='AdminUser@icloud.com', password='testPass')
+
+        selected_events = [self.event1.id, self.event3.id]
+        response = self.client.post(reverse('createBilling'), {'selectEvent': selected_events})
+        self.assertEqual(response.status_code, 200) # Since post was unsuccessful django doesn't redirect
+
+        billing = Billing.objects.first()
+        self.assertIsNone(billing)
+
+        messages = list(response.context['messages'])
+        for x in messages:
+            self.assertTrue(any("Can only create billings for one Supervisor at most."))
+    
+    def test_filter_supervisor(self):
+        self.client.login(email='AdminUser@icloud.com', password='testPass')
+        response = self.client.get(reverse('createBilling'), {'supervisorName': 'John Pork'})
+        self.assertEqual(response.status_code, 200)
+
+        event_list = response.context['eventList']
+        self.assertIn(self.event1, event_list)
+        self.assertIn(self.event2, event_list)
+        self.assertNotIn(self.event3, event_list)
+
+    def test_filter_date(self):
+        self.client.login(email='AdminUser@icloud.com', password='testPass')
+
+        date_min = (datetime.now() - timedelta(days=1)).date()
+        date_max = (datetime.now() + timedelta(days=1)).date()
+        response = self.client.get(reverse('createBilling'), {'dateMin': date_min, 'dateMax': date_max})
+        self.assertEqual(response.status_code, 200)
+
+        event_list = response.context['eventList']
+        self.assertIn(self.event1, event_list)
+        self.assertIn(self.event2, event_list)
+        self.assertNotIn(self.event3, event_list)
