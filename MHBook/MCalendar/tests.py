@@ -160,6 +160,7 @@ class editBookingTests(TestCase):
         )
 
         self.url = reverse('editBooking', kwargs={'id': self.event1.id})
+        self.cancelurl = reverse('cancelBooking', kwargs={'id': self.event1.id})
 
     # Tests
     def test_redirect_if_not_logged_in(self):
@@ -216,3 +217,12 @@ class editBookingTests(TestCase):
         response = self.client.post(self.url, update)
         self.assertEqual(response.status_code, 200)
         self.assertIn('This time slot is already booked for this equipment.', response.content.decode())
+
+    def test_cancel_bookings(self):
+        self.client.login(email='TestUser@icloud.com', password='testPass')
+        response = self.client.get(self.cancelurl)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('myBookings'))
+        with self.assertRaises(Event.DoesNotExist):
+            Event.objects.get(id=self.event1.id)
+        
