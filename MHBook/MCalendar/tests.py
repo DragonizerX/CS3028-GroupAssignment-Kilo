@@ -48,6 +48,7 @@ class MyBookingsTests(TestCase):
         self.event1 = Event.objects.create(
             bookingName='Fanum Tax', 
             supervisorName='Lionel Messi', 
+            # Event is linked to user via email
             email='otheruser@email.com', 
             bookingDate=timezone.now().date() + timezone.timedelta(days=2), 
             startTime='10:00', 
@@ -74,6 +75,7 @@ class MyBookingsTests(TestCase):
         self.assertNotContains(response, 'Fanum Tax')
 
     def test_superuser_sees_all_bookings(self):
+        # Tests that admins can see all bookings
         self.client.login(email='AdminUser@icloud.com', password='testPass')
         response = self.client.get(reverse('myBookings'))
         self.assertEqual(response.status_code, 200)
@@ -82,6 +84,7 @@ class MyBookingsTests(TestCase):
         self.assertContains(response, 'Fanum Tax')
 
     def test_no_past_bookings_shown(self):
+        # Tests that bookings are by default shown for todays date
         past_booking = Event.objects.create(
             bookingName='Past Booking', 
             supervisorName='Kylian Mbappe', 
@@ -101,6 +104,7 @@ class MyBookingsTests(TestCase):
         self.assertContains(response, f'{self.user.first_name} {self.user.last_name}')
 
     def test_no_bookings_message_displayed(self):
+        # Tests that no bookings message is displayed when none are found
         self.client.login(email='TestUser@icloud.com', password='testPass')
         Event.objects.filter(email='TestUser@icloud.com').delete()
         response = self.client.get(reverse('myBookings'))
@@ -108,6 +112,7 @@ class MyBookingsTests(TestCase):
         self.assertContains(response, "You have no current bookings.")
 
     def test_pagination(self):
+        # Tests that page by default shows only 10 bookings
         for i in range(13):
             Event.objects.create(
                 bookingName=f'Booking No {i}', 
@@ -288,7 +293,7 @@ class RequestsTests(TestCase):
 
         self.assertIn(f'{self.not1.first_name} {self.not1.last_name}', response.content.decode())
         self.assertIn(f'{self.not2.first_name} {self.not2.last_name}', response.content.decode())
-        self.assertNotIn(f'{self.user.first_name} {self.user.last_name}', response.content.decode()) # Checks verified user isn't here
+        self.assertNotIn(f'{self.user.first_name} {self.user.last_name}', response.content.decode()) # Checks verified user's request is gone
 
     def test_pagination(self):
         for i in range(15):
@@ -309,6 +314,7 @@ class RequestsTests(TestCase):
         self.assertEqual(len(response.context['pageObj']), len(paginator.page(1)))
 
     def test_accept_request(self):
+        # Tests that accepting a user verifies their account
         self.client.login(email='AdminUser@icloud.com', password='testPass')
         accept_url = reverse('confirmAccept', kwargs={'id': self.not1.id})
 
@@ -320,6 +326,7 @@ class RequestsTests(TestCase):
         self.assertTrue(self.not1.verified)
     
     def test_reject_requests(self):
+        # Tests that rejecting a user deletes their account
         self.client.login(email='AdminUser@icloud.com', password='testPass')
         reject_url = reverse('confirmReject', kwargs={'id': self.not2.id})
 
@@ -331,6 +338,7 @@ class RequestsTests(TestCase):
             Users.objects.get(id=self.not2.id)
 
     def test_no_requests_message(self):
+        # Tests that no requests message apears correctly
         Users.objects.all().delete()
         Users.objects.create_superuser(
             first_name='super', 
@@ -434,6 +442,7 @@ class BillingsTests(TestCase):
         self.assertEqual(Event.objects.get(id=self.event2.id).invoiceRef, 'None')
 
     def test_delete_some_event(self):
+        # Tests that if an event is unassigned its billing ID is reset to None and the Total Cost is updated
         self.client.login(email='AdminUser@icloud.com', password='testPass')
         response = self.client.post(reverse('deleteEvent'), data={'selected_events': [self.event1.id]})
         self.assertEqual(response.status_code, 302)
@@ -445,6 +454,7 @@ class BillingsTests(TestCase):
         self.assertEqual(updated_billing.totalCost, 30.0)
 
     def test_delete_all_event(self):
+        # Tests that if all events are unassigned then their billing ID's will be reset to None and billing will be deleted
         self.client.login(email='AdminUser@icloud.com', password='testPass')
         response = self.client.post(reverse('deleteEvent'), data={'selected_events': [self.event1.id]})
         response = self.client.post(reverse('deleteEvent'), data={'selected_events': [self.event2.id]})
@@ -560,6 +570,7 @@ class CreateBillingTests(TestCase):
         self.assertRedirects(response, reverse('billings'))
 
     def test_create_billing_multiple_supervisors(self):
+        # Tests that billings cannot be created if events have different supervisors, as billings are only per one supervisor
         self.client.login(email='AdminUser@icloud.com', password='testPass')
 
         selected_events = [self.event1.id, self.event3.id]
