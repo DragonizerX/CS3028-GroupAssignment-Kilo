@@ -1,8 +1,10 @@
 {% load static %}
+{{ redirect_to_login_immediately }}
 <!DOCTYPE html>
 <html>
 
 <head>
+
     <title>Calendar</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,97 +21,12 @@
 
     <link rel="stylesheet" href="{% static 'global.css' %}">
 
-    <style> 
-        #calendar {
-            margin: 10px auto;
-            padding: 10px;
-            max-width: 1000px;
-            border-radius: 30px;
-        }
-        .fc-toolbar {
-            padding: 20px;
-        }
-        .fc-toolbar-title {
-            font-weight: 200;
-        }
-        .fc-timegrid-slot {
-            height: 35px;
-            border-bottom: 1px solid;
-        }
-        .fc-timegrid-slot-label {
-            font-size: 0.9em;
-            color: darkgrey;
-        }
-        .fc-highlight {
-            background-color: lightblue;
-        }
-        .fc-col-header-cell {
-            background-color: white;
-            padding: 10px 0;
-            font-weight: 500;
-        }
-        .fc-timegrid-col {
-            background-color: white;
-        }
-        #bookingForm .card-body {
-            padding: 20px;
-        }
-        #bookingForm .row {
-            margin-bottom: 5px;
-        }
-        #bookingForm .control-label {
-            padding-top: 7px;
-        }
-        #bookingForm .btn-success {
-            margin-top: 10px;
-        }
-        .btn-info {
-            margin:10px;
-            padding:10px;
-        }
-        .text-center.mt-4 {
-            margin-top: 5px;
-            padding-top: 5px;
-            max-width: 1000px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .fc-button {
-            background-color: lightblue;
-            border: none;
-        }
-        .fc-button:hover {
-            background-color: lightblue;
-        }
-        .fc-button-primary:not(:disabled) {
-            background-color: lightblue;
-        }
-        #equipmentSelect {
-            width:500px;
-            margin:20px auto;
-            text-align:center;
-        }
-        .dropdown-content {
-        display: none; /* Hidden by default */
-        position: absolute;
-        background-color: #f9f9f9;
-        border: 1px solid #ccc;
-        max-height: 200px;
-        overflow-y: auto;
-        width: 100%;
-        z-index: 1;
-        }
-        .dropdown-item {
-            padding: 8px;
-            cursor: pointer;
-        }
-        .dropdown-item:hover {
-            background-color: #ddd;
-        }
-    </style>
 </head>
 
 <body>
+
+    <!-- This is the auto logout warning Message. DO NOT REMOVE! -->
+    <div id="warningMessage" class="popWarning">Warning, the user is about to be logged out!</div>
 
     <!-- sidebar -->
     <div id="sidebar" class="sidenav">
@@ -193,7 +110,7 @@
                             </div>
                             <div class="col-sm-7">
                                 <!-- Search Input Field -->
-                                <input type="text" id="supervisorSearch" class="form-control" placeholder="Search for a supervisor" onkeyup="filterSupervisors()">
+                                <input type="text" autocomplete="off" id="supervisorSearch" class="form-control" placeholder="Search for a supervisor" onkeyup="filterSupervisors()">
                                 
                                 <!-- Custom Dropdown -->
                                 <div id="supervisorDropdown" class="dropdown-content">
@@ -474,11 +391,6 @@
                                             <label for="email">Email:</label>
                                             <input type="email" class="form-control" id="email" name="email" required>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="telephone">Telephone:</label>
-                                            <input type="tel" class="form-control" id="telephone" name="telephone" required
-                                                pattern="^\+?\d{10,15}$" title="Enter a valid phone number (e.g., +1234567890 or 1234567890)">
-                                        </div>
                                     </form>
                                 </div>
                                 <div class="container px-5">
@@ -563,7 +475,9 @@
                     return {
                         html: '<b>' + arg.event.title + '</b>'
                     };
-                }
+                },
+
+                eventClassNames: 'bookedSlot'
             });
             
             calendar.render();
@@ -699,14 +613,6 @@
     if (!firstName.value.trim()) errors.push("First Name is required.");
     if (!lastName.value.trim()) errors.push("Last Name is required.");
     if (!email.value.trim()) errors.push("Email is required.");
-    
-    // Telephone validation
-    var phonePattern = /^\+?\d{10,15}$/;
-    if (!telephone.value.trim()) {
-        errors.push("Telephone is required.");
-    } else if (!phonePattern.test(telephone.value)) {
-        errors.push("Please enter a valid phone number (e.g., +1234567890 or 1234567890).");
-    }
 
     // If there are errors, display them and prevent form submission
     if (errors.length > 0) {
@@ -765,6 +671,42 @@ document.addEventListener("click", function(event) {
         dropdown.style.display = "none";
     }
 });
+
+// This is the auto-logout code, do not change!
+let idleTime = 0;
+const idleTimeout = 300;
+const warningTimeout = 290;
+let messageBox = document.getElementById("warningMessage");
+
+function resetTime() {
+    idleTime = 0;
+    messageBox.style.display = ("none");
+}
+
+function cycle() {
+    idleTime++;
+    if (idleTime >= warningTimeout) {
+        warningMessage();
+    }
+    if (idleTime >= idleTimeout) {
+        logoutUser();
+    }
+}
+
+function warningMessage() {
+    messageBox.style.display = ("block");
+}
+
+function logoutUser() {
+    window.location.href = "{% url 'logout' %}";
+}
+
+window.onload = function() {
+    document.onmousemove = resetTime;
+    document.onkeypress = resetTime;
+    setInterval(cycle, 1000);
+};
+// End of auto-logout code
         </script>
 </body>
 </html>

@@ -77,7 +77,6 @@ class CancelledBooking(models.Model):
     def __str__(self):
         return f"{self.booking_name} - {self.cancelled_by} on {self.cancellation_date}"
 
-
 class Event(models.Model):
     invoiceRef = models.CharField(max_length=10, default="None")
     bookingName = models.CharField(max_length=80)
@@ -131,7 +130,6 @@ class Event(models.Model):
     #def totalTime(self):
     #    pass    
 
-
 class Equipment(models.Model):
     equipmentID_auto = models.AutoField(primary_key=True)
     equipmentName = models.CharField(max_length=100)
@@ -142,10 +140,10 @@ class Equipment(models.Model):
     
 class Billing(models.Model): 
     invoiceRef = models.CharField(max_length=10, blank=False, null=False)
-    supervisor = models.CharField(max_length=64, blank=False, null=False) # includes first and last name, can be changed in billing.html
-    events = models.ManyToManyField(Event) # includes booking reference no which for now is the booking id, and takes the start and finish time parameters to calculate the differnce in minutes to display time used
+    supervisor = models.CharField(max_length=64, blank=False, null=False)
+    events = models.ManyToManyField(Event)
     issueDate = models.DateField(default=timezone.now)
-    startDate = models.DateField(default=(timezone.now().date() - relativedelta(months=3))) # Default is 3 months difference but we need to be able to change this and finish date
+    startDate = models.DateField(default=(timezone.now().date() - relativedelta(months=3)))
     finishDate = models.DateField(default=timezone.now)
-    equipment = models.ManyToManyField(Equipment) # includes the equipment id, name and its hourly rate
+    equipment = models.ManyToManyField(Equipment)
     totalCost = models.FloatField(default=0.0)

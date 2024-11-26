@@ -1,7 +1,9 @@
 {% load static %}
+{{ redirect_to_login_immediately }}
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
@@ -11,36 +13,6 @@
 
     <link rel="stylesheet" href="{% static 'global.css' %}">
     <title>Create Billing</title>
-    <script>
-
-        function displaySupervisors() {
-            // displays the checkboxes for supervisors
-            event.preventDefault();
-            let dropdown = document.getElementById('supervisorDropdown');
-            let computedStyle = window.getComputedStyle(dropdown).display;
-            if (computedStyle === 'none') {
-                dropdown.style.display = 'block';
-            } else {
-                dropdown.style.display = 'none';
-            }
-        }
-
-        function toggleNav() {
-    
-            var element = document.getElementById("sidebar");
-            element.classList.toggle("toggle");
-        }
-    
-        function LogoutButton() {
-            if (confirm("You are about to logout,\nAre you sure you want to continue?")) {
-                window.location.href="{% url 'logout' %}";
-            } else {
-                none;
-            }
-        }
-
-
-    </script>
 
     <style>
 
@@ -103,6 +75,9 @@
 
 <body>
 
+    <!-- This is the auto logout warning Message. DO NOT REMOVE! -->
+    <div id="warningMessage" class="popWarning">Warning, the user is about to be logged out!</div>
+
     <!-- sidebar -->
     <div id="sidebar" class="sidenav">
             
@@ -117,7 +92,7 @@
 
         {% if user.is_superuser %}
             <a href="{% url 'requests' %}">Requests</a>
-            <a href="{% url 'billings' %}">Billing</a> <!-- UPDATE WHEN THE BILLING PAGE IS MADE -->
+            <a href="{% url 'billings' %}">Billing</a>
             <a href="{% url 'archivePage' %}">Archive</a>
         {% endif %}
 
@@ -144,9 +119,16 @@
             <div class="col-md-12">
                 <div class="p-3 py-5">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h2 class="text-right">Billing</h2>
+                        <h2 class="text-right">Create Billing</h2>
+                        <div class="text-center">
+                            <a href="{% url 'billings' %}" class="btn btn-sty">Back To Billing</a>
+                        </div>
                     </div>
 
+                    <hr>
+
+                    <!-- Shows error messages -->
+                    <!-- ie shows error when creating a billing with multiple supervisors, not allowed -->
                     {% if messages %}
                         <ul class="messages">
                             {% for message in messages %}
@@ -155,6 +137,7 @@
                         </ul>
                     {% endif %}
 
+                    <!-- Filter form: supervisor, start date and end date -->
                     <form method="GET" action=".">
                         <div class="form-row">
                             <div class="form-group col-12">
@@ -185,7 +168,7 @@
         {% csrf_token %}
         {% for event in eventList %}
             {% if event.invoiceRef == "None" %}
-
+                <!-- Displays bookings that arent yet assigned, so the supervisor can use them to create a billing -->
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center">
@@ -215,12 +198,78 @@
                 {% endif %}
             {% endfor %}
 
-                        <input type="submit" id="create" value="Create Billing">
+                        <input class="btn btn-sty btn-block" type="submit" value="Create Billing">
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+
+        function displaySupervisors() {
+            // displays the checkboxes for supervisors
+            event.preventDefault();
+            let dropdown = document.getElementById('supervisorDropdown');
+            let computedStyle = window.getComputedStyle(dropdown).display;
+            if (computedStyle === 'none') {
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        }
+
+        function toggleNav() {
+    
+            var element = document.getElementById("sidebar");
+            element.classList.toggle("toggle");
+        }
+    
+        function LogoutButton() {
+            if (confirm("You are about to logout,\nAre you sure you want to continue?")) {
+                window.location.href="{% url 'logout' %}";
+            } else {
+                none;
+            }
+        }
+
+        // This is the auto-logout code, do not change!
+        let idleTime = 0;
+        const idleTimeout = 300;
+        const warningTimeout = 290;
+        let messageBox = document.getElementById("warningMessage");
+
+        function resetTime() {
+            idleTime = 0;
+            messageBox.style.display = ("none");
+        }
+
+        function cycle() {
+            idleTime++;
+            if (idleTime >= warningTimeout) {
+                warningMessage();
+            }
+            if (idleTime >= idleTimeout) {
+                logoutUser();
+            }
+        }
+
+        function warningMessage() {
+            messageBox.style.display = ("block");
+        }
+
+        function logoutUser() {
+            window.location.href = "{% url 'logout' %}";
+        }
+
+        window.onload = function() {
+            document.onmousemove = resetTime;
+            document.onkeypress = resetTime;
+            setInterval(cycle, 1000);
+        };
+        // End of auto-logout code
+
+    </script>
 
 </body>
 </html>

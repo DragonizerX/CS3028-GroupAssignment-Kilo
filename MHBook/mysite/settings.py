@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'MCalendar'
+    'MCalendar',
+    'HSamples',
 ]
 
 AUTH_USER_MODEL = 'MCalendar.Users'
@@ -50,6 +51,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_session_timeout.middleware.SessionTimeoutMiddleware',
+    'MCalendar.middleware.Handle404RedirectMiddleware',
 ]
 
 
@@ -121,6 +124,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+LOGIN_REDIRECT_URL = 'login'
+LOGIN_URL = '/MCalendar/login/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -137,3 +142,13 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'histotrackltd@gmail.com'
 EMAIL_HOST_PASSWORD = 'hrcr svsf fxyy fdnr'
+
+
+#This code is the session timeout, it needs to be included as
+#the auto logout on idle code only runs if the page is open. Which
+#means that if the user closes the page logged in it will stay logged in,
+#which is a security flaw.
+
+SESSION_EXPIRE_SECONDS = 3600
+SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
+SESSION_TIMEOUT_REDIRECT = '/MCalendar/login/'

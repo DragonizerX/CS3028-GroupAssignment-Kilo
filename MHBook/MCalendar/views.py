@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
-from django.http import HttpResponse, JsonResponse, FileResponse
+from django.http import HttpResponse, JsonResponse, FileResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.template import loader
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.utils import timezone
+from django.utils import timezone, dateformat
 
 from reportlab.pdfgen import canvas # type: ignore
 from django.contrib.admin.views.decorators import staff_member_required
@@ -19,6 +19,9 @@ from .forms import CreateUserForm, UpdateUserForm, ChangePasswordForm, AddEquipm
 
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+
+
 # Create your views here.b
 
 def loginPage(request):
@@ -96,8 +99,16 @@ def changePasswordPage(request):
 
         if request.method == 'POST':
             form = ChangePasswordForm(current_user, request.POST)
-            if form.is_valid(): #If the form's data is valid then data is
+            if form.is_valid(): 
                 form.save()
+                changePasswordText = ("Your password was successfully changed at  %s. You can now log in to HistoTrack with your new password." % str(dateformat.format((timezone.now()), 'Y-m-d H:i:s')))
+                send_mail(
+                    "Your Password Has Changed!",
+                    changePasswordText,
+                    "histotrackltd@gmail.com",
+                    [request.user.email],
+                    fail_silently=False,
+                )
                 messages.success(request, "Your Password Has Been Updated, Please Log In Again")
                 return redirect('loginPage')
 
@@ -109,7 +120,7 @@ def changePasswordPage(request):
         else:
             form = ChangePasswordForm(current_user)
             return render(request, 'changePassword.html', {'form':form})
-        
+
     else:
         messages.success(request, "Please log in before entering that page!")
         return redirect("loginPage")
@@ -118,11 +129,11 @@ def changePasswordPage(request):
 def myBookings(request):
     
     if request.user.is_superuser:
-        myBookings = Event.objects.filter(bookingDate__gte=timezone.now().date())
+        myBookings = Event.objects.filter(bookingDate__gte=timezone.now().date()) # Filter makes sure no past bookings display
         template = loader.get_template('myBookings.html')
-        hasBooking = myBookings.exists()
+        hasBooking = myBookings.exists() # Later used for displaying a message that there are no current bookings
 
-        # Paginator yaya
+        # Paginator Stuff
         paginator = Paginator(myBookings, 10)
         pageNumber = request.GET.get('page')
         pageObj = paginator.get_page(pageNumber)
@@ -133,9 +144,10 @@ def myBookings(request):
             'pageObj': pageObj,
         }
         return HttpResponse(template.render(context, request))
+    
     if request.user.is_authenticated:
         current_user = request.user.email
-        myBookings = Event.objects.filter(email=current_user, bookingDate__gte=timezone.now().date())
+        myBookings = Event.objects.filter(email=current_user, bookingDate__gte=timezone.now().date()) # Also makes sure only bookings that are associated with the user's email get dsiplayed
         template = loader.get_template('myBookings.html')
         hasBooking = myBookings.exists()
 
@@ -154,14 +166,15 @@ def myBookings(request):
         messages.success(request, "Please log in before entering that page!")
         return redirect("loginPage")
 
+
 def requests(request):
     if request.user.is_superuser:
         requests = Users.objects.all().values()
         template = loader.get_template('requests.html')
-        hasRequest = requests.filter(verified=False).exists()
+        hasRequest = requests.filter(verified=False).exists() # Checks if there are any requests
 
         # Paginator
-        paginator = Paginator(requests, 12) # For some reason it displays 2 less than what this value is ?? Currently it will display 10
+        paginator = Paginator(requests, 12)
         pageNumber = request.GET.get('page')
         pageObj = paginator.get_page(pageNumber)
 
@@ -176,28 +189,38 @@ def requests(request):
         logout(request)
         return redirect("loginPage")
 
+
+
 def cancelBooking(request, id):
+    # Failsafe if an issue occurs
+    if id is None:
+        return redirect('myBookings')
+    
     booking = get_object_or_404(Event, id=id)
-    if booking.bookingDate == timezone.now().date(): #check for same day cancelation
+    if booking.bookingDate == timezone.now().date(): #check for same day cancelation 
         CancelledBooking.objects.create(
             booking_name=booking.bookingName,
             cancelled_by=request.user,  # assumes the user is authenticated
             cancellation_date=timezone.now()
         )
+    # Booking gets purged
     booking.delete()
     return redirect('myBookings')
+
 
 def clear_cancelled_bookings(request):
     CancelledBooking.objects.all().delete()
     return redirect('CalendarPageAdmin') 
 
+
 def confirmAccept(request, id):
     requests = get_object_or_404(Users, id=id)
-    requests.verified = True
+    requests.verified = True # If user accepted, now able to log in
+    # Sends confirmation email
     send_mail(
         "Your Account Is Verified!",
         "Congratulations!\n\nYour account has been verified and is in our HistoTrack system. You may now log in.",
-        "histotrackltd@gmail.com",
+        "histotrackltd@gmail.com", # Change if necessary
         [requests.email],
         fail_silently=False,
     )
@@ -206,8 +229,10 @@ def confirmAccept(request, id):
 
 def confirmReject(request, id):
     requests = get_object_or_404(Users, id=id)
+    # Purges user account
     requests.delete()
     return redirect('requests')
+
 
 def editBooking(request, id):
     if request.user.is_authenticated:
@@ -216,10 +241,29 @@ def editBooking(request, id):
         supervisors = Supervisor.objects.all().order_by('first_name')
         
         if request.method == 'POST':
-            """bookingName = request.POST.get('bookingName')
-            if bookingName:
-                booking.bookingName = bookingName"""
+            new_date = request.POST.get('bookingDate')
+            new_start = request.POST.get('startTime')
+            new_finish = request.POST.get('finishTime')
+            new_equipment = request.POST.get('equipment')
 
+            # Check for overlapping bookings
+            overlapping_bookings = Event.objects.filter(
+                equipment=new_equipment,
+                bookingDate=new_date,
+                startTime__lt=new_finish,
+                finishTime__gt=new_start
+            ).exclude(id=id)  # Exclude current booking from check
+            
+            if overlapping_bookings.exists():
+                context = {
+                    'editBooking': [booking],
+                    'equipmentList': equipmentList,
+                    'supervisors': supervisors,
+                    'error_message': "This time slot is already booked for this equipment."
+                }
+                return render(request, 'editBooking.html', context)
+        
+            # Updates form only if there is an input
             supervisorName = request.POST.get('supervisorName')
             if supervisorName:
                 supervisor = Supervisor.objects.get(id=supervisorName)
@@ -260,11 +304,14 @@ def editBooking(request, id):
         messages.success(request, "Please log in before entering that page!")
         return redirect("loginPage")
 
+
 @ensure_csrf_cookie
 def calendar_view(request):
     return render(request, 'CalendarPage.html')
 
+
 @ensure_csrf_cookie
+@login_required
 def create_event(request):
     if request.method == 'POST':
         try:
@@ -336,6 +383,7 @@ def create_event(request):
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
+@login_required
 def get_events(request):
     try:
         equipment_id = request.GET.get('equipment', '')
@@ -359,10 +407,15 @@ def get_events(request):
             }
             event_list.append(event_data)
             
+        #return redirect('/MCalendar/CalendarPage/')
         return JsonResponse(event_list, safe=False)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=400)
+        if request.user.is_superuser:
+            return redirect('/MCalendar/CalendarPageAdmin/')
+        else:
+            return redirect('/MCalendar/CalendarPage/')
 
+@login_required
 def add_equipment(request):
     if request.method == 'POST':
         form = AddEquipmentForm(request.POST)
@@ -383,6 +436,8 @@ def add_equipment(request):
     else:
         return render(request, 'CalendarPage.html', {'form': form})
     
+
+@login_required
 def delete_equipment(request):
     if request.method == 'POST':
         equipment_id = request.POST.get('delete_equipment')
@@ -397,6 +452,7 @@ def delete_equipment(request):
     equipment_list = Equipment.objects.all()
     return render(request, 'CalendarPageAdmin.html', {'equipmentList': equipment_list})
 
+@login_required
 def CalendarPage(request):
     if request.user.is_authenticated:
         equipment_list = Equipment.objects.all()
@@ -409,7 +465,7 @@ def CalendarPage(request):
         messages.success(request, "Please log in before entering that page!")
         return redirect("loginPage")
 
-
+@login_required
 def AdminCalendarView(request):
     if request.user.is_superuser:
         equipment_list = Equipment.objects.all()
@@ -430,7 +486,7 @@ def AdminCalendarView(request):
         logout(request)
         return redirect("loginPage")
     
-
+@login_required
 def archivePage(request):
     if request.user.is_superuser:
         eventList = Event.objects.all()
@@ -466,7 +522,7 @@ def archivePage(request):
         totalHours = 0
         for x in eventList:
             totalHours += x.totalTime
-        print(totalHours)
+        #print(totalHours)
 
         # Paginator
         paginator = Paginator(eventList, 10)
@@ -487,14 +543,17 @@ def archivePage(request):
         logout(request)
         return redirect("loginPage")
 
-
 def archiveValidQuery(param): # createBilling is using this aswell to sort through filters. Thanks!
     return param != '' and param is not None
 
-# createBilling functions
+
+# Create Billing functions
+
 def generateInvoiceRef():
+    # Generates a uuid
     return str(uuid.uuid4())[:10]
 
+@login_required
 def createBilling(request):
 
     if request.user.is_superuser:
@@ -527,12 +586,15 @@ def createBilling(request):
 
             supervisors = selectedEventObjects.values_list('supervisorName', flat=True).distinct()
 
+            # Won't let you create a billing with multiple supervisors
             if supervisors.count() > 1:
                 messages.error(request, "Can only create billings for one Supervisor at most.")
                 return render(request, 'createBilling.html', context)
 
             billing = Billing()
+            # Gets the uuid
             billing.invoiceRef = generateInvoiceRef()
+            # Sets all refs in events to the billing ref
             for event in selectedEventObjects:
                 event.invoiceRef = billing.invoiceRef
                 event.save()
@@ -541,23 +603,19 @@ def createBilling(request):
 
             billing.events.set(selectedEventObjects)
 
-            #print(selectedEventObjects)
             equipment_names = selectedEventObjects.values_list('equipment', flat=True).distinct()
             for e in equipmentList:
-                print(e)
                 if e.equipmentName == equipment_names:
-                    print(e.equipmentID_auto+1)
                     billing.equipment.set(e.equipmentID_auto+1)
                     billing.save()
 
+            # For calculating cost
             cost = 0
             for event in selectedEventObjects:
                 for eq in equipment:
                     if event.equipment == eq.equipmentName:
-                        print("Here")
                         cost += event.totalTime * eq.hourlyRate
             billing.totalCost = cost
-            print(cost)
             billing.save()
 
             return redirect('billings')
@@ -568,7 +626,54 @@ def createBilling(request):
         messages.success(request, "Please log in before entering that page! Admin access only.")
         logout(request)
         return redirect("loginPage")
+
+
+# For deleting whole billings
+@login_required
+def deleteBilling(request, id):
+    if request.user.is_superuser:
+        billing = get_object_or_404(Billing, id=id)
+
+        Event.objects.filter(invoiceRef=billing.invoiceRef).update(invoiceRef='None') # Makes sure to reset event refs since billing doesn't exist anymore
+
+        billing.delete()
+
+        return redirect('billings')
+    else:
+        messages.success(request, "Please log in before entering that page! Admin access only.")
+        logout(request)
+        return redirect("loginPage")
+
+
+# DOESN'T DELETE EVENT, just removes event from billing
+@login_required
+def deleteEvent(request):
+    if request.user.is_superuser:
+        if request.method == 'POST':
+            selectedEvent = request.POST.getlist('selected_events')
+
+            if selectedEvent:
+                for id in selectedEvent:
+                    event = Event.objects.get(id=id)
+                    billing = Billing.objects.filter(events=event).first()
+                    billingInvoiceRef = event.invoiceRef
+                    event.invoiceRef = 'None'
+                    billing.events.remove(event)
+                    billing.totalCost -= (float(event.totalTime) * float(event.hourlyRate)) # Necessary to remove from total cost
+                    event.save()
+                    billing.save()
+
+                    # If no events in a billing, delete the billing
+                    if not Event.objects.filter(invoiceRef=billingInvoiceRef).exists():
+                        Billing.objects.filter(invoiceRef=billingInvoiceRef).delete()
+
+        return redirect('billings')
+    else:
+        messages.success(request, "Please log in before entering that page! Admin access only.")
+        logout(request)
+        return redirect("loginPage")
     
+@login_required
 def billings(request):
 
     if request.user.is_superuser:
@@ -602,114 +707,165 @@ def billings(request):
         logout(request)
         return redirect("loginPage")
     
-
-def editBilling(request, id):
-    if request.user.is_superuser:
-        billing = get_object_or_404(Billing, id=id)
-        events = Event.objects.all()
-        
-        if request.method == 'POST':
-            
-            print(request.POST)
-            for event in events:
-                assigned = f"{event.id}AssignedBooking"
-                if assigned in request.POST:
-                    continue
-                else:
-                    if event.invoiceRef == billing.invoiceRef:
-                        event.invoiceRef = 'None'
-                        event.save()
-
-            associated_events = Event.objects.filter(invoiceRef=billing.invoiceRef)
-            if not associated_events.exists():
-                # No events are associated with this billing, so delete the billing
-                billing.delete()
-                
-            return redirect('billings')
-
-        template = loader.get_template('editBilling.html')
-        context = {
-            'billing': billing,
-            'events': events,
-        }
-        return HttpResponse(template.render(context, request))
-    else:
-        messages.success(request, "Please log in before entering that page!")
-        return redirect("loginPage")
-    
+@login_required
 def generatePDF(request, id):
 
     if request.user.is_superuser:
-        # Retrieve the billing instance or return a 404 if not found
         billing = get_object_or_404(Billing, id=id)
         
-        # Set up a BytesIO buffer to store the PDF
         buffer = io.BytesIO()
         p = canvas.Canvas(buffer)
-        
-        # Set PDF title and metadata
         p.setTitle(f"Invoice_{billing.invoiceRef}")
 
-        # Define content formatting (customize based on your needs)
+        # Info for client
+        p.setFont("Helvetica", 8)
+        y_position = 800
+        p.drawString(50, y_position, "If you have any queries, feel free to get in touch.")
+        y_position -= 10
+        p.drawString(50, y_position, "University of Aberdeen, Institute of Medical Sciences, Foresthill, Aberdeen, AB25 2ZD")
+        y_position -= 10
+        p.drawString(50, y_position, "Gillian Milne, gillian.milne@abdn.ac.uk")
+
+        # Head
+        y_position -= 10
+        p.line(50, y_position, 550, y_position)
+        y_position -= 20
         p.setFont("Helvetica-Bold", 16)
-        p.drawString(100, 800, "Microscopy and Histology Invoice")
+        p.drawString(50, y_position, "Microscopy and Histology Invoice")
+        y_position -= 10
+        p.line(50, y_position, 550, y_position)
+
+        # Important Info
+        p.setFont("Helvetica-Bold", 12)
+        y_position -= 30
+        p.drawString(50, y_position, "Supervisor: ")
+
+        width = p.stringWidth("Supervisor: ", "Helvetica-Bold", 12)
         p.setFont("Helvetica", 12)
+        p.drawString(50 + width, y_position, f"{billing.supervisor}")
 
-        # Display billing information (update fields according to your model)
-        y_position = 750
-        p.drawString(100, y_position, f"Invoice Reference code: {billing.invoiceRef}")
+        p.setFont("Helvetica-Bold", 12)
         y_position -= 20
-        p.drawString(100, y_position, f"Total Cost: {billing.totalCost}")
-        y_position -= 20
-        p.drawString(100, y_position, f"Supervisor: {billing.supervisor}")
-        y_position -= 20
-        p.drawString(100, y_position, f"Issue Date: {billing.issueDate}")
+        p.drawString(50, y_position, "Invoice Reference code: ")
 
-        # List the events and equipment in the billing, if applicable
-        y_position -= 40
-        p.setFont("Helvetica-Bold", 14)
-        p.drawString(100, y_position, "Events:")
-        y_position -= 20
+        width = p.stringWidth("Invoice Reference code: ", "Helvetica-Bold", 12)
         p.setFont("Helvetica", 12)
+        p.drawString(50 + width, y_position, f"{billing.invoiceRef}")
 
-        # Loop through events in the billing
+        p.setFont("Helvetica-Bold", 12)
+        y_position -= 21
+        p.drawString(50, y_position, "Total Cost: ")
+
+        width = p.stringWidth("Total Cost: ", "Helvetica-Bold", 12)
+        p.setFont("Helvetica", 12)
+        p.drawString(50 + width, y_position, f"£{billing.totalCost:.2f}")
+
+        p.setFont("Helvetica-Bold", 12)
+        y_position -= 20
+        p.drawString(50, y_position, "Issue Date: ")
+
+        width = p.stringWidth("Issue Date: ", "Helvetica-Bold", 12)
+        p.setFont("Helvetica", 12)
+        p.drawString(50 + width, y_position, f"{billing.issueDate}")
+
+        y_position -= 20
+        p.line(50, y_position, 550, y_position)
+
+        # Events listing
+        y_position -= 20
+        p.setFont("Helvetica-Bold", 13)
+        p.drawString(50, y_position, "Events:")
+        y_position -= 10
+        p.setFont("Helvetica", 12)
+        p.line(50, y_position, 550, y_position)
+        y_position -= 20
+
         for event in billing.events.all():
-            p.drawString(120, y_position, f"{event.bookingName} on {event.bookingDate}")
-            y_position -= 20
+            # Checks for space & creates new page
+            if y_position <= 50:
+                p.showPage()
+                y_position = 800
+                p.line(100, y_position, 550, y_position)
+                y_position -= 20
 
-        # Reset y_position and list equipment
-        y_position -= 20
-        p.setFont("Helvetica-Bold", 14)
-        p.drawString(100, y_position, "Equipment:")
-        y_position -= 20
-        p.setFont("Helvetica", 12)
-        
-        for equipment in billing.equipment.all():
-            p.drawString(120, y_position, f"- {equipment}")
+            # name
+            p.setFont("Helvetica-Bold", 10)
+            p.drawString(100, y_position, "Booking Name: ")
+
+            width = p.stringWidth("Booking Name: ", "Helvetica-Bold", 10)
+            p.setFont("Helvetica", 10)
+            p.drawString(100 + width, y_position, f"{event.bookingName}")
+
+            # id
+            p.setFont("Helvetica-Bold", 10)
+            p.drawString(300, y_position, "Booking ID: ")
+
+            width = p.stringWidth("Booking ID: ", "Helvetica-Bold", 10)
+            p.setFont("Helvetica", 10)
+            p.drawString(300 + width, y_position, f"{event.id}")
+
+            # date
+            p.setFont("Helvetica-Bold", 10)
+            p.drawString(425, y_position, "Booking Date: ")
+
+            width = p.stringWidth("Booking Date: ", "Helvetica-Bold", 10)
+            p.setFont("Helvetica", 10)
+            p.drawString(425 + width, y_position, f"{event.bookingDate}")
+
+            # equipment
+            y_position -= 8
+            p.line(300, y_position, 550, y_position)
+            y_position -= 15
+            p.setFont("Helvetica-Bold", 10)
+            p.drawString(300, y_position, "Hour(s)")
+            p.drawString(400, y_position, "Rate/hr")
+            p.drawString(500, y_position, "Cost")
+
+            y_position -= 20
+            p.drawString(100, y_position, f"{event.equipment}")
+
+            p.setFont("Helvetica", 10)
+            p.drawString(300, y_position, f"{event.totalTime}")
+            p.drawString(400, y_position, f"{event.hourlyRate}")
+            cost = event.hourlyRate * event.totalTime
+            p.drawString(500, y_position, f"£{cost:.2f}")
+            
+            # end
+            y_position -= 20
+            p.line(100, y_position, 550, y_position)
             y_position -= 20
         
-        # Save the PDF
+        p.setFont("Helvetica-Bold", 12)
+        y_position -= 5
+        p.drawString(350, y_position, "Invoice Total Cost: ")
+
+        # Cost
+        width = p.stringWidth("Invoice Total Cost: ", "Helvetica-Bold", 12)
+        p.setFont("Helvetica", 12)
+        p.drawString(350 + width, y_position, f"£{billing.totalCost:.2f}")
+        y_position -= 15
+        p.line(50, y_position, 550, y_position)
+        
+        # Done
         p.showPage()
         p.save()
         
-        # Prepare PDF for download
         buffer.seek(0)
         return FileResponse(buffer, as_attachment=True, filename=f"Invoice_{billing.invoiceRef}.pdf")
     else:
         messages.success(request, "Please log in before entering that page! Admin access only.")
         logout(request)
         return redirect("loginPage")
-    
-    
+
+@login_required(login_url='/MCalendar/login/')
 def add_supervisor(request): #function for adding new supervisors
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         email = request.POST.get('email')
-        telephone = request.POST.get('telephone')
 
         #Input validation for all fields
-        if not first_name or not last_name or not email or not telephone:
+        if not first_name or not last_name or not email:
             return JsonResponse({'status': 'error', 'message': 'All fields are required.'})
 
         #Ensures unique email
@@ -717,10 +873,16 @@ def add_supervisor(request): #function for adding new supervisors
             return JsonResponse({'status': 'error', 'message': 'Supervisor with this email already exists.'})
         
         #Add new supervisor to table
-        supervisor = Supervisor(first_name=first_name, last_name=last_name, email=email, telephone=telephone)
+        supervisor = Supervisor(first_name=first_name, last_name=last_name, email=email, telephone="")
         supervisor.save()
 
-        #Response to let users no it was a success
-        return JsonResponse({'status': 'success', 'message': 'Supervisor added successfully.'})
+        #Response to let users know it was a success
+        return JsonResponse({'status': 'success', 'message': 'Supervisor added successfully.'})   
+        
 
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})    
+
+
+def custom_404_view(request, exception):
+    # Redirect to the login page
+    return redirect('/MCalendar/login/')
