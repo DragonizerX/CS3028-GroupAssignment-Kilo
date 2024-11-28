@@ -148,346 +148,6 @@
                             <label for="start">Start time: </label>
                             <select class="form-control" id="start" name="startTime" required>
                                 <option value="00:00" {% if x.startTime|time:'H:i' == '00:00' %}selected{% endif %}>00:00</option>
-                                <option value="01:00" {% if x.startTime|time:'H:i' == '01:00' %}selected{% endif %}>01:00</option>
-                                <option value="02:00" {% if x.startTime|time:'H:i' == '02:00' %}selected{% endif %}>02:00</option>
-                                <option value="03:00" {% if x.startTime|time:'H:i' == '03:00' %}selected{% endif %}>03:00</option>
-                                <option value="04:00" {% if x.startTime|time:'H:i' == '04:00' %}selected{% endif %}>04:00</option>
-                                <option value="05:00" {% if x.startTime|time:'H:i' == '05:00' %}selected{% endif %}>05:00</option>
-                                <option value="06:00" {% if x.startTime|time:'H:i' == '06:00' %}selected{% endif %}>06:00</option>
-                                <option value="07:00" {% if x.startTime|time:'H:i' == '07:00' %}selected{% endif %}>07:00</option>
-                                <option value="08:00" {% if x.startTime|time:'H:i' == '08:00' %}selected{% endif %}>08:00</option>
-                                <option value="09:00" {% if x.startTime|time:'H:i' == '09:00' %}selected{% endif %}>09:00</option>
-                                <option value="10:00" {% if x.startTime|time:'H:i' == '10:00' %}selected{% endif %}>10:00</option>
-                                <option value="11:00" {% if x.startTime|time:'H:i' == '11:00' %}selected{% endif %}>11:00</option>
-                                <option value="12:00" {% if x.startTime|time:'H:i' == '12:00' %}selected{% endif %}>12:00</option>
-                                <option value="13:00" {% if x.startTime|time:'H:i' == '13:00' %}selected{% endif %}>13:00</option>
-                                <option value="14:00" {% if x.startTime|time:'H:i' == '14:00' %}selected{% endif %}>14:00</option>
-                                <option value="15:00" {% if x.startTime|time:'H:i' == '15:00' %}selected{% endif %}>15:00</option>
-                                <option value="16:00" {% if x.startTime|time:'H:i' == '16:00' %}selected{% endif %}>16:00</option>
-                                <option value="17:00" {% if x.startTime|time:'H:i' == '17:00' %}selected{% endif %}>17:00</option>
-                                <option value="18:00" {% if x.startTime|time:'H:i' == '18:00' %}selected{% endif %}>18:00</option>
-                                <option value="19:00" {% if x.startTime|time:'H:i' == '19:00' %}selected{% endif %}>19:00</option>
-                                <option value="20:00" {% if x.startTime|time:'H:i' == '20:00' %}selected{% endif %}>20:00</option>
-                                <option value="21:00" {% if x.startTime|time:'H:i' == '21:00' %}selected{% endif %}>21:00</option>
-                                <option value="22:00" {% if x.startTime|time:'H:i' == '22:00' %}selected{% endif %}>22:00</option>
-                                <option value="23:00" {% if x.startTime|time:'H:i' == '23:00' %}selected{% endif %}>23:00</option>
-                            </select>
-
-                            <label for="finish">Finish time: </label>
-                            <select class="form-control" id="finish" name="finishTime" required>
-                                <option value="00:00" {% if x.finishTime|time:'H:i' == '00:00' %}selected{% endif %}>00:00</option>
-                                <option value="01:00" {% if x.finishTime|time:'H:i' == '01:00' %}selected{% endif %}>01:00</option>
-                                <option value="02:00" {% if x.finishTime|time:'H:i' == '02:00' %}selected{% endif %}>02:00</option>
-                                <option value="03:00" {% if x.finishTime|time:'H:i' == '03:00' %}selected{% endif %}>03:00</option>
-                                <option value="04:00" {% if x.finishTime|time:'H:i' == '04:00' %}selected{% endif %}>04:00</option>
-                                <option value="05:00" {% if x.finishTime|time:'H:i' == '05:00' %}selected{% endif %}>05:00</option>
-                                <option value="06:00" {% if x.finishTime|time:'H:i' == '06:00' %}selected{% endif %}>06:00</option>
-                                <option value="07:00" {% if x.finishTime|time:'H:i' == '07:00' %}selected{% endif %}>07:00</option>
-                                <option value="08:00" {% if x.finishTime|time:'H:i' == '08:00' %}selected{% endif %}>08:00</option>
-                                <option value="09:00" {% if x.finishTime|time:'H:i' == '09:00' %}selected{% endif %}>09:00</option>
-                                <option value="10:00" {% if x.finishTime|time:'H:i' == '10:00' %}selected{% endif %}>10:00</option>
-                                <option value="11:00" {% if x.finishTime|time:'H:i' == '11:00' %}selected{% endif %}>11:00</option>
-                                <option value="12:00" {% if x.finishTime|time:'H:i' == '12:00' %}selected{% endif %}>12:00</option>
-                                <option value="13:00" {% if x.finishTime|time:'H:i' == '13:00' %}selected{% endif %}>13:00</option>
-                                <option value="14:00" {% if x.finishTime|time:'H:i' == '14:00' %}selected{% endif %}>14:00</option>
-                                <option value="15:00" {% if x.finishTime|time:'H:i' == '15:00' %}selected{% endif %}>15:00</option>
-                                <option value="16:00" {% if x.finishTime|time:'H:i' == '16:00' %}selected{% endif %}>16:00</option>
-                                <option value="17:00" {% if x.finishTime|time:'H:i' == '17:00' %}selected{% endif %}>17:00</option>
-                                <option value="18:00" {% if x.finishTime|time:'H:i' == '18:00' %}selected{% endif %}>18:00</option>
-                                <option value="19:00" {% if x.finishTime|time:'H:i' == '19:00' %}selected{% endif %}>19:00</option>
-                                <option value="20:00" {% if x.finishTime|time:'H:i' == '20:00' %}selected{% endif %}>20:00</option>
-                                <option value="21:00" {% if x.finishTime|time:'H:i' == '21:00' %}selected{% endif %}>21:00</option>
-                                <option value="22:00" {% if x.finishTime|time:'H:i' == '22:00' %}selected{% endif %}>22:00</option>
-                                <option value="23:00" {% if x.finishTime|time:'H:i' == '23:00' %}selected{% endif %}>23:00</option>
-                            </select>
-
-                            <label for="notes">Notes: </label>
-                            <input type="text" id="notes" name="notes" placeholder="{{ x.notes }}">
-                        
-
-
-                            <label for="equipment">Equipment: </label>
-                            <select id="equipment" name="equipment"> <option selected>{{ x.equipment }}</option>
-
-                                {% for equipment in equipmentList %}
-                                    <option value="{{ equipment }}">{{ equipment }}</option>
-                                {% endfor %}
-                            </select>
-
-                        </div>
-    
-                        <br>
-                        <input class="btn btn-success btn-block" type="submit" value="Submit" style="width: 80%; margin: auto;">
-                    </p>
-                </div>
-            </div>
-            <br>
-
-            <button class="btn btn-danger btn-block" type="button" style="width: 80%; margin: auto;" onclick="confirmCancel({{ x.id }})">Cancel Booking</button>
-
-            
-        {% endfor %}
-        </form>
-
-        </div>
-        </div>
-        </div>
-    </div>
-
-    <script>
-        // Cancels booking after confirming with user
-        function confirmCancel(id) {
-            const dialog = window.confirm('Are you sure you want to cancel this booking?');
-    
-            if (dialog) {
-                window.location.href = `/MCalendar/cancelBooking/${id}/`;
-            }
-        }
-
-        function toggleNav() {
-    
-            var element = document.getElementById("sidebar");
-            element.classList.toggle("toggle");
-        }
-
-        function LogoutButton() {
-            if (confirm("You are about to logout,\nAre you sure you want to continue?")) {
-              window.location.href="{% url 'logout' %}";
-            } else {
-              none;
-            }
-          }
-
-          document.addEventListener('DOMContentLoaded', function() {
-          function updateEndTimeOptions() {
-              const startTime = document.getElementById('start').value;
-              const finishTimeSelect = document.getElementById('finish');
-              const [startHour, startMinute] = startTime.split(':').map(Number);
-              
-              const currentSelection = finishTimeSelect.value;
-              
-              finishTimeSelect.innerHTML = '';
-              
-              for (let i = 0; i < 24 * 60; i += 15) {
-                  const hour = Math.floor(i / 60);
-                  const minute = i % 60;
-  
-                  // Only include times that are after the start time
-                  if (hour > startHour || (hour === startHour && minute > startMinute)) {
-                      const timeStr = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-                      const option = new Option(timeStr, timeStr);
-                      finishTimeSelect.appendChild(option);
-                      
-                      if (timeStr === currentSelection) {
-                          option.selected = true;
-                      }
-                  }
-              }
-              
-              if (finishTimeSelect.value === '') {
-                  finishTimeSelect.value = `${String(startHour + 1).padStart(2, '0')}:00`;
-              }
-          }
-  
-          function validateTimes() {
-              const startTime = document.getElementById('start').value;
-              const finishTime = document.getElementById('finish').value;
-              const [startHour, startMinute] = startTime.split(':').map(Number);
-              const [finishHour, finishMinute] = finishTime.split(':').map(Number);
-              
-              if (finishHour < startHour || (finishHour === startHour && finishMinute <= startMinute)) {
-                  alert('End time must be after start time');
-                  document.getElementById('finish').value = 
-                      `${String(startHour + 1).padStart(2, '0')}:00`;
-                  return false;
-              }
-              return true;
-          }
-  
-          const startSelect = document.getElementById('start');
-          if (startSelect) {
-              startSelect.addEventListener('change', updateEndTimeOptions);
-              updateEndTimeOptions();
-          }
-  
-          const finishSelect = document.getElementById('finish');
-          if (finishSelect) {
-              finishSelect.addEventListener('change', validateTimes);
-          }
-  
-          const form = document.querySelector('.details');
-          if (form) {
-              form.addEventListener('submit', function(e) {
-                  if (!validateTimes()) {
-                      e.preventDefault();
-                  }
-              });
-          }
-      });  
-
-        
-
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById("supervisorSearch");
-    const dropdown = document.getElementById("supervisorDropdown");
-
-    // Show dropdown when the input is focused
-    searchInput.addEventListener("focus", function() {
-        dropdown.style.display = "block";
-    });
-
-    // Filter dropdown items as user types
-    searchInput.addEventListener("keyup", function() {
-        const searchText = searchInput.value.toLowerCase();
-        const items = dropdown.getElementsByClassName("dropdown-item");
-
-        for (let item of items) {
-            const itemText = item.innerText.toLowerCase();
-            item.style.display = itemText.includes(searchText) ? "" : "none";
-        }
-    });
-
-    // Close dropdown if clicking outside of the input or dropdown
-    document.addEventListener("mousedown", function(event) {
-        if (!dropdown.contains(event.target) && event.target !== searchInput) {
-            dropdown.style.display = "none";
-        }
-    });
-
-    // Select a supervisor from the dropdown
-    window.selectSupervisor = function(id, name) {
-        searchInput.value = name; // Display selected name in input field
-        document.getElementById("selectedSupervisorId").value = id; // Store selected supervisor ID
-        dropdown.style.display = "none"; // Hide dropdown after selection
-    };
-});
-
-
-        // This is the auto-logout code, do not change!
-        let idleTime = 0;
-        const idleTimeout = 300;
-        const warningTimeout = 290;
-        let messageBox = document.getElementById("warningMessage");
-
-        function resetTime() {
-            idleTime = 0;
-            messageBox.style.display = ("none");
-        }
-
-        function cycle() {
-            idleTime++;
-            if (idleTime >= warningTimeout) {
-                warningMessage();
-            }
-            if (idleTime >= idleTimeout) {
-                logoutUser();
-            }
-        }
-
-        function warningMessage() {
-            messageBox.style.display = ("block");
-        }
-
-        function logoutUser() {
-            window.location.href = "{% url 'logout' %}";
-        }
-
-        window.onload = function() {
-            document.onmousemove = resetTime;
-            document.onkeypress = resetTime;
-            setInterval(cycle, 1000);
-        };
-        // End of auto-logout code
-
-    </script>
-
-</head>
-
-<body>
-
-    <!-- sidebar -->
-    <div id="sidebar" class="sidenav">
-        
-        {% if user.is_superuser %}
-            <a href="{% url 'CalendarPageAdmin' %}">Home</a>
-        {% else %}
-            <a href="{% url 'CalendarPage' %}">Home</a>
-        {% endif %}
-
-        <a href="{% url 'accountPage' %}">Account</a>
-        <a href="{% url 'myBookings' %}">Bookings</a>
-
-        {% if user.is_superuser %}
-            <a href="{% url 'requests' %}">Requests</a>
-            <a href="{% url 'billings' %}">Billing</a> <!-- UPDATE WHEN THE BILLING PAGE IS MADE -->
-            <a href="{% url 'archivePage' %}">Archive</a>
-        {% endif %}
-
-        <div class="sideCont">
-            <a id="sidebarLogout" onclick="LogoutButton()">Logout</a>
-        </div>
-    </div>
-
-    <!-- top bar (includes sidebar button and whatever else crazy)-->
-    <div class="container-fluid text-white topbar">
-        <div class="row">
-            <div class="col-2 container-fluid text-left">
-            <span class="sidebarButton" onclick="toggleNav()">&#9776;</span>
-            </div>
-            <div class="col-8 container-fluid text-center h1">
-                <span>HistoTrack</span>
-            </div>
-            <div class="col-2"></div>
-        </div>
-    </div>
-
-    <div class="container rounded bg-white mt-5 mb-5 pb-5 pt-3">
-    
-    <form method="POST">
-        {% csrf_token %}
-        {% for x in editBooking %}
-            <div class="card">
-                <div class="card-body">
-                    <p class="card-text">
-                        <div class="details">
-                            <!--
-                            <label for="name">Full Name: </label>
-                            <input type="text" id="name" name="bookingName" placeholder="{{ x.bookingName }}">
-                            -->
-                            <label for="supervisor">Supervisor:</label>
-
-                            <!-- Dropdown Container -->
-                            <div class="dropdown-container">
-                                <!-- Search Input Field -->
-                                <input type="text" id="supervisorSearch" class="form-control" placeholder="Search for a supervisor">
-
-                                <!-- Custom Dropdown -->
-                                <div id="supervisorDropdown" class="dropdown-content">
-                                    {% for supervisor in supervisors %}
-                                        <div class="dropdown-item" onclick="selectSupervisor('{{ supervisor.id }}', '{{ supervisor.first_name }} {{ supervisor.last_name }}')">
-                                            {{ supervisor.first_name }} {{ supervisor.last_name }}
-                                        </div>
-                                    {% empty %}
-                                        <div class="dropdown-item">No supervisors available</div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-
-                            <!-- Hidden Input to Store Selected Supervisor ID -->
-                            <input type="hidden" name="supervisorName" id="selectedSupervisorId" required>
-
-
-                    
-                            
-
-                            <label for="date">Date: </label>
-                            <input type="date" id="date" name="bookingDate" value="{{ x.bookingDate|date:'Y-m-d' }}">
-
-                            <label for="start">Start time: </label>
-                            <select class="form-control" id="start" name="startTime" required>
-                                <option value="00:00" {% if x.startTime|time:'H:i' == '00:00' %}selected{% endif %}>00:00</option>
                                 <option value="00:15" {% if x.startTime|time:'H:i' == '00:15' %}selected{% endif %}>00:15</option>
                                 <option value="00:30" {% if x.startTime|time:'H:i' == '00:30' %}selected{% endif %}>00:30</option>
                                 <option value="00:45" {% if x.startTime|time:'H:i' == '00:45' %}selected{% endif %}>00:45</option>
@@ -685,8 +345,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <option value="23:45" {% if x.finishTime|time:'H:i' == '23:45' %}selected{% endif %}>23:45</option>
                             </select>
 
-                            <label for="comments">Comments: </label>
-                            <input type="text" id="comments" name="comments" placeholder="{{ x.comments }}">
+                            <label for="notes">Notes: </label>
+                            <input type="text" id="notes" name="notes" placeholder="{{ x.notes }}">
                         
 
 
@@ -707,14 +367,185 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             <br>
 
-            <button class="btn btn-danger btn-block" type="button" style="width: 80%; margin: auto;" onclick="confirmCancel('{{ x.id }}')">Cancel Booking</button>
-
+            <button class="btn btn-danger btn-block" type="button" style="width: 80%; margin: auto;" onclick="confirmCancel({{ x.id }})">Cancel Booking</button>
 
             
         {% endfor %}
         </form>
 
+        </div>
+        </div>
+        </div>
     </div>
+
+    <script>
+        // Cancels booking after confirming with user
+        function confirmCancel(id) {
+            const dialog = window.confirm('Are you sure you want to cancel this booking?');
+    
+            if (dialog) {
+                window.location.href = `/MCalendar/cancelBooking/${id}/`;
+            }
+        }
+
+        function toggleNav() {
+    
+            var element = document.getElementById("sidebar");
+            element.classList.toggle("toggle");
+        }
+
+        function LogoutButton() {
+            if (confirm("You are about to logout,\nAre you sure you want to continue?")) {
+              window.location.href="{% url 'logout' %}";
+            } else {
+              none;
+            }
+          }
+
+          document.addEventListener('DOMContentLoaded', function() {
+          function updateEndTimeOptions() {
+              const startTime = document.getElementById('start').value;
+              const finishTimeSelect = document.getElementById('finish');
+              const [startHour, startMinute] = startTime.split(':').map(Number);
+              
+              const currentSelection = finishTimeSelect.value;
+              
+              finishTimeSelect.innerHTML = '';
+              
+              for (let i = 0; i < 24 * 60; i += 15) {
+                  const hour = Math.floor(i / 60);
+                  const minute = i % 60;
+  
+                  // Only include times that are after the start time
+                  if (hour > startHour || (hour === startHour && minute > startMinute)) {
+                      const timeStr = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+                      const option = new Option(timeStr, timeStr);
+                      finishTimeSelect.appendChild(option);
+                      
+                      if (timeStr === currentSelection) {
+                          option.selected = true;
+                      }
+                  }
+              }
+              
+              if (finishTimeSelect.value === '') {
+                  finishTimeSelect.value = `${String(startHour + 1).padStart(2, '0')}:00`;
+              }
+          }
+  
+          function validateTimes() {
+              const startTime = document.getElementById('start').value;
+              const finishTime = document.getElementById('finish').value;
+              const [startHour, startMinute] = startTime.split(':').map(Number);
+              const [finishHour, finishMinute] = finishTime.split(':').map(Number);
+              
+              if (finishHour < startHour || (finishHour === startHour && finishMinute <= startMinute)) {
+                  alert('End time must be after start time');
+                  document.getElementById('finish').value = 
+                      `${String(startHour + 1).padStart(2, '0')}:00`;
+                  return false;
+              }
+              return true;
+          }
+  
+          const startSelect = document.getElementById('start');
+          if (startSelect) {
+              startSelect.addEventListener('change', updateEndTimeOptions);
+              updateEndTimeOptions();
+          }
+  
+          const finishSelect = document.getElementById('finish');
+          if (finishSelect) {
+              finishSelect.addEventListener('change', validateTimes);
+          }
+  
+          const form = document.querySelector('.details');
+          if (form) {
+              form.addEventListener('submit', function(e) {
+                  if (!validateTimes()) {
+                      e.preventDefault();
+                  }
+              });
+          }
+      });  
+
+        
+
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById("supervisorSearch");
+            const dropdown = document.getElementById("supervisorDropdown");
+
+            // Show dropdown when the input is focused
+            searchInput.addEventListener("focus", function() {
+                dropdown.style.display = "block";
+            });
+
+            // Filter dropdown items as user types
+            searchInput.addEventListener("keyup", function() {
+                const searchText = searchInput.value.toLowerCase();
+                const items = dropdown.getElementsByClassName("dropdown-item");
+
+                for (let item of items) {
+                    const itemText = item.innerText.toLowerCase();
+                    item.style.display = itemText.includes(searchText) ? "" : "none";
+                }
+            });
+
+            // Close dropdown if clicking outside of the input or dropdown
+            document.addEventListener("mousedown", function(event) {
+                if (!dropdown.contains(event.target) && event.target !== searchInput) {
+                    dropdown.style.display = "none";
+                }
+            });
+
+            // Select a supervisor from the dropdown
+            window.selectSupervisor = function(id, name) {
+                searchInput.value = name; // Display selected name in input field
+                document.getElementById("selectedSupervisorId").value = id; // Store selected supervisor ID
+                dropdown.style.display = "none"; // Hide dropdown after selection
+            };
+        });
+
+
+        // This is the auto-logout code, do not change!
+        let idleTime = 0;
+        const idleTimeout = 300;
+        const warningTimeout = 290;
+        let messageBox = document.getElementById("warningMessage");
+
+        function resetTime() {
+            idleTime = 0;
+            messageBox.style.display = ("none");
+        }
+
+        function cycle() {
+            idleTime++;
+            if (idleTime >= warningTimeout) {
+                warningMessage();
+            }
+            if (idleTime >= idleTimeout) {
+                logoutUser();
+            }
+        }
+
+        function warningMessage() {
+            messageBox.style.display = ("block");
+        }
+
+        function logoutUser() {
+            window.location.href = "{% url 'logout' %}";
+        }
+
+        window.onload = function() {
+            document.onmousemove = resetTime;
+            document.onkeypress = resetTime;
+            setInterval(cycle, 1000);
+        };
+        // End of auto-logout code
+
+    </script>
 
 </body>
 </html>
