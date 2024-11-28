@@ -1,0 +1,272 @@
+{% load static %}
+{{ redirect_to_login_immediately }}
+
+<head>
+
+    <title>Archive</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+    <link rel="stylesheet" href="{% static 'global.css' %}">
+
+</head>
+<body>
+
+<!-- This is the auto logout warning Message. DO NOT REMOVE! -->
+<div id="warningMessage" class="popWarning">Warning, the user is about to be logged out!</div>
+
+<!-- sidebar -->
+<div id="sidebar" class="sidenav">
+        
+    {% if user.is_superuser %}
+        <a href="{% url 'CalendarPageAdmin' %}">Home</a>
+    {% else %}
+        <a href="{% url 'CalendarPage' %}">Home</a>
+    {% endif %}
+
+    <a href="{% url 'accountPage' %}">Account</a>
+    <a href="{% url 'myBookings' %}">Bookings</a>
+
+    {% if user.is_superuser %}
+        <a href="{% url 'requests' %}">Requests</a>
+        <a href="{% url 'billings' %}">Billing</a>
+        <a href="{% url 'archivePage' %}">Archive</a>
+    {% endif %}
+
+    <div class="sideCont">
+        <a id="sidebarLogout" onclick="LogoutButton()">Logout</a>
+    </div>
+</div>
+
+<!-- top bar (includes sidebar button and whatever else)-->
+<div class="container-fluid text-white topbar">
+    <div class="row">
+        <div class="col-2 container-fluid text-left">
+        <span class="sidebarButton" onclick="toggleNav()">&#9776;</span>
+        </div>
+        <div class="col-8 container-fluid text-center h1">
+            <span>HistoTrack</span>
+        </div>
+        <div class="col-2"></div>
+    </div>
+</div>
+
+<div class="container rounded bg-white mt-5 mb-5">
+    <div class="row">
+
+        <div class="col-md-12">
+            <div class="p-3 py-5">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="text-right">Archive</h2>
+                    <h5 class="text-right">Total Accumulated Hours: {{ totalHours }} </h5>
+                </div>
+
+                <hr>
+                
+                <form method="GET" action=".">
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <div class="input-group">
+                                <input class="form-control py-2" type="search" name="bookingName" placeholder="Booking Name..." />
+                            </div>
+                        </div>        
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <div class="input-group">
+                                <input class="form-control py-2" type="search" name="supervisorName" placeholder="Supervisor Name..." />
+                            </div>
+                        </div>        
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <div class="input-group">
+                                <input class="form-control py-2" type="search" name="notes" placeholder="Notes..." />
+                            </div>
+                        </div>        
+                    </div>
+
+                    <div class="form-row">
+                      
+                        <div class="form-group col-md-3 col-lg-3">
+                            <label for="startDate">Start Date</label>
+                            <input type="date" class="form-control" id="startDate" name="dateMin">
+                        </div>
+                        <div class="form-group col-md-3 col-lg-3">
+                            <label for="endDate">End Date</label>
+                            <input type="date" class="form-control" id="endDate" name="dateMax">
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="equipment">Equipment</label>
+                            <select id="equipment" class="form-control" name="equipment">
+                                <option selected>Select...</option>
+                                
+                                {% for equipment in equipmentList %}
+                                    <option value="{{ equipment }}">{{ equipment }}</option>
+                                {% endfor %}
+                            </select>
+
+                        </div>
+                    
+                    </div>
+
+
+                    <div class="form-row">
+                        <div class="form-group col-md-11 col-lg-11">
+                            <button type="submit" class="btn btn-block btn-sty">Search</button>
+                        </div>
+                        <div class="form-group col-md-1 col-lg-1">
+                            <button type="submit" class="btn btn-block btn-sty" style="background: #c42323;">X</button>
+                        </div>
+                    </div>
+                
+                </form>
+
+                <hr>
+
+                {% for event in pageObj %}
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4>Booking ID: {{ event.id }}</h4>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <p class="card-text">
+                            <div class="details">
+                                <div class="detailsListItem">Booking Name: {{ event.bookingName }}</div>
+                                <div class="detailsListItem">Supervisor: {{ event.supervisorName }}</div>
+                                <div class="detailsListItem">Date: {{ event.bookingDate }}</div>
+                                <div class="detailsListItem">From: {{ event.startTime }} to {{ event.finishTime }}</div>
+                                <div class="detailsListItem">Equipment: {{ event.equipment }}</div>
+                                <div class="detailsListItem">Hours Booked: {{ event.totalTime }}</div>
+                            </div>
+                        </p>
+                    </div>
+                    
+                </div>
+
+                <br>
+
+                {% endfor %}
+
+                <!-- Paginator Stuff -->
+                {% if pageObj.has_other_pages %}
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if pageObj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1" aria-label="First">&laquo; First</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ pageObj.previous_page_number }}" aria-label="Previous">Previous</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">&laquo; First</span></li>
+                            <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                        {% endif %}
+
+                        <!-- Page Numbers -->
+                        {% for num in pageObj.paginator.page_range %}
+                            {% if pageObj.number == num %}
+                                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% elif num > pageObj.number|add:'-3' and num < pageObj.number|add:'3' %}
+                                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if pageObj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ pageObj.next_page_number }}" aria-label="Next">Next</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ pageObj.paginator.num_pages }}" aria-label="Last">Last &raquo;</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">Next</span></li>
+                            <li class="page-item disabled"><span class="page-link">Last &raquo;</span></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+                
+                
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<br>
+
+<script>
+
+
+    function toggleNav() {
+
+        var element = document.getElementById("sidebar");
+        element.classList.toggle("toggle");
+    }
+
+    function LogoutButton() {
+        if (confirm("You are about to logout,\nAre you sure you want to continue?")) {
+            window.location.href="{% url 'logout' %}";
+        } else {
+            none;
+        }
+    }
+
+    // This is the auto-logout code, do not change!
+    let idleTime = 0;
+    const idleTimeout = 300;
+    const warningTimeout = 290;
+    let messageBox = document.getElementById("warningMessage");
+
+    function resetTime() {
+        idleTime = 0;
+        messageBox.style.display = ("none");
+    }
+
+    function cycle() {
+        idleTime++;
+        if (idleTime >= warningTimeout) {
+            warningMessage();
+        }
+        if (idleTime >= idleTimeout) {
+            logoutUser();
+        }
+    }
+
+    function warningMessage() {
+        messageBox.style.display = ("block");
+    }
+
+    function logoutUser() {
+        window.location.href = "{% url 'logout' %}";
+    }
+
+    window.onload = function() {
+        document.onmousemove = resetTime;
+        document.onkeypress = resetTime;
+        setInterval(cycle, 1000);
+    };
+    // End of auto-logout code
+
+</script>
+
+</body>

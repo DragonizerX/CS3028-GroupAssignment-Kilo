@@ -1,0 +1,275 @@
+{% load static %}
+{{ redirect_to_login_immediately }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+    <link rel="stylesheet" href="{% static 'global.css' %}">
+    <title>Create Billing</title>
+
+    <style>
+
+        #navBar {
+            width: 80%;
+            max-width: 800px;
+            height: 50px;
+            margin: 40px auto 80px auto;
+            display: grid;
+            grid-template-columns: 30% 25% 25% 20%;
+        }
+
+        .supervisorSearch {
+            box-shadow: 2px 2px 5px hsl(265 0% 70%);
+            border-radius: 10px;
+            height: 40px;
+            margin: auto;
+            background-color: hsl(0 0 85%);
+            border: none;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .dates {
+            box-shadow: 2px 2px 5px hsl(265 0% 70%);
+            border-radius: 10px;
+            text-align: center;
+            height: 40px;
+            width: 90%;
+            margin: auto;
+            background-color: hsl(0 0 85%);
+        }
+
+        #filter {
+            box-shadow: 2px 2px 5px hsl(265 0% 70%);
+            border-radius: 10px;
+            height: 40px;
+            margin: auto;
+            background-color: hsl(0 0 85%);
+            border: none;
+            padding: 10px;
+            width: 80%;
+            cursor: pointer;
+        }
+
+        #create {
+            box-shadow: 2px 2px 5px hsl(265 0% 70%);
+            border-radius: 10px;
+            height: 40px;
+            margin: auto;
+            background-color: hsl(0 0 85%);
+            border: none;
+            padding: 10px;
+            max-width: 200px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- This is the auto logout warning Message. DO NOT REMOVE! -->
+    <div id="warningMessage" class="popWarning">Warning, the user is about to be logged out!</div>
+
+    <!-- sidebar -->
+    <div id="sidebar" class="sidenav">
+            
+        {% if user.is_superuser %}
+            <a href="{% url 'CalendarPageAdmin' %}">Home</a>
+        {% else %}
+            <a href="{% url 'CalendarPage' %}">Home</a>
+        {% endif %}
+
+        <a href="{% url 'accountPage' %}">Account</a>
+        <a href="{% url 'myBookings' %}">Bookings</a>
+
+        {% if user.is_superuser %}
+            <a href="{% url 'requests' %}">Requests</a>
+            <a href="{% url 'billings' %}">Billing</a>
+            <a href="{% url 'archivePage' %}">Archive</a>
+        {% endif %}
+
+        <div class="sideCont">
+            <a id="sidebarLogout" onclick="LogoutButton()">Logout</a>
+        </div>
+    </div>
+
+    <!-- top bar (includes sidebar button and whatever else)-->
+    <div class="container-fluid text-white topbar">
+        <div class="row">
+            <div class="col-2 container-fluid text-left">
+            <span class="sidebarButton" onclick="toggleNav()">&#9776;</span>
+            </div>
+            <div class="col-8 container-fluid text-center h1">
+                <span>HistoTrack</span>
+            </div>
+            <div class="col-2"></div>
+        </div>
+    </div>
+
+    <div class="container rounded bg-white mt-5 mb-5">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="p-3 py-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="text-right">Create Billing</h2>
+                        <div class="text-center">
+                            <a href="{% url 'billings' %}" class="btn btn-sty">Back To Billing</a>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Shows error messages -->
+                    <!-- ie shows error when creating a billing with multiple supervisors, not allowed -->
+                    {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+                    <!-- Filter form: supervisor, start date and end date -->
+                    <form method="GET" action=".">
+                        <div class="form-row">
+                            <div class="form-group col-12">
+                                <div class="input-group">
+                                    <input class="form-control py-2" type="search" name="supervisorName" placeholder="Supervisor Name..." />
+                                </div>
+                            </div>        
+                        </div>
+    
+                        <div class="form-row">
+                          
+                            <div class="form-group col-md-6 col-lg-6">
+                                <label for="startDate">Start Date</label>
+                                <input type="date" class="form-control" id="startDate" name="dateMin">
+                            </div>
+                            <div class="form-group col-md-6 col-lg-6">
+                                <label for="endDate">End Date</label>
+                                <input type="date" class="form-control" id="endDate" name="dateMax">
+                            </div>
+                        
+                        </div>
+    
+                        <button type="submit" class="btn btn-block btn-sty mb-3">Search</button>
+
+                    </form>
+
+    <form method="POST">
+        {% csrf_token %}
+        {% for event in eventList %}
+            {% if event.invoiceRef == "None" %}
+                <!-- Displays bookings that arent yet assigned, so the supervisor can use them to create a billing -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4>Booking ID: {{ event.id }}</h4>
+                        
+                            <div class="text-center">
+                                <span style="cursor:default">Select<span>
+                                <input class="btn btn-block" type="checkbox" name="selectEvent" value="{{ event.id }}">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <p class="card-text">
+                            <div class="details">
+                                <div class="detailsListItem">Booking Name: {{ event.bookingName }}</div>
+                                <div class="detailsListItem">Supervisor: {{ event.supervisorName }}</div>
+                                <div class="detailsListItem">Date: {{ event.bookingDate }}</div>
+                                <div class="detailsListItem">From: {{ event.startTime }} to {{ event.finishTime }}</div>
+                                <div class="detailsListItem">Equipment: {{ event.equipment }}</div>
+                            </div>
+                        </p>
+                    </div>  
+                </div>
+
+                <br>
+                {% endif %}
+            {% endfor %}
+
+                        <input class="btn btn-sty btn-block" type="submit" value="Create Billing">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        function displaySupervisors() {
+            // displays the checkboxes for supervisors
+            event.preventDefault();
+            let dropdown = document.getElementById('supervisorDropdown');
+            let computedStyle = window.getComputedStyle(dropdown).display;
+            if (computedStyle === 'none') {
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        }
+
+        function toggleNav() {
+    
+            var element = document.getElementById("sidebar");
+            element.classList.toggle("toggle");
+        }
+    
+        function LogoutButton() {
+            if (confirm("You are about to logout,\nAre you sure you want to continue?")) {
+                window.location.href="{% url 'logout' %}";
+            } else {
+                none;
+            }
+        }
+
+        // This is the auto-logout code, do not change!
+        let idleTime = 0;
+        const idleTimeout = 300;
+        const warningTimeout = 290;
+        let messageBox = document.getElementById("warningMessage");
+
+        function resetTime() {
+            idleTime = 0;
+            messageBox.style.display = ("none");
+        }
+
+        function cycle() {
+            idleTime++;
+            if (idleTime >= warningTimeout) {
+                warningMessage();
+            }
+            if (idleTime >= idleTimeout) {
+                logoutUser();
+            }
+        }
+
+        function warningMessage() {
+            messageBox.style.display = ("block");
+        }
+
+        function logoutUser() {
+            window.location.href = "{% url 'logout' %}";
+        }
+
+        window.onload = function() {
+            document.onmousemove = resetTime;
+            document.onkeypress = resetTime;
+            setInterval(cycle, 1000);
+        };
+        // End of auto-logout code
+
+    </script>
+
+</body>
+</html>

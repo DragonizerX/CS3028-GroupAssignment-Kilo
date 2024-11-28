@@ -1,0 +1,712 @@
+{% load static %}
+{{ redirect_to_login_immediately }}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Calendar</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.js'></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+    <link rel="stylesheet" href="{% static 'global.css' %}">
+
+</head>
+
+<body>
+
+    <!-- This is the auto logout warning Message. DO NOT REMOVE! -->
+    <div id="warningMessage" class="popWarning">Warning, the user is about to be logged out!</div>
+
+    <!-- sidebar -->
+    <div id="sidebar" class="sidenav">
+
+        {% if user.is_superuser %}
+            <a href="{% url 'CalendarPageAdmin' %}">Home</a>
+        {% else %}
+            <a href="{% url 'CalendarPage' %}">Home</a>
+        {% endif %}
+
+        <a href="{% url 'accountPage' %}">Account</a>
+        <a href="{% url 'myBookings' %}">Bookings</a>
+
+        {% if user.is_superuser %}
+            <a href="{% url 'requests' %}">Requests</a>
+            <a href="{% url 'billings' %}">Billing</a>
+            <a href="{% url 'archivePage' %}">Archive</a>
+        {% endif %}
+
+        <div class="sideCont">
+            <a id="sidebarLogout" onclick="LogoutButton()">Logout</a>
+        </div>
+    </div>
+
+    <!-- top bar (includes sidebar button and whatever else)-->
+    <div class="container-fluid text-white topbar">
+        <div class="row">
+            <div class="col-2 container-fluid text-left">
+            <span class="sidebarButton" style="position:relative; top: 11px;" onclick="toggleNav()">&#9776;</span>
+            </div>
+            <div class="col-8 container-fluid text-center h1">
+                <h1 style="font-size: 40px; position: relative; bottom: 9px;">HistoTrack</h1>
+            </div>
+            <div class="col-2"></div>
+        </div>
+    </div>
+
+    <div class="container rounded bg-white mt-5 mb-5 pb-5">
+        <div class="container">
+        <!--EQUIPMENT SELECTION-->
+        <div id="equipmentSelect" class="form-group">
+                    
+            <label for="equipment">Select Equipment:</label>
+            <select class="form-control" id="equipment" name="equipment" required>
+                <option value="">-- Select Equipment --</option>
+
+                {% for x in equipmentList %}
+                    <option value="{{ x.equipmentID_auto}}">-- {{ x.equipmentName }} -- {{ x.hourlyRate }} --</option>
+                {% endfor %}
+
+            </select>
+        </div>
+
+        <!--CALENDAR-->
+        <div id="calendar"></div>
+        
+        <!--BOOKING FORM-->
+        <div class="text-center mt-4">
+            <button class="btn btn-sty" type="button" data-toggle="collapse" data-target="#bookingForm" aria-expanded="false" aria-controls="bookingForm">
+                Make New Booking 
+            </button>
+            
+            <div class="collapse mt-3" id="bookingForm">
+                <div class="card card-body">
+                    <form method="post" action="{% url 'create_event' %}">
+                        {% csrf_token %}
+                        <input type="hidden" id="equipmentInput" name="equipment" value="">
+                        <!--
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <label for="bookingName" class="control-label">Name for Booking:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="bookingName" name="bookingName" required>
+                            </div>
+                        </div>
+                        -->
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="supervisorName" class="control-label">Supervisor:</label>
+                            </div>
+                            <div class="col-sm-7">
+                                <!-- Search Input Field -->
+                                <input type="text" autocomplete="off" id="supervisorSearch" class="form-control" placeholder="Search for a supervisor" onkeyup="filterSupervisors()">
+                                
+                                <!-- Custom Dropdown -->
+                                <div id="supervisorDropdown" class="dropdown-content">
+                                    {% for supervisor in supervisors %}
+                                        <div class="dropdown-item" onclick="selectSupervisor('{{ supervisor.id }}', '{{ supervisor.first_name }} {{ supervisor.last_name }}')">
+                                            {{ supervisor.first_name }} {{ supervisor.last_name }}
+                                        </div>
+                                    {% empty %}
+                                        <div class="dropdown-item">No supervisors available</div>
+                                    {% endfor %}
+                                </div>
+                        
+                                <!-- Hidden Input to Store Selected Supervisor ID -->
+                                <input type="hidden" name="supervisorName" id="selectedSupervisorId" required>
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-sty btn-block" data-toggle="modal" data-target="#addSupervisorModal">
+                                    Add New
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="bookingDate" class="control-label">Date of Booking:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="date" class="form-control" id="bookingDate" name="bookingDate" required>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="startTime" class="control-label">Start Time:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="startTime" name="startTime" required>
+                                    <option value="00:00">00:00</option>
+                                    <option value="00:15">00:15</option>
+                                    <option value="00:30">00:30</option>
+                                    <option value="00:45">00:45</option>
+                                    <option value="01:00">01:00</option>
+                                    <option value="01:15">01:15</option>
+                                    <option value="01:30">01:30</option>
+                                    <option value="01:45">01:45</option>
+                                    <option value="02:00">02:00</option>
+                                    <option value="02:15">02:15</option>
+                                    <option value="02:30">02:30</option>
+                                    <option value="02:45">02:45</option>
+                                    <option value="03:00">03:00</option>
+                                    <option value="03:15">03:15</option>
+                                    <option value="03:30">03:30</option>
+                                    <option value="03:45">03:45</option>
+                                    <option value="04:00">04:00</option>
+                                    <option value="04:15">04:15</option>
+                                    <option value="04:30">04:30</option>
+                                    <option value="04:45">04:45</option>
+                                    <option value="05:00">05:00</option>
+                                    <option value="05:15">05:15</option>
+                                    <option value="05:30">05:30</option>
+                                    <option value="05:45">05:45</option>
+                                    <option value="06:00">06:00</option>
+                                    <option value="06:15">06:15</option>
+                                    <option value="06:30">06:30</option>
+                                    <option value="06:45">06:45</option>
+                                    <option value="07:00">07:00</option>
+                                    <option value="07:15">07:15</option>
+                                    <option value="07:30">07:30</option>
+                                    <option value="07:45">07:45</option>
+                                    <option value="08:00">08:00</option>
+                                    <option value="08:15">08:15</option>
+                                    <option value="08:30">08:30</option>
+                                    <option value="08:45">08:45</option>
+                                    <option value="09:00">09:00</option>
+                                    <option value="09:15">09:15</option>
+                                    <option value="09:30">09:30</option>
+                                    <option value="09:45">09:45</option>
+                                    <option value="10:00">10:00</option>
+                                    <option value="10:15">10:15</option>
+                                    <option value="10:30">10:30</option>
+                                    <option value="10:45">10:45</option>
+                                    <option value="11:00">11:00</option>
+                                    <option value="11:15">11:15</option>
+                                    <option value="11:30">11:30</option>
+                                    <option value="11:45">11:45</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="12:15">12:15</option>
+                                    <option value="12:30">12:30</option>
+                                    <option value="12:45">12:45</option>
+                                    <option value="13:00">13:00</option>
+                                    <option value="13:15">13:15</option>
+                                    <option value="13:30">13:30</option>
+                                    <option value="13:45">13:45</option>
+                                    <option value="14:00">14:00</option>
+                                    <option value="14:15">14:15</option>
+                                    <option value="14:30">14:30</option>
+                                    <option value="14:45">14:45</option>
+                                    <option value="15:00">15:00</option>
+                                    <option value="15:15">15:15</option>
+                                    <option value="15:30">15:30</option>
+                                    <option value="15:45">15:45</option>
+                                    <option value="16:00">16:00</option>
+                                    <option value="16:15">16:15</option>
+                                    <option value="16:30">16:30</option>
+                                    <option value="16:45">16:45</option>
+                                    <option value="17:00">17:00</option>
+                                    <option value="17:15">17:15</option>
+                                    <option value="17:30">17:30</option>
+                                    <option value="17:45">17:45</option>
+                                    <option value="18:00">18:00</option>
+                                    <option value="18:15">18:15</option>
+                                    <option value="18:30">18:30</option>
+                                    <option value="18:45">18:45</option>
+                                    <option value="19:00">19:00</option>
+                                    <option value="19:15">19:15</option>
+                                    <option value="19:30">19:30</option>
+                                    <option value="19:45">19:45</option>
+                                    <option value="20:00">20:00</option>
+                                    <option value="20:15">20:15</option>
+                                    <option value="20:30">20:30</option>
+                                    <option value="20:45">20:45</option>
+                                    <option value="21:00">21:00</option>
+                                    <option value="21:15">21:15</option>
+                                    <option value="21:30">21:30</option>
+                                    <option value="21:45">21:45</option>
+                                    <option value="22:00">22:00</option>
+                                    <option value="22:15">22:15</option>
+                                    <option value="22:30">22:30</option>
+                                    <option value="22:45">22:45</option>
+                                    <option value="23:00">23:00</option>
+                                    <option value="23:15">23:15</option>
+                                    <option value="23:30">23:30</option>
+                                    <option value="23:45">23:45</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="finishTime" class="control-label">End Time:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="finishTime" name="finishTime" required>
+                                    <option value="00:00">00:00</option>
+                                    <option value="00:15">00:15</option>
+                                    <option value="00:30">00:30</option>
+                                    <option value="00:45">00:45</option>
+                                    <option value="01:00">01:00</option>
+                                    <option value="01:15">01:15</option>
+                                    <option value="01:30">01:30</option>
+                                    <option value="01:45">01:45</option>
+                                    <option value="02:00">02:00</option>
+                                    <option value="02:15">02:15</option>
+                                    <option value="02:30">02:30</option>
+                                    <option value="02:45">02:45</option>
+                                    <option value="03:00">03:00</option>
+                                    <option value="03:15">03:15</option>
+                                    <option value="03:30">03:30</option>
+                                    <option value="03:45">03:45</option>
+                                    <option value="04:00">04:00</option>
+                                    <option value="04:15">04:15</option>
+                                    <option value="04:30">04:30</option>
+                                    <option value="04:45">04:45</option>
+                                    <option value="05:00">05:00</option>
+                                    <option value="05:15">05:15</option>
+                                    <option value="05:30">05:30</option>
+                                    <option value="05:45">05:45</option>
+                                    <option value="06:00">06:00</option>
+                                    <option value="06:15">06:15</option>
+                                    <option value="06:30">06:30</option>
+                                    <option value="06:45">06:45</option>
+                                    <option value="07:00">07:00</option>
+                                    <option value="07:15">07:15</option>
+                                    <option value="07:30">07:30</option>
+                                    <option value="07:45">07:45</option>
+                                    <option value="08:00">08:00</option>
+                                    <option value="08:15">08:15</option>
+                                    <option value="08:30">08:30</option>
+                                    <option value="08:45">08:45</option>
+                                    <option value="09:00">09:00</option>
+                                    <option value="09:15">09:15</option>
+                                    <option value="09:30">09:30</option>
+                                    <option value="09:45">09:45</option>
+                                    <option value="10:00">10:00</option>
+                                    <option value="10:15">10:15</option>
+                                    <option value="10:30">10:30</option>
+                                    <option value="10:45">10:45</option>
+                                    <option value="11:00">11:00</option>
+                                    <option value="11:15">11:15</option>
+                                    <option value="11:30">11:30</option>
+                                    <option value="11:45">11:45</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="12:15">12:15</option>
+                                    <option value="12:30">12:30</option>
+                                    <option value="12:45">12:45</option>
+                                    <option value="13:00">13:00</option>
+                                    <option value="13:15">13:15</option>
+                                    <option value="13:30">13:30</option>
+                                    <option value="13:45">13:45</option>
+                                    <option value="14:00">14:00</option>
+                                    <option value="14:15">14:15</option>
+                                    <option value="14:30">14:30</option>
+                                    <option value="14:45">14:45</option>
+                                    <option value="15:00">15:00</option>
+                                    <option value="15:15">15:15</option>
+                                    <option value="15:30">15:30</option>
+                                    <option value="15:45">15:45</option>
+                                    <option value="16:00">16:00</option>
+                                    <option value="16:15">16:15</option>
+                                    <option value="16:30">16:30</option>
+                                    <option value="16:45">16:45</option>
+                                    <option value="17:00">17:00</option>
+                                    <option value="17:15">17:15</option>
+                                    <option value="17:30">17:30</option>
+                                    <option value="17:45">17:45</option>
+                                    <option value="18:00">18:00</option>
+                                    <option value="18:15">18:15</option>
+                                    <option value="18:30">18:30</option>
+                                    <option value="18:45">18:45</option>
+                                    <option value="19:00">19:00</option>
+                                    <option value="19:15">19:15</option>
+                                    <option value="19:30">19:30</option>
+                                    <option value="19:45">19:45</option>
+                                    <option value="20:00">20:00</option>
+                                    <option value="20:15">20:15</option>
+                                    <option value="20:30">20:30</option>
+                                    <option value="20:45">20:45</option>
+                                    <option value="21:00">21:00</option>
+                                    <option value="21:15">21:15</option>
+                                    <option value="21:30">21:30</option>
+                                    <option value="21:45">21:45</option>
+                                    <option value="22:00">22:00</option>
+                                    <option value="22:15">22:15</option>
+                                    <option value="22:30">22:30</option>
+                                    <option value="22:45">22:45</option>
+                                    <option value="23:00">23:00</option>
+                                    <option value="23:15">23:15</option>
+                                    <option value="23:30">23:30</option>
+                                    <option value="23:45">23:45</option>
+                                    <option value="24:00">24:00</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label for="notes" class="control-label">Notes:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Enter Project Information: E.g: (Project Name/Project Info)"></textarea>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-sm-12 text-center">
+                                <button type="submit" class="btn btn-success">Confirm Booking</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="modal fade" id="addSupervisorModal" tabindex="-1" role="dialog" aria-labelledby="addSupervisorModalLabel" aria-hidden="true"> <!-- Modal for adding new supervisor to table -->
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addSupervisorModalLabel">Add New Supervisor</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="addSupervisorForm">
+                                        <div class="form-group">
+                                            <label for="firstName">First Name:</label> <!-- Input for new supervisor field -->
+                                            <input type="text" class="form-control" id="firstName" name="first_name" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="lastName">Last Name:</label>
+                                            <input type="text" class="form-control" id="lastName" name="last_name" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">Email:</label>
+                                            <input type="email" class="form-control" id="email" name="email" required>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="container px-5">
+                                    <div class="text-center">
+                                    <button type="button" class="detailsListItem btn btn-block btn-success" id="submitSupervisor">Add Supervisor</button>
+                                    <button type="button" class="detailsListItem btn btn-block btn-danger " data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--JAVASCRIPT SCRIPTS-->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                allDaySlot: false,
+                slotMinTime: '00:00:00',
+                slotMaxTime: '24:00:00',
+                slotDuration: '00:15:00',
+                snapDuration: '00:15:00',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'timeGridWeek,timeGridDay'
+                },
+                slotLabelInterval: 15,
+                slotLabelFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                },
+                selectable: true,
+                select: function(info) {
+                    var date = info.start.toISOString().split('T')[0];
+                    var startTime = info.start.toTimeString().split(' ')[0].slice(0, 5);
+                    var endTime = info.end.toTimeString().split(' ')[0].slice(0, 5);
+                    
+                    document.getElementById('bookingDate').value = date;
+                    document.getElementById('startTime').value = startTime;
+                    
+                    const startHour = parseInt(startTime.split(':')[0]);
+                    const endHour = parseInt(endTime.split(':')[0]);
+                    
+                    if(endHour <= startHour) {
+                        endTime = `${String(startHour + 1).padStart(2, '0')}:00`;
+                    }
+                    
+                    document.getElementById('finishTime').value = endTime;
+                    updateEndTimeOptions();
+                    $('#bookingForm').collapse('show');
+                },
+                height: 'auto',
+                expandRows: true,
+                events: function(fetchInfo, successCallback, failureCallback) {
+                    const equipment = document.getElementById('equipment').value;
+                    
+                    if (!equipment) {
+                        successCallback([]); // Return empty array if no equipment selected
+                        return;
+                    }
+                    
+                    fetch(`/MCalendar/CalendarPage/get_events/?equipment=${encodeURIComponent(equipment)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            successCallback(data);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            failureCallback(error);
+                        });
+                },
+                eventContent: function(arg) {
+                    return {
+                        html: '<b>' + arg.event.title + '</b>'
+                    };
+                },
+
+                eventClassNames: 'bookedSlot'
+            });
+            
+            calendar.render();
+        
+            // Equipment change handler
+            document.getElementById('equipment').addEventListener('change', function() {
+                const selectedEquipment = this.value;
+                document.getElementById('equipmentInput').value = selectedEquipment;
+                calendar.refetchEvents();
+            });
+        
+            // Time validation functions
+            function updateEndTimeOptions() {
+                const startTime = document.getElementById('startTime').value;
+                const finishTimeSelect = document.getElementById('finishTime');
+                const [startHour, startMinute] = startTime.split(':').map(Number);                
+                const startInMinutes = startHour * 60 + startMinute;
+                finishTimeSelect.innerHTML = '';
+               
+                for (let time = startInMinutes + 15; time < 24 * 60; time += 15) {
+                    const hour = Math.floor(time / 60).toString().padStart(2, '0');
+                    const minutes = (time % 60).toString().padStart(2, '0');
+                    const timeStr = `${hour}:${minutes}`;                  
+                    const option = new Option(timeStr, timeStr);
+                    finishTimeSelect.appendChild(option);
+                }
+                           
+                if (finishTimeSelect.value === '') {
+                    const defaultHour = Math.floor((startInMinutes + 60) / 60).toString().padStart(2, '0');
+                    const defaultMinutes = ((startInMinutes + 60) % 60).toString().padStart(2, '0');
+                    finishTimeSelect.value = `${defaultHour}:${defaultMinutes}`;
+                }
+            }
+        
+            function validateTimes() {
+                const startTime = document.getElementById('startTime').value;
+                const finishTime = document.getElementById('finishTime').value;
+                const startHour = parseInt(startTime.split(':')[0]);
+                const finishHour = parseInt(finishTime.split(':')[0]);
+                const startMin = parseInt(startTime.split(':')[1]);
+                const finishMin = parseInt(finishTime.split(':')[1]);
+                console.log(finishHour,startHour,finishMin,startMin);
+                
+                if(finishHour <= startHour && finishMin <= startMin) {
+                    alert('End time must be after start time');
+                    document.getElementById('finishTime').value = 
+                        `${String(startHour + 0.25).padStart(2, '0')}:00`;
+                }
+            }
+
+            // Form submission handler
+            document.getElementById('startTime').addEventListener('change', updateEndTimeOptions);
+            document.getElementById('finishTime').addEventListener('change', validateTimes);
+        
+            document.querySelector('#bookingForm form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const startTime = document.getElementById('startTime').value;
+                const finishTime = document.getElementById('finishTime').value;
+                const startHour = parseInt(startTime.split(':')[0]);
+                const finishHour = parseInt(finishTime.split(':')[0]);
+                const startMin = parseInt(startTime.split(':')[1]);
+                const finishMin = parseInt(finishTime.split(':')[1]);
+                
+                if(finishHour <= startHour && finishMin <= startMin) {
+                    alert('End time must be after start time');
+                    return;
+                }
+        
+                var formData = new FormData(this);
+                var selectedEquipment = document.getElementById('equipment').value;
+                formData.append('equipment', selectedEquipment);
+                
+                if (!selectedEquipment) {
+                    alert('Please select equipment before submitting the booking.');
+                    return;
+                }
+
+                const selectedOption = document.getElementById('equipment').options[document.getElementById('equipment').selectedIndex];
+                const hourlyRate = selectedOption.text.split('--')[2].trim(); 
+                formData.append('hourlyRate', hourlyRate);
+
+                const customPrice = document.getElementById('customPrice') ? document.getElementById('customPrice').value : null;
+                if (customPrice) {
+                    formData.append('customPrice', customPrice);  // Add custom price to form data
+                    }
+        
+                fetch("{% url 'create_event' %}", {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        calendar.refetchEvents(); // Refresh calendar to show new booking
+                        $('#bookingForm').collapse('hide');
+                        this.reset();
+                        document.getElementById('equipment').value = selectedEquipment;
+                        document.getElementById('equipmentInput').value = selectedEquipment;
+                    } else if (data.status === 'error') {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+        
+        function toggleNav() {
+            var element = document.getElementById("sidebar");
+            element.classList.toggle("toggle");
+        }
+        
+        function LogoutButton() {
+            if (confirm("You are about to logout,\nAre you sure you want to continue?")) {
+                window.location.href="{% url 'logout' %}";
+            } else {
+                none;
+            }
+        }
+        document.getElementById('submitSupervisor').addEventListener('click', function() {
+    var form = document.getElementById('addSupervisorForm');
+    var firstName = document.getElementById('firstName');
+    var lastName = document.getElementById('lastName');
+    var email = document.getElementById('email');
+    var telephone = document.getElementById('telephone');
+
+    // Validate each field and store error messages
+    var errors = [];
+
+    if (!firstName.value.trim()) errors.push("First Name is required.");
+    if (!lastName.value.trim()) errors.push("Last Name is required.");
+    if (!email.value.trim()) errors.push("Email is required.");
+
+    // If there are errors, display them and prevent form submission
+    if (errors.length > 0) {
+        alert(errors.join("\n"));
+        return; // Stop submission if there are errors
+    }
+
+    // If no errors, proceed with form submission
+    var formData = new FormData(form);
+    fetch("{% url 'add_supervisor' %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert(data.message);
+            $('#addSupervisorModal').modal('hide');
+            form.reset();
+            location.reload();
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+        
+        document.getElementById("supervisorSearch").addEventListener("focus", function() {
+        document.getElementById("supervisorDropdown").style.display = "block";
+});
+
+function filterSupervisors() {
+    const searchInput = document.getElementById("supervisorSearch").value.toLowerCase();
+    const dropdown = document.getElementById("supervisorDropdown");
+    const items = dropdown.getElementsByClassName("dropdown-item");
+
+    for (let i = 0; i < items.length; i++) {
+        const itemText = items[i].innerText.toLowerCase();
+        items[i].style.display = itemText.includes(searchInput) ? "" : "none";
+    }
+}
+
+function selectSupervisor(id, name) {
+    document.getElementById("supervisorSearch").value = name; // Show selected supervisor in search field
+    document.getElementById("selectedSupervisorId").value = id; // Set selected supervisor ID
+    document.getElementById("supervisorDropdown").style.display = "none"; // Hide the dropdown
+}
+
+// Close dropdown if clicked outside
+document.addEventListener("click", function(event) {
+    const dropdown = document.getElementById("supervisorDropdown");
+    if (!dropdown.contains(event.target) && event.target.id !== "supervisorSearch") {
+        dropdown.style.display = "none";
+    }
+});
+
+// This is the auto-logout code, do not change!
+let idleTime = 0;
+const idleTimeout = 300;
+const warningTimeout = 290;
+let messageBox = document.getElementById("warningMessage");
+
+function resetTime() {
+    idleTime = 0;
+    messageBox.style.display = ("none");
+}
+
+function cycle() {
+    idleTime++;
+    if (idleTime >= warningTimeout) {
+        warningMessage();
+    }
+    if (idleTime >= idleTimeout) {
+        logoutUser();
+    }
+}
+
+function warningMessage() {
+    messageBox.style.display = ("block");
+}
+
+function logoutUser() {
+    window.location.href = "{% url 'logout' %}";
+}
+
+window.onload = function() {
+    document.onmousemove = resetTime;
+    document.onkeypress = resetTime;
+    setInterval(cycle, 1000);
+};
+// End of auto-logout code
+        </script>
+</body>
+</html>

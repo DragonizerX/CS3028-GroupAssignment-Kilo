@@ -1,0 +1,384 @@
+body {
+    background: #f9efea;
+    margin-top:100px;
+    padding-bottom: 5px !important;
+    height: 100%;
+}
+
+a {
+    text-decoration:none !important;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #006a6a !important;
+}
+
+.btn-sty {
+    color: #ffffff;
+    background: #008080;
+    box-shadow: none;
+    border: none;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.btn-danger {
+    color: #ffffff;
+    box-shadow: none;
+    border: none;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.btn-sty:hover {
+    color: #a9a9a9;
+    background: #006a6a;
+}
+
+.labels {
+    font-size: 11px;
+}
+
+/* sidebar */
+.sidenav {
+height: 100%;
+width: 0;
+position: fixed;
+z-index: 99;
+top: 0;
+left: 0;
+background-color: #0f2e2e;
+overflow-x: hidden;
+transition: 0.5s;
+padding-top: 110px;
+}
+
+.sideCont {
+display: flex;
+}
+
+/* sidebar width */
+.toggle {
+    width: 170px;
+}
+
+/* sidebar buttons */
+.sidenav a {
+padding: 8px 32px 8px 32px;
+text-decoration: none;
+font-size: 25px;
+color: #ffffff !important;
+display:block;
+transition: 0.3s;
+cursor:pointer;
+}
+
+.sidenav a:hover {
+color: #757575 !important;
+}
+
+#sidebarLogout {
+position: absolute;
+bottom: 30px;
+left: auto;
+width: 0px;
+align-self: flex-end;
+}
+
+/* top bar height and alignment */
+/* (the height here needs to be the same as the top for the sidebar) */
+.topbar {
+height: 80px;
+max-height: 80px;
+align-content:center;
+position: fixed;
+top:0;
+z-index: 100;
+background-color: #008080;
+cursor:default;
+}
+
+/* sidebar stuff */
+@media screen and (max-height: 450px) {
+.sidenav {padding-top: 15px;}
+.sidenav a {font-size: 18px;}
+}
+
+/* style for the button to toggle the sidebar */
+.sidebarButton {
+font-size:30px;
+cursor:pointer;
+}
+
+::-webkit-scrollbar { /* hides the scroll bar but it still functions as intended */
+display: none;
+}
+  
+.centered-text {
+    text-align: center;
+    font-size: 48px;
+    font-weight: bold;
+    color: #29a1c8;
+    margin-top: 20px;
+}
+
+.user_card {
+    width: 350px;
+    margin-top: auto;
+    margin-bottom: auto;
+    background: #fff;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 5px;
+
+}
+
+.form_container {
+    margin-top: 20px;
+}
+
+#form-title{
+    color: #008080;
+}
+
+.page-title{
+    color: #008080;
+}
+
+.login_container {
+    padding: 0 2rem;
+}
+.input-group-text {
+    background: #008080 !important;
+    color: #fff !important;
+    border: 0 !important;
+    border-radius: 0.25rem 0 0 0.25rem !important;
+}
+.input_user,
+.input_pass:focus {
+    box-shadow: none !important;
+    outline: 0px !important;
+}
+
+#messages{
+    background-color: #0f2e2e;
+    color: #fff;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px; 
+}
+
+.details {
+    margin: 10px 0;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    gap: 3px
+}
+
+.detailsListItem {
+    list-style-type: none;
+    margin: auto;
+    padding: 4px 0;
+}
+
+#calendar {
+    margin: 10px auto;
+    padding: 10px;
+    max-width: 1000px;
+    border-radius: 30px;
+}
+.fc-toolbar {
+    padding: 20px;
+}
+.fc-toolbar-title {
+    font-weight: 200;
+}
+.fc-timegrid-slot {
+    height: 35px;
+    border-bottom: 1px solid;
+}
+.fc-timegrid-slot-label { 
+    font-size: 0.9em;
+    color: darkgrey;
+}
+.fc-highlight {
+    background-color: lightblue;
+}
+.fc-col-header-cell {
+    background-color: white;
+    padding: 10px 0;
+    font-weight: 500;
+}
+
+.fc-col-header-cell .fc-scrollgrid-sync-inner a{
+    text-decoration:none !important;
+    color: #111 !important;
+}
+
+.fc-timegrid-col {
+    background-color: white;
+}
+
+#deleteEquipForm #addEquipForm #bookingForm .card-body {
+    padding: 20px;
+}
+#deleteEquipForm #addEquipForm #bookingForm .row {
+    margin-bottom: 5px;
+}
+#deleteEquipForm #addEquipForm #bookingForm .control-label {
+    padding-top: 7px;
+}
+#deleteEquipForm #addEquipForm #bookingForm .btn-success {
+    margin-top: 10px;
+}
+
+.text-center.mt-4 {
+    margin-top: 5px;
+    padding-top: 5px;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+    flex-wrap: nowrap;
+}
+
+.fc-button {
+    background-color: lightblue;
+    border: none;
+}
+.fc-button:hover {
+    background-color: lightblue;
+}
+
+.fc-button-primary:not(:disabled) {
+    background-color: #006a6a;
+}
+
+#equipmentSelect {
+    width:500px;
+    margin:20px auto;
+    text-align:center;
+}
+
+.dropdown-content {
+display: none; /* Hidden by default */
+position: absolute;
+background-color: #f9f9f9;
+border: 1px solid #ccc;
+max-height: 200px;
+overflow-y: auto;
+width: 100%;
+z-index: 1;
+}
+
+.dropdown-item {
+    padding: 8px;
+    cursor: pointer;
+}
+.dropdown-item:hover {
+    background-color: #ddd;
+}
+
+.notification-box {
+    background-color: #fff;
+    color: #c42323;
+    padding: 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 35px; /* Adjust the width as needed */
+    position: absolute; /* Change to absolute positioning */
+    left: 50px; /* Adjust as needed to move it left */
+    top: 20px; /* Adjust as needed for vertical positioning */
+    text-align: center;
+    font-size: 12px;
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+.popup {
+    flex-direction: column;
+    position: fixed; /* Fixed positioning to stay in view */
+    left: 100px;
+    top: 7px;
+    background-color: white; /* Popup background color */
+    border: 1px solid #ccc; /* Border around popup */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    padding: 20px; /* Padding inside the popup */
+    z-index: 2000; /* Higher z-index to stay on top */
+    display: none; /* Initially hidden */
+    width: 300px; /* Set width for the popup */
+    color: black
+}
+
+.popup .close {
+    cursor: pointer;
+    float: right; /* Align close button to the right */
+    font-size: 20px; /* Font size for close button */
+    margin-top: -10px; /* Adjust position of close button */
+    color: #333; /* Color for close button */
+}
+
+.popup ul {
+    padding-left: 20px; /* Padding for the list inside popup */
+}
+
+.button-footer {
+    display:flex;
+    justify-content: center;
+    align-content: center;
+
+}
+
+.admin-information {
+    font-size: 12px;       /* Larger font size */
+    max-width: 220px;      /* Wider tooltip */
+    padding: 10px;         /* Add padding for readability */
+    background-color: white;  /* Light background */
+    color: grey;           /* Text color */
+    border: 1px solid grey; /* Border for the tooltip */
+    border-radius: 2px;    /* Rounded corners */
+    z-index: 1000;         /* Ensure it appears above other elements */
+}
+
+.bookedSlot {
+    background-color: #008080;
+}
+
+.popWarning {
+    bottom:10px;
+    right:10px;
+    display:none; /* Initially hidden */
+    flex-direction: column;
+    position: fixed; /* Fixed positioning to stay in view */
+    background-color: white; /* Popup background color */
+    border: 1px solid #ccc; /* Border around popup */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    padding: 20px; /* Padding inside the popup */
+    z-index: 2000; /* Higher z-index to stay on top */
+    width: 300px; /* Set width for the popup */
+    color: red;
+    text-align: center;
+    font-weight: bold;
+}
+
+.fc-event-content {
+    white-space: nowrap;         
+    overflow: hidden;          
+    align-items: center;          
+    padding: 2px;                
+    box-sizing: border-box;       
+    max-width: 100%;              
+}
+
+.fc-event-title, .fc-event-time {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
