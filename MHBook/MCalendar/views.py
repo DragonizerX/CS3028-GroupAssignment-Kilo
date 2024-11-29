@@ -827,7 +827,7 @@ def generatePDF(request, id):
             p.setFont("Helvetica", 10)
             p.drawString(300, y_position, f"{event.totalTime}")
             p.drawString(400, y_position, f"{event.hourlyRate}")
-            cost = event.hourlyRate * event.totalTime
+            cost = float(event.hourlyRate) * event.totalTime
             p.drawString(500, y_position, f"£{cost:.2f}")
             
             # end
