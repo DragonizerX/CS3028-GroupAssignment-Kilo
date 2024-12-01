@@ -5,7 +5,7 @@
 
 <head>
 
-    <title>Calendar</title>
+    <title>Calendar</title> <!--title for page-->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -17,9 +17,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script> <!--links for necessary scripts and styling-->
 
-    <link rel="stylesheet" href="{% static 'global.css' %}">
+    <link rel="stylesheet" href="{% static 'global.css' %}"> <!--link to external stylesheet-->
 
 </head>
 
@@ -31,23 +31,23 @@
     <!-- sidebar -->
     <div id="sidebar" class="sidenav">
 
-        {% if user.is_superuser %}
+        {% if user.is_superuser %} <!--direct to admin page for admins-->
             <a href="{% url 'CalendarPageAdmin' %}">Home</a>
         {% else %}
-            <a href="{% url 'CalendarPage' %}">Home</a>
+            <a href="{% url 'CalendarPage' %}">Home</a> <!--direct to regular page for non-admins-->
         {% endif %}
 
         <a href="{% url 'accountPage' %}">Account</a>
-        <a href="{% url 'myBookings' %}">Bookings</a>
+        <a href="{% url 'myBookings' %}">Bookings</a> <!--links to pages-->
 
         {% if user.is_superuser %}
             <a href="{% url 'requests' %}">Requests</a>
             <a href="{% url 'billings' %}">Billing</a>
-            <a href="{% url 'archivePage' %}">Archive</a>
+            <a href="{% url 'archivePage' %}">Archive</a> <!--links to admin only pages-->
         {% endif %}
 
         <div class="sideCont">
-            <a id="sidebarLogout" onclick="LogoutButton()">Logout</a>
+            <a id="sidebarLogout" onclick="LogoutButton()">Logout</a> <!--logout button-->
         </div>
     </div>
 
@@ -55,10 +55,10 @@
     <div class="container-fluid text-white topbar">
         <div class="row">
             <div class="col-2 container-fluid text-left">
-            <span class="sidebarButton" style="position:relative; top: 11px;" onclick="toggleNav()">&#9776;</span>
+            <span class="sidebarButton" style="position:relative; top: 11px;" onclick="toggleNav()">&#9776;</span> <!--button for sidebar-->
             </div>
             <div class="col-8 container-fluid text-center h1">
-                <h1 style="font-size: 40px; position: relative; bottom: 9px;">HistoTrack</h1>
+                <h1 style="font-size: 40px; position: relative; bottom: 9px;">HistoTrack</h1> <!--website title text for top of page-->
             </div>
             <div class="col-2"></div>
         </div>
@@ -69,44 +69,35 @@
         <!--EQUIPMENT SELECTION-->
         <div id="equipmentSelect" class="form-group">
                     
-            <label for="equipment">Select Equipment:</label>
+            <label for="equipment">Select Equipment:</label> <!--select equipment button-->
             <select class="form-control" id="equipment" name="equipment" required>
                 <option value="">-- Select Equipment --</option>
 
                 {% for x in equipmentList %}
                     <option value="{{ x.equipmentID_auto}}">-- {{ x.equipmentName }} -- {{ x.hourlyRate }} --</option>
-                {% endfor %}
+                {% endfor %} <!--loop to recieve equipment list from backend-->
 
             </select>
         </div>
 
         <!--CALENDAR-->
-        <div id="calendar"></div>
+        <div id="calendar"></div> <!--Div for calendar (allows it to be rendered in correct position)-->
         
         <!--BOOKING FORM-->
         <div class="text-center mt-4">
             <button class="btn btn-sty" type="button" data-toggle="collapse" data-target="#bookingForm" aria-expanded="false" aria-controls="bookingForm">
-                Make New Booking 
+                Make New Booking <!--make new booking button-->
             </button>
             
             <div class="collapse mt-3" id="bookingForm">
                 <div class="card card-body">
-                    <form method="post" action="{% url 'create_event' %}">
+                    <form method="post" action="{% url 'create_event' %}">  <!--get create event from views.py file-->
                         {% csrf_token %}
                         <input type="hidden" id="equipmentInput" name="equipment" value="">
-                        <!--
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <label for="bookingName" class="control-label">Name for Booking:</label>
-                            </div>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" id="bookingName" name="bookingName" required>
-                            </div>
-                        </div>
-                        -->
+
                         <div class="row mt-2">
                             <div class="col-sm-3">
-                                <label for="supervisorName" class="control-label">Supervisor:</label>
+                                <label for="supervisorName" class="control-label">Supervisor:</label> <!--option for supervisor-->
                             </div>
                             <div class="col-sm-7">
                                 <!-- Search Input Field -->
@@ -114,12 +105,12 @@
                                 
                                 <!-- Custom Dropdown -->
                                 <div id="supervisorDropdown" class="dropdown-content">
-                                    {% for supervisor in supervisors %}
+                                    {% for supervisor in supervisors %} <!--loop through supervisor list-->
                                         <div class="dropdown-item" onclick="selectSupervisor('{{ supervisor.id }}', '{{ supervisor.first_name }} {{ supervisor.last_name }}')">
-                                            {{ supervisor.first_name }} {{ supervisor.last_name }}
+                                            {{ supervisor.first_name }} {{ supervisor.last_name }} <!--get name of supervisor-->
                                         </div>
                                     {% empty %}
-                                        <div class="dropdown-item">No supervisors available</div>
+                                        <div class="dropdown-item">No supervisors available</div> <!--display when no supervisors in list-->
                                     {% endfor %}
                                 </div>
                         
@@ -128,25 +119,25 @@
                             </div>
                             <div class="col-sm-2">
                                 <button type="button" class="btn btn-sty btn-block" data-toggle="modal" data-target="#addSupervisorModal">
-                                    Add New
+                                    Add New <!--option to add new supervisor-->
                                 </button>
                             </div>
                         </div>
 
                         <div class="row mt-2">
                             <div class="col-sm-3">
-                                <label for="bookingDate" class="control-label">Date of Booking:</label>
+                                <label for="bookingDate" class="control-label">Date of Booking:</label> <!--option for booking date-->
                             </div>
                             <div class="col-sm-9">
-                                <input type="date" class="form-control" id="bookingDate" name="bookingDate" required>
+                                <input type="date" class="form-control" id="bookingDate" name="bookingDate" required> <!--date input type-->
                             </div>
                         </div>
                         <div class="row mt-2">
                             <div class="col-sm-3">
-                                <label for="startTime" class="control-label">Start Time:</label>
+                                <label for="startTime" class="control-label">Start Time:</label> <!--option for start time-->
                             </div>
                             <div class="col-sm-9">
-                                <select class="form-control" id="startTime" name="startTime" required>
+                                <select class="form-control" id="startTime" name="startTime" required> <!--dropdown for start time with apppropriate options-->
                                     <option value="00:00">00:00</option>
                                     <option value="00:15">00:15</option>
                                     <option value="00:30">00:30</option>
@@ -248,10 +239,10 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-sm-3">
-                                <label for="finishTime" class="control-label">End Time:</label>
+                                <label for="finishTime" class="control-label">End Time:</label> <!--option for end time-->
                             </div>
                             <div class="col-sm-9">
-                                <select class="form-control" id="finishTime" name="finishTime" required>
+                                <select class="form-control" id="finishTime" name="finishTime" required> <!--dropdown for end time with appropriate values-->
                                     <option value="00:00">00:00</option>
                                     <option value="00:15">00:15</option>
                                     <option value="00:30">00:30</option>
@@ -354,7 +345,7 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-sm-3">
-                                <label for="notes" class="control-label">Notes:</label>
+                                <label for="notes" class="control-label">Notes:</label> <!--option for extra comments-->
                             </div>
                             <div class="col-sm-9">
                                 <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Enter Project Information: E.g: (Project Name/Project Info)"></textarea>
@@ -363,7 +354,7 @@
                         </div>
                         <div class="row mt-3">
                             <div class="col-sm-12 text-center">
-                                <button type="submit" class="btn btn-success">Confirm Booking</button>
+                                <button type="submit" class="btn btn-success">Confirm Booking</button> <!--button to confirm the booking-->
                             </div>
                         </div>
                     </form>
@@ -372,7 +363,7 @@
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="addSupervisorModalLabel">Add New Supervisor</h5>
+                                    <h5 class="modal-title" id="addSupervisorModalLabel">Add New Supervisor</h5> <!-- Modal for adding new supervisor to table -->
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -384,18 +375,18 @@
                                             <input type="text" class="form-control" id="firstName" name="first_name" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="lastName">Last Name:</label>
+                                            <label for="lastName">Last Name:</label> <!-- Input for new supervisor last name field -->
                                             <input type="text" class="form-control" id="lastName" name="last_name" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="email">Email:</label>
+                                            <label for="email">Email:</label> <!-- Input for new supervisor email field -->
                                             <input type="email" class="form-control" id="email" name="email" required>
                                         </div>
                                     </form>
                                 </div>
                                 <div class="container px-5">
                                     <div class="text-center">
-                                    <button type="button" class="detailsListItem btn btn-block btn-success" id="submitSupervisor">Add Supervisor</button>
+                                    <button type="button" class="detailsListItem btn btn-block btn-success" id="submitSupervisor">Add Supervisor</button> <!--button to confirm new addition of supervisor-->
                                     <button type="button" class="detailsListItem btn btn-block btn-danger " data-dismiss="modal">Close</button>
                                     </div>
                                 </div>
@@ -411,76 +402,77 @@
 
     <!--JAVASCRIPT SCRIPTS-->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'timeGridWeek',
+        document.addEventListener('DOMContentLoaded', function() { //creation of calendar options
+            var calendarEl = document.getElementById('calendar'); //get calendar ID defined earlier
+            var calendar = new FullCalendar.Calendar(calendarEl, { //implement javascript fullcalendar
+                initialView: 'timeGridWeek', //display calendar in specific time and week format
                 allDaySlot: false,
-                slotMinTime: '00:00:00',
+                slotMinTime: '00:00:00', //time displays in calendar
                 slotMaxTime: '24:00:00',
                 slotDuration: '00:15:00',
                 snapDuration: '00:15:00',
-                headerToolbar: {
+                headerToolbar: { //options and display for selecting and viewing particular week
                     left: 'prev,next today',
                     center: 'title',
                     right: 'timeGridWeek,timeGridDay'
                 },
                 slotLabelInterval: 15,
-                slotLabelFormat: {
+                slotLabelFormat: { //options for calendar time displays
                     hour: '2-digit',
                     minute: '2-digit',
                     hour12: false
                 },
-                selectable: true,
+                selectable: true, //make specific times selectable
                 select: function(info) {
                     var date = info.start.toISOString().split('T')[0];
                     var startTime = info.start.toTimeString().split(' ')[0].slice(0, 5);
-                    var endTime = info.end.toTimeString().split(' ')[0].slice(0, 5);
+                    var endTime = info.end.toTimeString().split(' ')[0].slice(0, 5); //autofill date and times
                     
                     document.getElementById('bookingDate').value = date;
                     document.getElementById('startTime').value = startTime;
                     
+                    // Validate and set end time
                     const startHour = parseInt(startTime.split(':')[0]);
-                    const endHour = parseInt(endTime.split(':')[0]);
+                    const endHour = parseInt(endTime.split(':')[0]); //parse times and assign to new variables
                     
                     if(endHour <= startHour) {
-                        endTime = `${String(startHour + 1).padStart(2, '0')}:00`;
+                        endTime = `${String(startHour + 1).padStart(2, '0')}:00`; //set default endtime to 1 hour after start
                     }
                     
                     document.getElementById('finishTime').value = endTime;
-                    updateEndTimeOptions();
+                    updateEndTimeOptions(); // Update available end times
                     $('#bookingForm').collapse('show');
                 },
                 height: 'auto',
                 expandRows: true,
                 events: function(fetchInfo, successCallback, failureCallback) {
-                    const equipment = document.getElementById('equipment').value;
+                    const equipment = document.getElementById('equipment').value; //get selected equipment
                     
                     if (!equipment) {
                         successCallback([]); // Return empty array if no equipment selected
                         return;
                     }
                     
-                    fetch(`/MCalendar/CalendarPage/get_events/?equipment=${encodeURIComponent(equipment)}`)
+                    fetch(`/MCalendar/CalendarPage/get_events/?equipment=${encodeURIComponent(equipment)}`) //recieve get events from views.py file
                         .then(response => response.json())
                         .then(data => {
                             successCallback(data);
                         })
                         .catch(error => {
                             console.error('Error:', error);
-                            failureCallback(error);
+                            failureCallback(error); //give error if get events cant be retrieved
                         });
                 },
                 eventContent: function(arg) {
                     return {
                         html: '<b>' + arg.event.title + '</b>'
-                    };
+                    }; //display relevant information on calendar from get events
                 },
 
                 eventClassNames: 'bookedSlot'
             });
             
-            calendar.render();
+            calendar.render(); //render the calendar
         
             // Equipment change handler
             document.getElementById('equipment').addEventListener('change', function() {
@@ -526,7 +518,7 @@
                     document.getElementById('finishTime').value = 
                         `${String(startHour + 0.25).padStart(2, '0')}:00`;
                 }
-            }
+            } //validation to make sure of valid end time in case of manual entry
 
             // Form submission handler
             document.getElementById('startTime').addEventListener('change', updateEndTimeOptions);
@@ -540,25 +532,25 @@
                 const startHour = parseInt(startTime.split(':')[0]);
                 const finishHour = parseInt(finishTime.split(':')[0]);
                 const startMin = parseInt(startTime.split(':')[1]);
-                const finishMin = parseInt(finishTime.split(':')[1]);
+                const finishMin = parseInt(finishTime.split(':')[1]); //ensure times are parsed
                 
                 if(finishHour <= startHour && finishMin <= startMin) {
                     alert('End time must be after start time');
                     return;
-                }
+                } //alert for end time being before start time
         
                 var formData = new FormData(this);
                 var selectedEquipment = document.getElementById('equipment').value;
                 formData.append('equipment', selectedEquipment);
                 
                 if (!selectedEquipment) {
-                    alert('Please select equipment before submitting the booking.');
+                    alert('Please select equipment before submitting the booking.'); //ensure equipment is handled
                     return;
                 }
 
                 const selectedOption = document.getElementById('equipment').options[document.getElementById('equipment').selectedIndex];
                 const hourlyRate = selectedOption.text.split('--')[2].trim(); 
-                formData.append('hourlyRate', hourlyRate);
+                formData.append('hourlyRate', hourlyRate); //ensure hourlyRate is handled
 
                 const customPrice = document.getElementById('customPrice') ? document.getElementById('customPrice').value : null;
                 if (customPrice) {
@@ -576,12 +568,12 @@
                 .then(data => {
                     if (data.status === 'success') {
                         calendar.refetchEvents(); // Refresh calendar to show new booking
-                        $('#bookingForm').collapse('hide');
+                        $('#bookingForm').collapse('hide'); //collapse booking form if necessary
                         this.reset();
                         document.getElementById('equipment').value = selectedEquipment;
-                        document.getElementById('equipmentInput').value = selectedEquipment;
+                        document.getElementById('equipmentInput').value = selectedEquipment; //get equipment
                     } else if (data.status === 'error') {
-                        alert(data.message);
+                        alert(data.message); //error handling
                     }
                 })
                 .catch(error => console.error('Error:', error));
@@ -590,7 +582,7 @@
         
         function toggleNav() {
             var element = document.getElementById("sidebar");
-            element.classList.toggle("toggle");
+            element.classList.toggle("toggle"); //toggle the navigation bar
         }
         
         function LogoutButton() {
@@ -598,21 +590,21 @@
                 window.location.href="{% url 'logout' %}";
             } else {
                 none;
-            }
+            } //implement logout option
         }
         document.getElementById('submitSupervisor').addEventListener('click', function() {
     var form = document.getElementById('addSupervisorForm');
     var firstName = document.getElementById('firstName');
     var lastName = document.getElementById('lastName');
     var email = document.getElementById('email');
-    var telephone = document.getElementById('telephone');
+    var telephone = document.getElementById('telephone'); //get necessary details for booking
 
     // Validate each field and store error messages
     var errors = [];
 
     if (!firstName.value.trim()) errors.push("First Name is required.");
     if (!lastName.value.trim()) errors.push("Last Name is required.");
-    if (!email.value.trim()) errors.push("Email is required.");
+    if (!email.value.trim()) errors.push("Email is required."); //handling for missing information
 
     // If there are errors, display them and prevent form submission
     if (errors.length > 0) {
@@ -633,7 +625,7 @@
     .then(data => {
         if (data.status === 'success') {
             alert(data.message);
-            $('#addSupervisorModal').modal('hide');
+            $('#addSupervisorModal').modal('hide'); //hide modal unless selected
             form.reset();
             location.reload();
         } else {
@@ -650,11 +642,11 @@
 function filterSupervisors() {
     const searchInput = document.getElementById("supervisorSearch").value.toLowerCase();
     const dropdown = document.getElementById("supervisorDropdown");
-    const items = dropdown.getElementsByClassName("dropdown-item");
+    const items = dropdown.getElementsByClassName("dropdown-item"); //get supervisor options
 
     for (let i = 0; i < items.length; i++) {
         const itemText = items[i].innerText.toLowerCase();
-        items[i].style.display = itemText.includes(searchInput) ? "" : "none";
+        items[i].style.display = itemText.includes(searchInput) ? "" : "none"; //display for supervisors
     }
 }
 
@@ -673,9 +665,9 @@ document.addEventListener("click", function(event) {
 });
 
 // This is the auto-logout code, do not change!
-let idleTime = 0;
-const idleTimeout = 300;
-const warningTimeout = 290;
+let idleTime = 0; //creation of a timer initially 0
+const idleTimeout = 300; //idle timeout time
+const warningTimeout = 290; //timer for when warning for timeout is displayed
 let messageBox = document.getElementById("warningMessage");
 
 function resetTime() {
@@ -684,28 +676,28 @@ function resetTime() {
 }
 
 function cycle() {
-    idleTime++;
+    idleTime++; //increment time
     if (idleTime >= warningTimeout) {
         warningMessage();
     }
     if (idleTime >= idleTimeout) {
         logoutUser();
-    }
+    } //ensuring warning is displayed and logout works
 }
 
 function warningMessage() {
     messageBox.style.display = ("block");
-}
+} //styling for warning
 
 function logoutUser() {
     window.location.href = "{% url 'logout' %}";
-}
+} //logging user out
 
 window.onload = function() {
     document.onmousemove = resetTime;
     document.onkeypress = resetTime;
     setInterval(cycle, 1000);
-};
+}; //ensuring that if user is active to reset timer
 // End of auto-logout code
         </script>
 </body>
