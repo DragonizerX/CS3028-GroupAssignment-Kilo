@@ -195,7 +195,11 @@ display: none;
     padding: 10px;
     max-width: 1000px;
     border-radius: 30px;
+    max-height: 500px;
+    overflow-y: scroll;
+    border: 1px solid grey;
 }
+
 .fc-toolbar {
     padding: 20px;
 }
