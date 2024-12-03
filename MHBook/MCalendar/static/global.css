@@ -195,10 +195,11 @@ display: none;
     padding: 10px;
     max-width: 1000px;
     border-radius: 30px;
-    max-height: 500px;
-    overflow-y: scroll;
+    overflow-y: auto;
     border: 1px solid grey;
+    height: 600px; 
 }
+
 
 .fc-toolbar {
     padding: 20px;
@@ -213,6 +214,11 @@ display: none;
 .fc-timegrid-slot-label { 
     font-size: 0.9em;
     color: darkgrey;
+}
+
+.fc-timegrid-body {
+    overflow-y: auto; 
+    max-height: 500px; 
 }
 .fc-highlight {
     background-color: lightblue;
