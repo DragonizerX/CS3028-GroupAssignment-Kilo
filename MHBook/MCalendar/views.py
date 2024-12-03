@@ -21,6 +21,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
+from datetime import datetime, time
+
 
 # Create your views here.b
 
@@ -345,6 +347,23 @@ def create_event(request):
                     'status': 'error',
                     'message': f"This equipment is already booked by another user during the selected time slot."
                 }, status=400) #return error if overlapping booking exists
+
+            booking_Date = request.POST.get('bookingDate')
+            start_Time = request.POST.get('startTime')
+            
+            # Convert booking date and time to datetime for validation
+            booking_datetime = timezone.make_aware(
+                datetime.combine(
+                    datetime.strptime(booking_Date, '%Y-%m-%d').date(), 
+                    datetime.strptime(start_Time, '%H:%M').time()
+                )
+            )
+
+            if booking_datetime < timezone.now():
+                return JsonResponse({
+                    'status': 'error',
+                    'message': "Cannot create bookings for past dates or times."
+                }, status=400)
 
             custom_price = request.POST.get('customPrice')
             if request.user.is_superuser and custom_price:

@@ -217,8 +217,7 @@ display: none;
 }
 
 .fc-timegrid-body {
-    overflow-y: auto; 
-    max-height: 500px; 
+    overflow-y: auto;  
 }
 .fc-highlight {
     background-color: lightblue;
