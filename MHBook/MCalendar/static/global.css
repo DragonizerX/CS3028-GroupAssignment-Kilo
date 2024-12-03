@@ -192,9 +192,9 @@ display: none;
 
 #calendar {
     margin: 10px auto;
-    padding: 10px;
+    /*padding: 10px;*/
     max-width: 1000px;
-    border-radius: 30px;
+    /*border-radius: 30px;*/
     overflow-y: auto;
     border: 1px solid grey;
     height: 600px; 
