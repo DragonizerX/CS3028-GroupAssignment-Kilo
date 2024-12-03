@@ -1,0 +1,1 @@
+web gunicorn MHBook.wsgi:application --log-file -
