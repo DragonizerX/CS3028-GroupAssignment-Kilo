@@ -87,7 +87,7 @@ class Event(models.Model):
     finishTime = models.TimeField()
     notes = models.TextField(max_length = 1000)
     equipment = models.CharField(max_length=100, default='Not specified')
-    totalTime = models.IntegerField(default=0)
+    totalTime = models.FloatField(default=0)
     hourlyRate = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def __str__(self):
@@ -117,7 +117,7 @@ class Event(models.Model):
             finishTime += timedelta(days=1)
 
         duration = finishTime - startTime
-        return int(duration.total_seconds()//3600) 
+        return float(duration.total_seconds()/3600) 
     
     def save(self, *args, **kwargs):
         self.totalTime = self.calctotalTime

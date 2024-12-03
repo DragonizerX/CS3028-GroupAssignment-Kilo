@@ -316,7 +316,7 @@ def create_event(request):
     if request.method == 'POST':
         try:
             
-            booking_Name = f"{request.user.first_name} {request.user.last_name}"
+            booking_Name = f"{request.user.first_name} {request.user.last_name}" #uses account name for booking name
             supervisor_Name = request.POST.get('supervisorName')
             email_ = request.user.email
             booking_Date = request.POST.get('bookingDate')
@@ -325,12 +325,12 @@ def create_event(request):
             notes = request.POST.get('notes')
             equipment_id = request.POST.get('equipment')
             equipment = Equipment.objects.get(equipmentID_auto=equipment_id)
-            hourly_rate = equipment.hourlyRate
+            hourly_rate = equipment.hourlyRate #acquire all the necessary information
 
             supervisor = Supervisor.objects.get(id=supervisor_Name)
-            supervisor_full_name = f"{supervisor.first_name} {supervisor.last_name}"
+            supervisor_full_name = f"{supervisor.first_name} {supervisor.last_name}" #acquire name of supervisor
 
-            email_ = request.POST.get('user_email') or request.user.email if request.user.is_superuser else request.user.email
+            email_ = request.POST.get('user_email') or request.user.email if request.user.is_superuser else request.user.email #get email
 
             overlapping_bookings = Event.objects.filter(
                 equipment=equipment.equipmentName,
@@ -344,12 +344,12 @@ def create_event(request):
                 return JsonResponse({
                     'status': 'error',
                     'message': f"This equipment is already booked by another user during the selected time slot."
-                }, status=400)
+                }, status=400) #return error if overlapping booking exists
 
             custom_price = request.POST.get('customPrice')
             if request.user.is_superuser and custom_price:
                 try:
-                    hourly_rate = float(custom_price)
+                    hourly_rate = float(custom_price)  #override regular price for admin defined price
                 except ValueError:
                     # Handle case where custom price is not a valid number
                     hourly_rate = equipment.hourlyRate
@@ -365,7 +365,7 @@ def create_event(request):
                 equipment=equipment.equipmentName,
                 hourlyRate=hourly_rate,
             )
-            event.save()
+            event.save() #get valid information
 
             return JsonResponse({
                 'status': 'success',
@@ -373,26 +373,26 @@ def create_event(request):
                     'title': f"{event.bookingName} - {event.equipment}",
                     'start': f"{event.bookingDate}T{event.startTime}",
                     'end': f"{event.bookingDate}T{event.finishTime}",
-                }
+                } #return this information
             })
         except Exception as e:
             return JsonResponse({
                 'status': 'error',
                 'message': str(e)
-            }, status=400)
+            }, status=400)  #return status 400 error message if applicable
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
 @login_required
 def get_events(request):
     try:
-        equipment_id = request.GET.get('equipment', '')
+        equipment_id = request.GET.get('equipment', '') #recieve equipment
         
         if equipment_id:
             equipment = Equipment.objects.get(equipmentID_auto=equipment_id)
             events = Event.objects.filter(equipment=equipment.equipmentName)
         else:
-            events = Event.objects.none()
+            events = Event.objects.none() #return none if applicable
             
         event_list = []
         for event in events:
@@ -405,28 +405,28 @@ def get_events(request):
                 'totalTime': event.totalTime,
                 'hourlyRate': event.hourlyRate
             }
-            event_list.append(event_data)
+            event_list.append(event_data) #get every piece of data applicable
             
         #return redirect('/MCalendar/CalendarPage/')
         return JsonResponse(event_list, safe=False)
     except Exception as e:
         if request.user.is_superuser:
-            return redirect('/MCalendar/CalendarPageAdmin/')
+            return redirect('/MCalendar/CalendarPageAdmin/') #if user is admin bring to admin page
         else:
-            return redirect('/MCalendar/CalendarPage/')
+            return redirect('/MCalendar/CalendarPage/') #if regular user bring them to the normal page
 
 @login_required
 def add_equipment(request):
     if request.method == 'POST':
-        form = AddEquipmentForm(request.POST)
+        form = AddEquipmentForm(request.POST) #add equipment form
         if form.is_valid():
-            form.save()
+            form.save() #validate form
             if request.user.is_superuser:
                 return redirect('CalendarPageAdmin')  # Redirect to a success page or another view
             else:
                 return redirect('CalendarPage')
         else:
-            return JsonResponse({'errors': form.errors}, status=400)
+            return JsonResponse({'errors': form.errors}, status=400) #redirect to 400 page if error
     else:
         form = AddEquipmentForm()
     
@@ -463,11 +463,11 @@ def CalendarPage(request):
         return render(request, 'CalendarPage.html', context)
     else:
         messages.success(request, "Please log in before entering that page!")
-        return redirect("loginPage")
+        return redirect("loginPage") #get users to log in if needed
 
 @login_required
 def AdminCalendarView(request):
-    if request.user.is_superuser:
+    if request.user.is_superuser: #check if user is admin
         equipment_list = Equipment.objects.all()
         supervisors = Supervisor.objects.all().order_by('first_name')
 
@@ -482,9 +482,9 @@ def AdminCalendarView(request):
                     }
         return render(request, 'CalendarPageAdmin.html', context)
     else:
-        messages.success(request, "Please log in before entering that page! Admin access only.")
-        logout(request)
-        return redirect("loginPage")
+        messages.success(request, "Please log in before entering that page! Admin access only.") #validate if user is admin
+        logout(request) #logout when logout button is clicked
+        return redirect("loginPage") #redirect to login page
     
 @login_required
 def archivePage(request):
@@ -827,7 +827,7 @@ def generatePDF(request, id):
             p.setFont("Helvetica", 10)
             p.drawString(300, y_position, f"{event.totalTime}")
             p.drawString(400, y_position, f"{event.hourlyRate}")
-            cost = event.hourlyRate * event.totalTime
+            cost = float(event.hourlyRate) * event.totalTime
             p.drawString(500, y_position, f"£{cost:.2f}")
             
             # end
