@@ -33,8 +33,8 @@ class CustomUserManager(UserManager):
 
 class Users(AbstractBaseUser, PermissionsMixin):
     
-    first_name = models.CharField(max_length=15, unique=True, blank=True)
-    last_name = models.CharField(max_length=15, unique=True, blank=True)
+    first_name = models.CharField(max_length=15, blank=True)
+    last_name = models.CharField(max_length=15, blank=True)
     email = models.EmailField(unique=True, blank=True)
     password = models.CharField(max_length=128, null=True)  # Initially allow null
     telephone = models.CharField(max_length=11, blank=True)
@@ -64,8 +64,8 @@ class Users(AbstractBaseUser, PermissionsMixin):
         return check_password(raw_password, self.password)
 
 class Supervisor(models.Model):
-    first_name = models.CharField(max_length=15, unique=True, blank=True)
-    last_name = models.CharField(max_length=15, unique=True, blank=True)
+    first_name = models.CharField(max_length=15, blank=True)
+    last_name = models.CharField(max_length=15, blank=True)
     email = models.EmailField(unique=True, blank=True)
     telephone = models.CharField(max_length=15, blank=True)
 
