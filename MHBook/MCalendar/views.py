@@ -612,9 +612,7 @@ def createBilling(request):
             # For calculating cost
             cost = 0
             for event in selectedEventObjects:
-                for eq in equipment:
-                    if event.equipment == eq.equipmentName:
-                        cost += event.totalTime * eq.hourlyRate
+                cost += event.totalTime * event.hourlyRate
             billing.totalCost = cost
             billing.save()
 

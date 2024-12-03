@@ -1,6 +1,8 @@
 # CS3028-GroupAssignment-Kilo
 Group Kilo - Software Engineering Assignment: Microscopy and Histology Management System
 
+Copyright Reserved by members of group Kilo. Unauthorised use of this code will not be tolerated.
+
 # Running the application and tests
 
 In order to run the calendar, make sure you are in the MHBook directory first.
