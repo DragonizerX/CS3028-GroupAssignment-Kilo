@@ -248,6 +248,34 @@ def editBooking(request, id):
             new_finish = request.POST.get('finishTime')
             new_equipment = request.POST.get('equipment')
 
+
+            # Validation to ensure bookings can't be edited to the past
+            if new_date and new_start:
+                # Convert new date and time to a datetime object for validation
+                try:
+                    new_datetime = timezone.make_aware(
+                        datetime.combine(
+                            datetime.strptime(new_date, '%Y-%m-%d').date(),
+                            datetime.strptime(new_start, '%H:%M').time()
+                        )
+                    )
+                    if new_datetime < timezone.now():
+                        context = {
+                            'editBooking': [booking],
+                            'equipmentList': equipmentList,
+                            'supervisors': supervisors,
+                            'error_message': "You cannot edit a booking to be in the past."
+                        }
+                        return render(request, 'editBooking.html', context)
+                except ValueError:
+                    context = {
+                        'editBooking': [booking],
+                        'equipmentList': equipmentList,
+                        'supervisors': supervisors,
+                        'error_message': "Invalid date or time format."
+                    }
+                    return render(request, 'editBooking.html', context)
+
             # Check for overlapping bookings
             overlapping_bookings = Event.objects.filter(
                 equipment=new_equipment,
