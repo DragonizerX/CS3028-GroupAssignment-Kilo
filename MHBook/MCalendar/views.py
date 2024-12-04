@@ -21,6 +21,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
+from datetime import datetime, time
+
 
 # Create your views here.b
 
@@ -246,6 +248,34 @@ def editBooking(request, id):
             new_finish = request.POST.get('finishTime')
             new_equipment = request.POST.get('equipment')
 
+
+            # Validation to ensure bookings can't be edited to the past
+            if new_date and new_start:
+                # Convert new date and time to a datetime object for validation
+                try:
+                    new_datetime = timezone.make_aware(
+                        datetime.combine(
+                            datetime.strptime(new_date, '%Y-%m-%d').date(),
+                            datetime.strptime(new_start, '%H:%M').time()
+                        )
+                    )
+                    if new_datetime < timezone.now():
+                        context = {
+                            'editBooking': [booking],
+                            'equipmentList': equipmentList,
+                            'supervisors': supervisors,
+                            'error_message': "You cannot edit a booking to be in the past."
+                        }
+                        return render(request, 'editBooking.html', context)
+                except ValueError:
+                    context = {
+                        'editBooking': [booking],
+                        'equipmentList': equipmentList,
+                        'supervisors': supervisors,
+                        'error_message': "Invalid date or time format."
+                    }
+                    return render(request, 'editBooking.html', context)
+
             # Check for overlapping bookings
             overlapping_bookings = Event.objects.filter(
                 equipment=new_equipment,
@@ -345,6 +375,23 @@ def create_event(request):
                     'status': 'error',
                     'message': f"This equipment is already booked by another user during the selected time slot."
                 }, status=400) #return error if overlapping booking exists
+
+            booking_Date = request.POST.get('bookingDate')
+            start_Time = request.POST.get('startTime')
+            
+            # Convert booking date and time to datetime for validation
+            booking_datetime = timezone.make_aware(
+                datetime.combine(
+                    datetime.strptime(booking_Date, '%Y-%m-%d').date(), 
+                    datetime.strptime(start_Time, '%H:%M').time()
+                )
+            )
+
+            if booking_datetime < timezone.now():
+                return JsonResponse({
+                    'status': 'error',
+                    'message': "Cannot create bookings for past dates or times."
+                }, status=400)
 
             custom_price = request.POST.get('customPrice')
             if request.user.is_superuser and custom_price:
