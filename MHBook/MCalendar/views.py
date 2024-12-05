@@ -498,7 +498,7 @@ def delete_equipment(request):
     equipment_list = Equipment.objects.all()
     return render(request, 'CalendarPageAdmin.html', {'equipmentList': equipment_list})
 
-@login_required
+# There is no login required because of a bug
 def CalendarPage(request):
     if request.user.is_authenticated:
         equipment_list = Equipment.objects.all()
@@ -512,7 +512,7 @@ def CalendarPage(request):
         logout(request) #logout when logout button is clicked
         return redirect("loginPage") #get users to log in if needed
 
-@login_required
+# There is no login required because of a bug
 def AdminCalendarView(request):
     if request.user.is_superuser: #check if user is admin
         equipment_list = Equipment.objects.all()

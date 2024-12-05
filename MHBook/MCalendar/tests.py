@@ -681,6 +681,10 @@ class CalendarTests(TestCase):
         )
 
     # Tests
+    def test_redirect_if_not_logged_in(self):
+        response = self.client.get(reverse('CalendarPage'))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('loginPage'))
 
     def test_load_accountPage(self):
         self.client.login(email='TestUser@icloud.com', password='testPass')
