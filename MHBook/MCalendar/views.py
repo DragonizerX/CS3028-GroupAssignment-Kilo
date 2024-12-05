@@ -509,6 +509,7 @@ def CalendarPage(request):
         return render(request, 'CalendarPage.html', context)
     else:
         messages.success(request, "Please log in before entering that page!")
+        logout(request) #logout when logout button is clicked
         return redirect("loginPage") #get users to log in if needed
 
 @login_required
