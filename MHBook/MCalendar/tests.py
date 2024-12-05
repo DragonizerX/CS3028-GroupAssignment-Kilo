@@ -606,3 +606,128 @@ class CreateBillingTests(TestCase):
         self.assertIn(self.event1, event_list)
         self.assertIn(self.event2, event_list)
         self.assertNotIn(self.event3, event_list)
+
+
+class accountTests(TestCase):
+    def setUp(self):
+        # Create User
+        self.user = Users.objects.create_user(
+            first_name='test', 
+            last_name='user', 
+            email='TestUser@icloud.com', 
+            password='testPass', 
+            verified=True, 
+        )
+
+    # Tests
+    def test_redirect_if_not_logged_in(self):
+        response = self.client.get(reverse('accountPage'))
+        # 302 code is used when unauthenticated users try to access a page
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('loginPage'))
+
+    def test_load_accountPage(self):
+        self.client.login(email='TestUser@icloud.com', password='testPass')
+        response = self.client.get(reverse('accountPage'))
+        # 200 code is used to check if the page was loaded correctly
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'account.html')
+        self.assertContains(response, f'{self.user.first_name}')
+
+    
+class archiveTests(TestCase):
+    def setUp(self):
+        # Create User
+        self.user = Users.objects.create_user(
+            first_name='test', 
+            last_name='user', 
+            email='TestUser@icloud.com', 
+            password='testPass', 
+            verified=True, 
+        )
+        # Create superuser
+        self.superuser = Users.objects.create_superuser(
+            first_name='first', 
+            last_name='last', 
+            email='AdminUser@icloud.com', 
+            password='testPass', 
+            telephone=''
+        )
+
+    # Tests
+    def test_redirect_if_not_superuser(self):
+        self.client.login(email='TestUser@icloud.com', password='testPass')
+        response = self.client.get(reverse('archivePage'))
+        self.assertEqual(response.status_code, 302)
+
+        self.assertRedirects(response, reverse('loginPage'))
+    
+    def test_access_if_superuser(self):
+        self.client.login(email='AdminUser@icloud.com', password='testPass')
+        response = self.client.get(reverse('archivePage'))
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTemplateUsed(response, 'archive.html')
+        self.assertIn('Archive', response.content.decode())
+
+
+class calendarTests(TestCase):
+    def setUp(self):
+        # Create User
+        self.user = Users.objects.create_user(
+            first_name='test', 
+            last_name='user', 
+            email='TestUser@icloud.com', 
+            password='testPass', 
+            verified=True, 
+        )
+
+    # Tests
+    def test_redirect_if_not_logged_in(self):
+        response = self.client.get(reverse('CalendarPage'))
+        # 302 code is used when unauthenticated users try to access a page
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('loginPage'))
+
+    def test_load_accountPage(self):
+        self.client.login(email='TestUser@icloud.com', password='testPass')
+        response = self.client.get(reverse('CalendarPage'))
+        # 200 code is used to check if the page was loaded correctly
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'CalendarPage.html')
+
+
+class calendarAdminTests(TestCase):
+    def setUp(self):
+        # Create User
+        self.user = Users.objects.create_user(
+            first_name='test', 
+            last_name='user', 
+            email='TestUser@icloud.com', 
+            password='testPass', 
+            verified=True, 
+        )
+        # Create superuser
+        self.superuser = Users.objects.create_superuser(
+            first_name='first', 
+            last_name='last', 
+            email='AdminUser@icloud.com', 
+            password='testPass', 
+            telephone=''
+        )
+
+    # Tests
+    def test_redirect_if_not_superuser(self):
+        self.client.login(email='TestUser@icloud.com', password='testPass')
+        response = self.client.get(reverse('CalendarPageAdmin'))
+        self.assertEqual(response.status_code, 302)
+
+        self.assertRedirects(response, reverse('loginPage'))
+    
+    def test_access_if_superuser(self):
+        self.client.login(email='AdminUser@icloud.com', password='testPass')
+        response = self.client.get(reverse('CalendarPageAdmin'))
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTemplateUsed(response, 'CalendarPageAdmin.html')
+        self.assertIn('CalendarPageAdmin', response.content.decode())
