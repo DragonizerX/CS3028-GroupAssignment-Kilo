@@ -3,12 +3,23 @@ Group Kilo - Software Engineering Assignment: Microscopy and Histology Managemen
 
 Copyright Reserved by members of group Kilo. Unauthorised use of this code will not be tolerated.
 
+# Required pip installs
+
+Run these commands before trying to run the server:
+
+pip install django
+pip install python-dateutil
+pip install reportlab
+pip install django-session-timeout
+
+These are required pip installs and without them the server will not function.
+
 # Running the application and tests
 
 In order to run the calendar, make sure you are in the MHBook directory first.
 
 In terminal: py manage.py runserver
-In your browser: http://127.0.0.1:8000/MCalendar/login/
+In your browser: http://127.0.0.1:8000/MCalendar/login/ OR ctrl-click the link in the terminal.
 
 In order to run tests, once again make sure you are in the MHBook directory
 
