@@ -395,10 +395,15 @@ def create_event(request):
             custom_price = request.POST.get('customPrice')
             if request.user.is_superuser and custom_price:
                 try:
+                    custom_price = float(custom_price) #validation for custom price
+                    if custom_price <= 0:  # Ensure it is positive
+                        return JsonResponse({
+                            'status': 'error',
+                            'message': "Custom price must be a positive integer."
+                        }, status=400)
                     hourly_rate = float(custom_price)  #override regular price for admin defined price
                 except ValueError:
-                    # Handle case where custom price is not a valid number
-                    hourly_rate = equipment.hourlyRate
+                    hourly_rate = equipment.hourlyRate #use default rate for no inputted value
         
             event = Event(
                 bookingName=booking_Name,
