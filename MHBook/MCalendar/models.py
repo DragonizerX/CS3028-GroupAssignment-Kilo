@@ -146,4 +146,4 @@ class Billing(models.Model):
     startDate = models.DateField(default=(timezone.now().date() - relativedelta(months=3)))
     finishDate = models.DateField(default=timezone.now)
     equipment = models.ManyToManyField(Equipment)
-    totalCost = models.FloatField(default=0.0)
+    totalCost = models.FloatField(default=0.00)

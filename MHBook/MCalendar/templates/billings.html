@@ -236,7 +236,7 @@
                                 <p class="card-text">
                                     <div class="details">
                                         <div class="detailsListItem">Issued: {{ b.issueDate }}</div>
-                                        <div class="detailsListItem">Total Cost: £{{ b.totalCost }}</div>
+                                        <div class="detailsListItem">Total Cost: £{{ b.totalCost|floatformat:2 }}</div>
                                     </div>
 
                                     <div id="{{ b.id }}" class="eventsDiv">
