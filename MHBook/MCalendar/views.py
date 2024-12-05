@@ -23,8 +23,7 @@ from django.contrib.auth.decorators import login_required
 
 from datetime import datetime, time
 
-
-# Create your views here.b
+# Views
 
 def loginPage(request):
     if request.method == "POST":
