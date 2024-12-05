@@ -21,6 +21,11 @@ In order to run the calendar, make sure you are in the MHBook directory first.
 In terminal: py manage.py runserver
 In your browser: http://127.0.0.1:8000/MCalendar/login/ OR ctrl-click the link in the terminal.
 
+User Login: user@user.com
+User Password: userpassword
+Admin Login: admin@admin.com 
+Admin Password: adminpassword
+
 In order to run tests, once again make sure you are in the MHBook directory
 
 To run all tests; in terminal: py manage.py test
