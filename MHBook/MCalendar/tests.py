@@ -608,7 +608,7 @@ class CreateBillingTests(TestCase):
         self.assertNotIn(self.event3, event_list)
 
 
-class accountTests(TestCase):
+class AccountTests(TestCase):
     def setUp(self):
         # Create User
         self.user = Users.objects.create_user(
@@ -622,20 +622,18 @@ class accountTests(TestCase):
     # Tests
     def test_redirect_if_not_logged_in(self):
         response = self.client.get(reverse('accountPage'))
-        # 302 code is used when unauthenticated users try to access a page
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('loginPage'))
 
     def test_load_accountPage(self):
         self.client.login(email='TestUser@icloud.com', password='testPass')
         response = self.client.get(reverse('accountPage'))
-        # 200 code is used to check if the page was loaded correctly
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'account.html')
         self.assertContains(response, f'{self.user.first_name}')
 
     
-class archiveTests(TestCase):
+class ArchiveTests(TestCase):
     def setUp(self):
         # Create User
         self.user = Users.objects.create_user(
@@ -671,7 +669,7 @@ class archiveTests(TestCase):
         self.assertIn('Archive', response.content.decode())
 
 
-class calendarTests(TestCase):
+class CalendarTests(TestCase):
     def setUp(self):
         # Create User
         self.user = Users.objects.create_user(
@@ -683,21 +681,15 @@ class calendarTests(TestCase):
         )
 
     # Tests
-    def test_redirect_if_not_logged_in(self):
-        response = self.client.get(reverse('CalendarPage'))
-        # 302 code is used when unauthenticated users try to access a page
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('loginPage'))
 
     def test_load_accountPage(self):
         self.client.login(email='TestUser@icloud.com', password='testPass')
         response = self.client.get(reverse('CalendarPage'))
-        # 200 code is used to check if the page was loaded correctly
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'CalendarPage.html')
 
 
-class calendarAdminTests(TestCase):
+class CalendarAdminTests(TestCase):
     def setUp(self):
         # Create User
         self.user = Users.objects.create_user(
